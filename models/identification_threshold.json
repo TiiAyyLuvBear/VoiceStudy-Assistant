@@ -1,0 +1,4 @@
+{
+  "description": "Ngưỡng nhận dạng người nói; cần được hiệu chỉnh từ dữ liệu validation.",
+  "threshold": null
+}

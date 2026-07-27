@@ -1,0 +1,7 @@
+# Cấu hình mặc định cho ứng dụng VoiceStudy-Assistant.
+app:
+  name: VoiceStudy-Assistant
+  environment: development
+
+audio:
+  sample_rate: 16000

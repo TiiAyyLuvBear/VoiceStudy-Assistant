@@ -1,0 +1,1 @@
+PLACEHOLDER: Tệp mô hình SVM tuyến tính nhận dạng người nói sẽ được tạo sau khi huấn luyện.
