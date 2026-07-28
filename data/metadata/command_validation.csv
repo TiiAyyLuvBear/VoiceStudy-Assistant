@@ -1,0 +1,31 @@
+command_id,transcript,intent,expected_title,expected_date,expected_time,reference_date,split
+VAL0001,Xin hỏi bây giờ là mấy giờ?,GET_TIME,,,,2026-07-28,validation
+VAL0002,Bạn báo giờ hiện tại giúp mình.,GET_TIME,,,,2026-07-28,validation
+VAL0003,Cho tôi biết hiện tại là mấy giờ.,GET_TIME,,,,2026-07-28,validation
+VAL0004,Đọc cho tôi giờ hiện tại.,GET_TIME,,,,2026-07-28,validation
+VAL0005,Hiện tại thời gian là bao nhiêu?,GET_TIME,,,,2026-07-28,validation
+VAL0006,Xem lịch học hôm nay của tôi.,VIEW_SCHEDULE,,2026-07-28,,2026-07-28,validation
+VAL0007,Hãy mở lịch ngày mai.,VIEW_SCHEDULE,,2026-07-29,,2026-07-28,validation
+VAL0008,Kiểm tra thời khóa biểu thứ tư.,VIEW_SCHEDULE,,2026-07-29,,2026-07-28,validation
+VAL0009,Ngày kia tôi có buổi học gì?,VIEW_SCHEDULE,,2026-07-30,,2026-07-28,validation
+VAL0010,Hiển thị lịch của mình thứ bảy.,VIEW_SCHEDULE,,2026-08-01,,2026-07-28,validation
+VAL0011,Thêm lịch học sâu lúc 7 giờ sáng ngày mai.,ADD_SCHEDULE,học sâu,2026-07-29,07:00,2026-07-28,validation
+VAL0012,Tạo lịch làm đồ án lúc 4 giờ chiều ngày kia.,ADD_SCHEDULE,làm đồ án,2026-07-30,16:00,2026-07-28,validation
+VAL0013,Đặt cuộc hẹn trao đổi bài lúc 10h30 thứ năm.,ADD_SCHEDULE,trao đổi bài,2026-07-30,10:30,2026-07-28,validation
+VAL0014,Nhắc tôi nộp bài lúc 11 giờ tối nay.,ADD_SCHEDULE,nộp bài,2026-07-28,23:00,2026-07-28,validation
+VAL0015,Lập lịch ôn thi lúc chín giờ sáng thứ hai.,ADD_SCHEDULE,ôn thi,2026-08-03,09:00,2026-07-28,validation
+VAL0016,Xin mở ghi chú bảo mật của tôi.,VIEW_PRIVATE_NOTE,,,,2026-07-28,validation
+VAL0017,Cho tôi đọc ghi chú cá nhân.,VIEW_PRIVATE_NOTE,,,,2026-07-28,validation
+VAL0018,Hiển thị ghi chú riêng tư mới nhất.,VIEW_PRIVATE_NOTE,,,,2026-07-28,validation
+VAL0019,Xem note bảo mật của tôi.,VIEW_PRIVATE_NOTE,,,,2026-07-28,validation
+VAL0020,Đọc note riêng tư.,VIEW_PRIVATE_NOTE,,,,2026-07-28,validation
+VAL0021,Phát bài hát yêu thích.,OUT_OF_SCOPE,,,,2026-07-28,validation
+VAL0022,Ngày mai có nắng không?,OUT_OF_SCOPE,,,,2026-07-28,validation
+VAL0023,Tóm tắt chương một cho tôi.,OUT_OF_SCOPE,,,,2026-07-28,validation
+VAL0024,Viết email cho giảng viên.,OUT_OF_SCOPE,,,,2026-07-28,validation
+VAL0025,Đặt báo thức lúc 6 giờ sáng.,OUT_OF_SCOPE,,,,2026-07-28,validation
+VAL0026,Máy học là gì?,OUT_OF_SCOPE,,,,2026-07-28,validation
+VAL0027,Xem điểm thi của tôi.,OUT_OF_SCOPE,,,,2026-07-28,validation
+VAL0028,Đọc tin tức hôm nay.,OUT_OF_SCOPE,,,,2026-07-28,validation
+VAL0029,Bạn tên là gì?,OUT_OF_SCOPE,,,,2026-07-28,validation
+VAL0030,Thêm một việc vào danh sách.,OUT_OF_SCOPE,,,,2026-07-28,validation

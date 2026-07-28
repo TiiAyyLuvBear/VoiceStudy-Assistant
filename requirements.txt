@@ -1,1 +1,8 @@
-# Dependencies sẽ được bổ sung khi các module được triển khai.
+# ASR + configuration
+faster-whisper>=1.1,<2
+PyYAML>=6,<7
+numpy>=1.26,<3
+sounddevice>=0.4.6,<1
+
+# Test
+pytest>=8,<10

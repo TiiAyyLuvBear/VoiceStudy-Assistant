@@ -1,0 +1,10 @@
+# Model weights are downloaded on first use and must not be committed.
+models/cache/
+
+# Python/test cache.
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Local runtime data.
+data/database/*.db

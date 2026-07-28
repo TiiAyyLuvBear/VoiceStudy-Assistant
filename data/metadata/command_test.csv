@@ -1,0 +1,31 @@
+command_id,transcript,intent,expected_title,expected_date,expected_time,reference_date,split
+TST0001,Xin cho tôi biết bây giờ mấy giờ rồi.,GET_TIME,,,,2026-07-28,test
+TST0002,Bạn hãy báo giờ hiện tại.,GET_TIME,,,,2026-07-28,test
+TST0003,Đọc thời gian hiện tại giúp mình.,GET_TIME,,,,2026-07-28,test
+TST0004,Hiện tại chính xác là mấy giờ?,GET_TIME,,,,2026-07-28,test
+TST0005,Bây giờ thời gian thế nào?,GET_TIME,,,,2026-07-28,test
+TST0006,Hãy xem lịch của tôi hôm nay.,VIEW_SCHEDULE,,2026-07-28,,2026-07-28,test
+TST0007,Mở thời khóa biểu ngày kia giúp mình.,VIEW_SCHEDULE,,2026-07-30,,2026-07-28,test
+TST0008,Đọc lịch học vào thứ năm.,VIEW_SCHEDULE,,2026-07-30,,2026-07-28,test
+TST0009,Ngày mai mình có buổi gì?,VIEW_SCHEDULE,,2026-07-29,,2026-07-28,test
+TST0010,Kiểm tra lịch ngày 02/08/2026.,VIEW_SCHEDULE,,2026-08-02,,2026-07-28,test
+TST0011,Thêm lịch luyện nghe lúc 6h30 sáng mai.,ADD_SCHEDULE,luyện nghe,2026-07-29,06:30,2026-07-28,test
+TST0012,Tạo lịch sửa báo cáo lúc 3 giờ chiều hôm nay.,ADD_SCHEDULE,sửa báo cáo,2026-07-28,15:00,2026-07-28,test
+TST0013,Lập cuộc hẹn gặp cố vấn lúc 9 giờ sáng ngày kia.,ADD_SCHEDULE,gặp cố vấn,2026-07-30,09:00,2026-07-28,test
+TST0014,Đặt buổi thảo luận lúc 7 giờ tối thứ bảy.,ADD_SCHEDULE,thảo luận,2026-08-01,19:00,2026-07-28,test
+TST0015,Nhắc tôi gửi bài lúc mười một giờ sáng ngày mai.,ADD_SCHEDULE,gửi bài,2026-07-29,11:00,2026-07-28,test
+TST0016,Xin đọc ghi chú riêng tư của tôi.,VIEW_PRIVATE_NOTE,,,,2026-07-28,test
+TST0017,Mở note bảo mật gần nhất.,VIEW_PRIVATE_NOTE,,,,2026-07-28,test
+TST0018,Cho tôi xem ghi chú cá nhân mới nhất.,VIEW_PRIVATE_NOTE,,,,2026-07-28,test
+TST0019,Hiển thị note riêng tư của tôi.,VIEW_PRIVATE_NOTE,,,,2026-07-28,test
+TST0020,Xem ghi chú bảo mật gần đây.,VIEW_PRIVATE_NOTE,,,,2026-07-28,test
+TST0021,Mở máy tính giúp tôi.,OUT_OF_SCOPE,,,,2026-07-28,test
+TST0022,Ngày mai nhiệt độ bao nhiêu?,OUT_OF_SCOPE,,,,2026-07-28,test
+TST0023,Tính điểm trung bình của tôi.,OUT_OF_SCOPE,,,,2026-07-28,test
+TST0024,Đặt vé xe lúc 8 giờ.,OUT_OF_SCOPE,,,,2026-07-28,test
+TST0025,Đọc bài báo này.,OUT_OF_SCOPE,,,,2026-07-28,test
+TST0026,Cho tôi xem ảnh cá nhân.,OUT_OF_SCOPE,,,,2026-07-28,test
+TST0027,Thêm sản phẩm vào giỏ hàng.,OUT_OF_SCOPE,,,,2026-07-28,test
+TST0028,Tôi có môn học yêu thích.,OUT_OF_SCOPE,,,,2026-07-28,test
+TST0029,Mở note.,OUT_OF_SCOPE,,,,2026-07-28,test
+TST0030,Hôm nay có sự kiện gì?,OUT_OF_SCOPE,,,,2026-07-28,test

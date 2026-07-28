@@ -1,7 +1,52 @@
-# Cấu hình mặc định cho ứng dụng VoiceStudy-Assistant.
+# Cấu hình dùng chung cho VoiceStudy Assistant.
+# Mọi đường dẫn tương đối được tính từ thư mục chứa file config.yaml.
 app:
-  name: VoiceStudy-Assistant
+  name: VoiceStudy Assistant
   environment: development
+
+paths:
+  raw_data: data/raw
+  processed_data: data/processed
+  metadata: data/metadata
+  command_audio: data/commands/audio
+  command_audio_manifest: data/commands/command_audio_manifest.csv
+  asr_validation: data/metadata/asr_validation.csv
+  asr_test: data/metadata/asr_test.csv
+  asr_reports: reports/asr
+  database: data/database/voicestudy.db
+  model_cache: models/cache
+  speaker_model: models/speaker_svm_linear.pkl
+  user_embeddings: models/user_embeddings
+  identification_threshold: models/identification_threshold.json
+  verification_threshold: models/verification_threshold.json
 
 audio:
   sample_rate: 16000
+  channels: 1
+  format: wav
+
+# Theo yêu cầu tuần 1: Whisper Small chạy trên CPU.
+# int8 giảm bộ nhớ và tăng tốc inference CPU.
+asr:
+  backend: faster-whisper
+  model_size: small
+  model_name: whisper-small
+  language: vi
+  task: transcribe
+  device: cpu
+  compute_type: int8
+  cpu_threads: 0
+  num_workers: 1
+  beam_size: 5
+  vad_filter: true
+  condition_on_previous_text: false
+  word_timestamps: false
+  download_root: models/cache/whisper
+  local_files_only: false
+
+speaker:
+  embedding_model: speechbrain/spkrec-ecapa-voxceleb
+  device: cpu
+
+database:
+  path: data/database/voicestudy.db

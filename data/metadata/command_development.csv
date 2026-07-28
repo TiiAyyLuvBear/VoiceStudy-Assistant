@@ -1,0 +1,65 @@
+command_id,transcript,intent,expected_title,expected_date,expected_time,reference_date,split
+DEV0001,Bây giờ là mấy giờ?,GET_TIME,,,,2026-07-28,development
+DEV0002,Mấy giờ rồi?,GET_TIME,,,,2026-07-28,development
+DEV0003,Hiện tại là mấy giờ?,GET_TIME,,,,2026-07-28,development
+DEV0004,Cho tôi biết giờ hiện tại.,GET_TIME,,,,2026-07-28,development
+DEV0005,Đọc giờ hiện tại giúp tôi.,GET_TIME,,,,2026-07-28,development
+DEV0006,Báo cho tôi thời gian hiện tại.,GET_TIME,,,,2026-07-28,development
+DEV0007,Xin cho biết thời gian hiện tại.,GET_TIME,,,,2026-07-28,development
+DEV0008,Bây giờ thời gian là bao nhiêu?,GET_TIME,,,,2026-07-28,development
+DEV0009,Bạn cho tôi biết thời gian hiện tại.,GET_TIME,,,,2026-07-28,development
+DEV0010,Hiện tại đang là mấy giờ vậy?,GET_TIME,,,,2026-07-28,development
+DEV0011,Báo giờ hiện tại cho tôi.,GET_TIME,,,,2026-07-28,development
+DEV0012,Đọc thời gian hiện tại.,GET_TIME,,,,2026-07-28,development
+DEV0013,Hôm nay tôi có lịch gì?,VIEW_SCHEDULE,,2026-07-28,,2026-07-28,development
+DEV0014,Cho tôi xem lịch ngày mai.,VIEW_SCHEDULE,,2026-07-29,,2026-07-28,development
+DEV0015,Đọc lịch học của tôi.,VIEW_SCHEDULE,,,,2026-07-28,development
+DEV0016,Mở thời khóa biểu của tôi.,VIEW_SCHEDULE,,,,2026-07-28,development
+DEV0017,Kiểm tra lịch hôm nay giúp tôi.,VIEW_SCHEDULE,,2026-07-28,,2026-07-28,development
+DEV0018,Hiển thị lịch ngày kia.,VIEW_SCHEDULE,,2026-07-30,,2026-07-28,development
+DEV0019,Ngày mai tôi có môn gì?,VIEW_SCHEDULE,,2026-07-29,,2026-07-28,development
+DEV0020,Xem lịch thứ hai.,VIEW_SCHEDULE,,2026-08-03,,2026-07-28,development
+DEV0021,Cho tôi xem thời khóa biểu thứ sáu.,VIEW_SCHEDULE,,2026-07-31,,2026-07-28,development
+DEV0022,Lịch của tôi hôm nay có gì?,VIEW_SCHEDULE,,2026-07-28,,2026-07-28,development
+DEV0023,Tôi có lịch gì hôm nay?,VIEW_SCHEDULE,,2026-07-28,,2026-07-28,development
+DEV0024,Đọc lịch của mình ngày mai.,VIEW_SCHEDULE,,2026-07-29,,2026-07-28,development
+DEV0025,Thêm lịch học máy lúc 8 giờ sáng mai.,ADD_SCHEDULE,học máy,2026-07-29,08:00,2026-07-28,development
+DEV0026,Tạo lịch ôn xác suất lúc 2 giờ chiều ngày mai.,ADD_SCHEDULE,ôn xác suất,2026-07-29,14:00,2026-07-28,development
+DEV0027,Lập lịch làm bài tập lúc 19h hôm nay.,ADD_SCHEDULE,làm bài tập,2026-07-28,19:00,2026-07-28,development
+DEV0028,Đặt lịch họp nhóm lúc 9h30 ngày kia.,ADD_SCHEDULE,họp nhóm,2026-07-30,09:30,2026-07-28,development
+DEV0029,Nhắc tôi đọc tài liệu lúc 8 giờ tối nay.,ADD_SCHEDULE,đọc tài liệu,2026-07-28,20:00,2026-07-28,development
+DEV0030,Thêm lịch môn thống kê vào ngày 30/07/2026 lúc 7h30 sáng.,ADD_SCHEDULE,thống kê,2026-07-30,07:30,2026-07-28,development
+DEV0031,Tạo cuộc hẹn gặp giảng viên lúc 10 giờ sáng thứ sáu.,ADD_SCHEDULE,gặp giảng viên,2026-07-31,10:00,2026-07-28,development
+DEV0032,Hãy thêm lịch thực hành Python lúc 13:30 ngày mai.,ADD_SCHEDULE,thực hành python,2026-07-29,13:30,2026-07-28,development
+DEV0033,Lập cho tôi một lịch học tiếng Anh lúc tám giờ sáng mai.,ADD_SCHEDULE,học tiếng anh,2026-07-29,08:00,2026-07-28,development
+DEV0034,Đặt buổi học cơ sở dữ liệu lúc 3 giờ chiều ngày kia.,ADD_SCHEDULE,học cơ sở dữ liệu,2026-07-30,15:00,2026-07-28,development
+DEV0035,Nhắc mình hoàn thành báo cáo lúc 9 giờ tối ngày mai.,ADD_SCHEDULE,hoàn thành báo cáo,2026-07-29,21:00,2026-07-28,development
+DEV0036,Tạo lịch thuyết trình lúc 14h05 ngày 05/08/2026.,ADD_SCHEDULE,thuyết trình,2026-08-05,14:05,2026-07-28,development
+DEV0037,Mở ghi chú riêng tư của tôi.,VIEW_PRIVATE_NOTE,,,,2026-07-28,development
+DEV0038,Đọc ghi chú cá nhân.,VIEW_PRIVATE_NOTE,,,,2026-07-28,development
+DEV0039,Cho tôi biết ghi chú bảo mật của tôi.,VIEW_PRIVATE_NOTE,,,,2026-07-28,development
+DEV0040,Cho tôi xem ghi chú riêng tư.,VIEW_PRIVATE_NOTE,,,,2026-07-28,development
+DEV0041,Hiển thị ghi chú cá nhân của tôi.,VIEW_PRIVATE_NOTE,,,,2026-07-28,development
+DEV0042,Mở note riêng tư của tôi.,VIEW_PRIVATE_NOTE,,,,2026-07-28,development
+DEV0043,Đọc note cá nhân.,VIEW_PRIVATE_NOTE,,,,2026-07-28,development
+DEV0044,Xem ghi chú bảo mật.,VIEW_PRIVATE_NOTE,,,,2026-07-28,development
+DEV0045,Mở ghi chú của tôi.,VIEW_PRIVATE_NOTE,,,,2026-07-28,development
+DEV0046,Đọc ghi chú riêng tư gần nhất.,VIEW_PRIVATE_NOTE,,,,2026-07-28,development
+DEV0047,Hiển thị note bảo mật của tôi.,VIEW_PRIVATE_NOTE,,,,2026-07-28,development
+DEV0048,Xem ghi chú cá nhân mới nhất.,VIEW_PRIVATE_NOTE,,,,2026-07-28,development
+DEV0049,Mở nhạc cho tôi.,OUT_OF_SCOPE,,,,2026-07-28,development
+DEV0050,Thời tiết hôm nay thế nào?,OUT_OF_SCOPE,,,,2026-07-28,development
+DEV0051,Kể cho tôi một câu chuyện.,OUT_OF_SCOPE,,,,2026-07-28,development
+DEV0052,Bật đèn phòng học.,OUT_OF_SCOPE,,,,2026-07-28,development
+DEV0053,Tôi thích học máy.,OUT_OF_SCOPE,,,,2026-07-28,development
+DEV0054,Lịch sử Việt Nam bắt đầu từ đâu?,OUT_OF_SCOPE,,,,2026-07-28,development
+DEV0055,Ghi chú bài này rất quan trọng.,OUT_OF_SCOPE,,,,2026-07-28,development
+DEV0056,Thêm ghi chú về môn toán.,OUT_OF_SCOPE,,,,2026-07-28,development
+DEV0057,Mấy giờ học thì phù hợp?,OUT_OF_SCOPE,,,,2026-07-28,development
+DEV0058,Cho tôi xem phim hoạt hình.,OUT_OF_SCOPE,,,,2026-07-28,development
+DEV0059,Gọi điện cho bạn tôi.,OUT_OF_SCOPE,,,,2026-07-28,development
+DEV0060,Tìm tài liệu về xác suất.,OUT_OF_SCOPE,,,,2026-07-28,development
+DEV0061,Hôm nay trời có mưa không?,OUT_OF_SCOPE,,,,2026-07-28,development
+DEV0062,Dịch câu này sang tiếng Anh.,OUT_OF_SCOPE,,,,2026-07-28,development
+DEV0063,Tăng âm lượng lên.,OUT_OF_SCOPE,,,,2026-07-28,development
+DEV0064,Cảm ơn bạn rất nhiều.,OUT_OF_SCOPE,,,,2026-07-28,development

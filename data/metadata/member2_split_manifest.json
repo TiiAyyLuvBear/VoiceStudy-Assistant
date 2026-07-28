@@ -1,0 +1,67 @@
+{
+  "version": "member2-v1",
+  "frozen_on": "2026-07-28",
+  "random_seed": 42,
+  "reference_date": "2026-07-28",
+  "rules": {
+    "command_split_overlap": false,
+    "normalized_duplicate_count": 0,
+    "test_used_for_rule_tuning": false,
+    "command_audio_allowed_for_speaker_training": false
+  },
+  "command_datasets": {
+    "command_development": {
+      "path": "data/metadata/command_development.csv",
+      "sha256": "2f7075860c42bb51386a56dab4734c30dcc50089132a32d0f60a7b74dc2ee3b7",
+      "bytes": 6095,
+      "row_count": 64,
+      "intent_distribution": {
+        "ADD_SCHEDULE": 12,
+        "GET_TIME": 12,
+        "OUT_OF_SCOPE": 16,
+        "VIEW_PRIVATE_NOTE": 12,
+        "VIEW_SCHEDULE": 12
+      }
+    },
+    "command_validation": {
+      "path": "data/metadata/command_validation.csv",
+      "sha256": "628e9421230b25fd87f77c8eee6d756283e9bde5e7b56b1f6d8398a3d8d63c08",
+      "bytes": 2814,
+      "row_count": 30,
+      "intent_distribution": {
+        "ADD_SCHEDULE": 5,
+        "GET_TIME": 5,
+        "OUT_OF_SCOPE": 10,
+        "VIEW_PRIVATE_NOTE": 5,
+        "VIEW_SCHEDULE": 5
+      }
+    },
+    "command_test": {
+      "path": "data/metadata/command_test.csv",
+      "sha256": "7b35d712331d83326449c9266810c2a5007e3fca845d48ea7686722d5cd9200d",
+      "bytes": 2688,
+      "row_count": 30,
+      "intent_distribution": {
+        "ADD_SCHEDULE": 5,
+        "GET_TIME": 5,
+        "OUT_OF_SCOPE": 10,
+        "VIEW_PRIVATE_NOTE": 5,
+        "VIEW_SCHEDULE": 5
+      }
+    }
+  },
+  "asr_datasets": {
+    "asr_validation": {
+      "status": "pending_member1_data"
+    },
+    "asr_test": {
+      "status": "pending_member1_data"
+    }
+  },
+  "command_audio": {
+    "path": "data/commands/command_audio_manifest.csv",
+    "row_count": 60,
+    "recorded_count": 0,
+    "status": "pending_recording"
+  }
+}
