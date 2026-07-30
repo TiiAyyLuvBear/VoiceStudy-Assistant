@@ -87,6 +87,41 @@ def _safe_speaker_id(value: str) -> str:
     return value
 
 
+def _record_until_enter(
+    sd: Any,
+    *,
+    sample_rate: int,
+    device: int | str | None,
+) -> np.ndarray:
+    chunks: list[np.ndarray] = []
+    stream_warnings: list[str] = []
+
+    def callback(
+        indata: np.ndarray,
+        _frames: int,
+        _time_info: Any,
+        status: Any,
+    ) -> None:
+        if status:
+            stream_warnings.append(str(status))
+        chunks.append(indata.copy())
+
+    with sd.InputStream(
+        samplerate=sample_rate,
+        channels=1,
+        dtype="float32",
+        device=device,
+        callback=callback,
+    ):
+        input("Đang thu... Nhấn Enter khi đọc xong để dừng và lưu.")
+
+    if stream_warnings:
+        print(f"Cảnh báo microphone: {'; '.join(stream_warnings)}")
+    if not chunks:
+        raise RuntimeError("Không nhận được mẫu âm thanh từ microphone.")
+    return np.concatenate(chunks, axis=0)
+
+
 def _record_one(
     row: dict[str, str],
     *,
@@ -95,6 +130,7 @@ def _record_one(
     sample_rate: int,
     device: int | str | None,
     assume_yes: bool,
+    manual_stop: bool,
 ) -> None:
     sd = _sounddevice()
     print(f"\n[{row['command_id']}] {row['expected_transcript']}")
@@ -107,15 +143,26 @@ def _record_one(
     print("1", flush=True)
     time.sleep(1)
 
-    samples = sd.rec(
-        int(duration * sample_rate),
-        samplerate=sample_rate,
-        channels=1,
-        dtype="float32",
-        device=device,
-    )
-    sd.wait()
-    print("Đã thu xong.")
+    if manual_stop:
+        samples = _record_until_enter(
+            sd,
+            sample_rate=sample_rate,
+            device=device,
+        )
+    else:
+        samples = sd.rec(
+            int(duration * sample_rate),
+            samplerate=sample_rate,
+            channels=1,
+            dtype="float32",
+            device=device,
+        )
+        sd.wait()
+
+    actual_duration = samples.shape[0] / sample_rate
+    print(f"Đã thu xong ({actual_duration:.2f} giây).")
+    if actual_duration > 15:
+        print("Cảnh báo: file dài hơn 15 giây và sẽ không đạt validator.")
 
     output = Path("data/commands/audio") / row["split"]
     output = output / f"{row['recording_id']}_{speaker_id}.wav"
@@ -130,7 +177,7 @@ def _record_one(
             "audio_path": output.as_posix(),
             "sample_rate": str(sample_rate),
             "channels": "1",
-            "duration_sec": f"{duration:.3f}",
+            "duration_sec": f"{actual_duration:.3f}",
             "recorded_at": datetime.now().astimezone().isoformat(timespec="seconds"),
             "recording_device": str(device_info.get("name", "unknown")),
             "status": "recorded",
@@ -155,6 +202,11 @@ def main() -> int:
     parser.add_argument("--command-id")
     parser.add_argument("--count", type=int, default=1)
     parser.add_argument("--duration", type=float, default=6.0)
+    parser.add_argument(
+        "--manual-stop",
+        action="store_true",
+        help="Record each prompt until Enter is pressed; keep each recording under 15 seconds",
+    )
     parser.add_argument("--sample-rate", type=int, default=16000)
     parser.add_argument("--device", help="Input device index or name")
     parser.add_argument("--list-devices", action="store_true")
@@ -188,6 +240,7 @@ def main() -> int:
             sample_rate=args.sample_rate,
             device=_device_value(args.device),
             assume_yes=args.yes,
+            manual_stop=args.manual_stop,
         )
         _save_manifest(args.manifest, rows)
     print(f"Đã cập nhật manifest: {args.manifest}")

@@ -28,6 +28,22 @@ python -m scripts.record_command_audio `
   --count 10 `
   --duration 6
 ```
+Nếu độ dài các câu khác nhau, dùng chế độ dừng thủ công. Sau khi đọc xong từng
+câu, nhấn Enter để dừng, lưu file và chuyển sang câu tiếp theo:
+
+```powershell
+python -m scripts.record_command_audio `
+  --speaker-id cmdspk01 `
+  --split validation `
+  --count 10 `
+  --device 1 `
+  --manual-stop
+```
+
+Giữ mỗi câu dưới 15 giây để đạt validator. `--duration` chỉ áp dụng khi không
+dùng `--manual-stop`.
+
+
 
 Thành viên tiếp theo dùng speaker ID khác; script tự chọn các hàng `pending`
 tiếp theo và lưu WAV 16 kHz mono vào đúng thư mục split.

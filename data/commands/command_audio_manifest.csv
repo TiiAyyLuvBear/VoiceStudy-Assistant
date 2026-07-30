@@ -1,14 +1,14 @@
 recording_id,command_id,split,expected_transcript,intent,speaker_id,audio_path,sample_rate,channels,duration_sec,recorded_at,recording_device,status,notes
-REC_VAL0001,VAL0001,validation,Xin hỏi bây giờ là mấy giờ?,GET_TIME,,,,,,,,pending,Do not use for Speaker model training
-REC_VAL0002,VAL0002,validation,Bạn báo giờ hiện tại giúp mình.,GET_TIME,,,,,,,,pending,Do not use for Speaker model training
-REC_VAL0003,VAL0003,validation,Cho tôi biết hiện tại là mấy giờ.,GET_TIME,,,,,,,,pending,Do not use for Speaker model training
-REC_VAL0004,VAL0004,validation,Đọc cho tôi giờ hiện tại.,GET_TIME,,,,,,,,pending,Do not use for Speaker model training
-REC_VAL0005,VAL0005,validation,Hiện tại thời gian là bao nhiêu?,GET_TIME,,,,,,,,pending,Do not use for Speaker model training
-REC_VAL0006,VAL0006,validation,Xem lịch học hôm nay của tôi.,VIEW_SCHEDULE,,,,,,,,pending,Do not use for Speaker model training
-REC_VAL0007,VAL0007,validation,Hãy mở lịch ngày mai.,VIEW_SCHEDULE,,,,,,,,pending,Do not use for Speaker model training
-REC_VAL0008,VAL0008,validation,Kiểm tra thời khóa biểu thứ tư.,VIEW_SCHEDULE,,,,,,,,pending,Do not use for Speaker model training
-REC_VAL0009,VAL0009,validation,Ngày kia tôi có buổi học gì?,VIEW_SCHEDULE,,,,,,,,pending,Do not use for Speaker model training
-REC_VAL0010,VAL0010,validation,Hiển thị lịch của mình thứ bảy.,VIEW_SCHEDULE,,,,,,,,pending,Do not use for Speaker model training
+REC_VAL0001,VAL0001,validation,Xin hỏi bây giờ là mấy giờ?,GET_TIME,cmdspk01,data/commands/audio/validation/REC_VAL0001_cmdspk01.wav,16000,1,3.146,2026-07-30T17:03:24+07:00,Microphone Array (Intel® Smart ,recorded,Do not use for Speaker model training
+REC_VAL0002,VAL0002,validation,Bạn báo giờ hiện tại giúp mình.,GET_TIME,cmdspk01,data/commands/audio/validation/REC_VAL0002_cmdspk01.wav,16000,1,3.380,2026-07-30T17:03:32+07:00,Microphone Array (Intel® Smart ,recorded,Do not use for Speaker model training
+REC_VAL0003,VAL0003,validation,Cho tôi biết hiện tại là mấy giờ.,GET_TIME,cmdspk01,data/commands/audio/validation/REC_VAL0003_cmdspk01.wav,16000,1,2.652,2026-07-30T17:03:40+07:00,Microphone Array (Intel® Smart ,recorded,Do not use for Speaker model training
+REC_VAL0004,VAL0004,validation,Đọc cho tôi giờ hiện tại.,GET_TIME,cmdspk01,data/commands/audio/validation/REC_VAL0004_cmdspk01.wav,16000,1,2.938,2026-07-30T17:03:47+07:00,Microphone Array (Intel® Smart ,recorded,Do not use for Speaker model training
+REC_VAL0005,VAL0005,validation,Hiện tại thời gian là bao nhiêu?,GET_TIME,cmdspk01,data/commands/audio/validation/REC_VAL0005_cmdspk01.wav,16000,1,2.574,2026-07-30T17:03:57+07:00,Microphone Array (Intel® Smart ,recorded,Do not use for Speaker model training
+REC_VAL0006,VAL0006,validation,Xem lịch học hôm nay của tôi.,VIEW_SCHEDULE,cmdspk01,data/commands/audio/validation/REC_VAL0006_cmdspk01.wav,16000,1,2.652,2026-07-30T17:04:05+07:00,Microphone Array (Intel® Smart ,recorded,Do not use for Speaker model training
+REC_VAL0007,VAL0007,validation,Hãy mở lịch ngày mai.,VIEW_SCHEDULE,cmdspk01,data/commands/audio/validation/REC_VAL0007_cmdspk01.wav,16000,1,1.872,2026-07-30T17:04:13+07:00,Microphone Array (Intel® Smart ,recorded,Do not use for Speaker model training
+REC_VAL0008,VAL0008,validation,Kiểm tra thời khóa biểu thứ tư.,VIEW_SCHEDULE,cmdspk01,data/commands/audio/validation/REC_VAL0008_cmdspk01.wav,16000,1,2.236,2026-07-30T17:04:20+07:00,Microphone Array (Intel® Smart ,recorded,Do not use for Speaker model training
+REC_VAL0009,VAL0009,validation,Ngày kia tôi có buổi học gì?,VIEW_SCHEDULE,cmdspk01,data/commands/audio/validation/REC_VAL0009_cmdspk01.wav,16000,1,2.808,2026-07-30T17:04:29+07:00,Microphone Array (Intel® Smart ,recorded,Do not use for Speaker model training
+REC_VAL0010,VAL0010,validation,Hiển thị lịch của mình thứ bảy.,VIEW_SCHEDULE,cmdspk01,data/commands/audio/validation/REC_VAL0010_cmdspk01.wav,16000,1,2.782,2026-07-30T17:04:37+07:00,Microphone Array (Intel® Smart ,recorded,Do not use for Speaker model training
 REC_VAL0011,VAL0011,validation,Thêm lịch học sâu lúc 7 giờ sáng ngày mai.,ADD_SCHEDULE,,,,,,,,pending,Do not use for Speaker model training
 REC_VAL0012,VAL0012,validation,Tạo lịch làm đồ án lúc 4 giờ chiều ngày kia.,ADD_SCHEDULE,,,,,,,,pending,Do not use for Speaker model training
 REC_VAL0013,VAL0013,validation,Đặt cuộc hẹn trao đổi bài lúc 10h30 thứ năm.,ADD_SCHEDULE,,,,,,,,pending,Do not use for Speaker model training
@@ -29,16 +29,16 @@ REC_VAL0027,VAL0027,validation,Xem điểm thi của tôi.,OUT_OF_SCOPE,,,,,,,,p
 REC_VAL0028,VAL0028,validation,Đọc tin tức hôm nay.,OUT_OF_SCOPE,,,,,,,,pending,Do not use for Speaker model training
 REC_VAL0029,VAL0029,validation,Bạn tên là gì?,OUT_OF_SCOPE,,,,,,,,pending,Do not use for Speaker model training
 REC_VAL0030,VAL0030,validation,Thêm một việc vào danh sách.,OUT_OF_SCOPE,,,,,,,,pending,Do not use for Speaker model training
-REC_TST0001,TST0001,test,Xin cho tôi biết bây giờ mấy giờ rồi.,GET_TIME,,,,,,,,pending,Do not use for Speaker model training
-REC_TST0002,TST0002,test,Bạn hãy báo giờ hiện tại.,GET_TIME,,,,,,,,pending,Do not use for Speaker model training
-REC_TST0003,TST0003,test,Đọc thời gian hiện tại giúp mình.,GET_TIME,,,,,,,,pending,Do not use for Speaker model training
-REC_TST0004,TST0004,test,Hiện tại chính xác là mấy giờ?,GET_TIME,,,,,,,,pending,Do not use for Speaker model training
-REC_TST0005,TST0005,test,Bây giờ thời gian thế nào?,GET_TIME,,,,,,,,pending,Do not use for Speaker model training
-REC_TST0006,TST0006,test,Hãy xem lịch của tôi hôm nay.,VIEW_SCHEDULE,,,,,,,,pending,Do not use for Speaker model training
-REC_TST0007,TST0007,test,Mở thời khóa biểu ngày kia giúp mình.,VIEW_SCHEDULE,,,,,,,,pending,Do not use for Speaker model training
-REC_TST0008,TST0008,test,Đọc lịch học vào thứ năm.,VIEW_SCHEDULE,,,,,,,,pending,Do not use for Speaker model training
-REC_TST0009,TST0009,test,Ngày mai mình có buổi gì?,VIEW_SCHEDULE,,,,,,,,pending,Do not use for Speaker model training
-REC_TST0010,TST0010,test,Kiểm tra lịch ngày 02/08/2026.,VIEW_SCHEDULE,,,,,,,,pending,Do not use for Speaker model training
+REC_TST0001,TST0001,test,Xin cho tôi biết bây giờ mấy giờ rồi.,GET_TIME,cmdspk01,data/commands/audio/test/REC_TST0001_cmdspk01.wav,16000,1,3.146,2026-07-30T17:05:02+07:00,Microphone Array (Intel® Smart ,recorded,Do not use for Speaker model training
+REC_TST0002,TST0002,test,Bạn hãy báo giờ hiện tại.,GET_TIME,cmdspk01,data/commands/audio/test/REC_TST0002_cmdspk01.wav,16000,1,2.444,2026-07-30T17:05:10+07:00,Microphone Array (Intel® Smart ,recorded,Do not use for Speaker model training
+REC_TST0003,TST0003,test,Đọc thời gian hiện tại giúp mình.,GET_TIME,cmdspk01,data/commands/audio/test/REC_TST0003_cmdspk01.wav,16000,1,2.626,2026-07-30T17:05:20+07:00,Microphone Array (Intel® Smart ,recorded,Do not use for Speaker model training
+REC_TST0004,TST0004,test,Hiện tại chính xác là mấy giờ?,GET_TIME,cmdspk01,data/commands/audio/test/REC_TST0004_cmdspk01.wav,16000,1,2.704,2026-07-30T17:05:28+07:00,Microphone Array (Intel® Smart ,recorded,Do not use for Speaker model training
+REC_TST0005,TST0005,test,Bây giờ thời gian thế nào?,GET_TIME,cmdspk01,data/commands/audio/test/REC_TST0005_cmdspk01.wav,16000,1,2.132,2026-07-30T17:05:35+07:00,Microphone Array (Intel® Smart ,recorded,Do not use for Speaker model training
+REC_TST0006,TST0006,test,Hãy xem lịch của tôi hôm nay.,VIEW_SCHEDULE,cmdspk01,data/commands/audio/test/REC_TST0006_cmdspk01.wav,16000,1,2.184,2026-07-30T17:05:42+07:00,Microphone Array (Intel® Smart ,recorded,Do not use for Speaker model training
+REC_TST0007,TST0007,test,Mở thời khóa biểu ngày kia giúp mình.,VIEW_SCHEDULE,cmdspk01,data/commands/audio/test/REC_TST0007_cmdspk01.wav,16000,1,2.704,2026-07-30T17:05:49+07:00,Microphone Array (Intel® Smart ,recorded,Do not use for Speaker model training
+REC_TST0008,TST0008,test,Đọc lịch học vào thứ năm.,VIEW_SCHEDULE,cmdspk01,data/commands/audio/test/REC_TST0008_cmdspk01.wav,16000,1,3.120,2026-07-30T17:05:57+07:00,Microphone Array (Intel® Smart ,recorded,Do not use for Speaker model training
+REC_TST0009,TST0009,test,Ngày mai mình có buổi gì?,VIEW_SCHEDULE,cmdspk01,data/commands/audio/test/REC_TST0009_cmdspk01.wav,16000,1,2.938,2026-07-30T17:06:09+07:00,Microphone Array (Intel® Smart ,recorded,Do not use for Speaker model training
+REC_TST0010,TST0010,test,Kiểm tra lịch ngày 02/08/2026.,VIEW_SCHEDULE,cmdspk01,data/commands/audio/test/REC_TST0010_cmdspk01.wav,16000,1,4.966,2026-07-30T17:06:19+07:00,Microphone Array (Intel® Smart ,recorded,Do not use for Speaker model training
 REC_TST0011,TST0011,test,Thêm lịch luyện nghe lúc 6h30 sáng mai.,ADD_SCHEDULE,,,,,,,,pending,Do not use for Speaker model training
 REC_TST0012,TST0012,test,Tạo lịch sửa báo cáo lúc 3 giờ chiều hôm nay.,ADD_SCHEDULE,,,,,,,,pending,Do not use for Speaker model training
 REC_TST0013,TST0013,test,Lập cuộc hẹn gặp cố vấn lúc 9 giờ sáng ngày kia.,ADD_SCHEDULE,,,,,,,,pending,Do not use for Speaker model training

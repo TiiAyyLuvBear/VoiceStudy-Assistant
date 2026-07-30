@@ -9,6 +9,7 @@ from pathlib import Path
 import numpy as np
 
 from scripts.prepare_command_audio_manifest import build_rows
+from scripts.record_command_audio import _record_until_enter
 from scripts.validate_command_audio import validate_manifest
 
 
@@ -129,3 +130,31 @@ def test_speaker_training_leakage_is_reported(tmp_path: Path) -> None:
     results = validate_manifest(manifest, metadata_dir=tmp_path)
 
     assert "speaker_training_leakage" in results[0]["issues"]
+
+
+def test_manual_recording_stops_on_enter(monkeypatch) -> None:
+    class FakeInputStream:
+        def __init__(self, **kwargs) -> None:
+            self.callback = kwargs["callback"]
+
+        def __enter__(self):
+            samples = np.full((320, 1), 0.25, dtype=np.float32)
+            self.callback(samples, 320, None, None)
+            return self
+
+        def __exit__(self, *_args) -> None:
+            return None
+
+    class FakeSoundDevice:
+        InputStream = FakeInputStream
+
+    monkeypatch.setattr("builtins.input", lambda _prompt: "")
+
+    samples = _record_until_enter(
+        FakeSoundDevice(),
+        sample_rate=16000,
+        device=1,
+    )
+
+    assert samples.shape == (320, 1)
+    assert samples.dtype == np.float32
