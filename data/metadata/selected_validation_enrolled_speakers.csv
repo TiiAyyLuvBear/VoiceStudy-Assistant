@@ -1,0 +1,3 @@
+﻿speaker_id,normalized_speaker_id,protocol,role,project_split,num_audio,speaker_sex,speaker_age
+6573b7471b56f7fc59a7df63,val_enrolled_spk_0001,COSINE_VALIDATION,ENROLLED,VALIDATION,96,Female,48
+63e534e8ae837950bc60d88b,val_enrolled_spk_0002,COSINE_VALIDATION,ENROLLED,VALIDATION,88,Male,30
