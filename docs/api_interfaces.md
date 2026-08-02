@@ -116,6 +116,24 @@ Nếu câu lệnh không khớp rõ ràng:
 }
 ```
 
+### Week 2 execution gates
+
+The stable end-to-end API is available without database side effects:
+
+```python
+from src.pipeline import run_asr_nlu_pipeline
+
+result = run_asr_nlu_pipeline(
+    "data/commands/audio/validation/example.wav",
+    reference_date="2026-07-28",
+)
+```
+
+The result includes `missing_fields`, `can_execute`, and
+`can_write_database`. An `ADD_SCHEDULE` command may write to the database
+only when `can_write_database` is `true`. `OUT_OF_SCOPE`, ASR failures, and
+commands with missing required entities are always blocked.
+
 ## 4. Speaker Recognition
 
 Kết quả nhận diện/xác thực mà Orchestrator sử dụng:

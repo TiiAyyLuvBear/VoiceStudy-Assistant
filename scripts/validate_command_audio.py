@@ -133,6 +133,7 @@ def validate_manifest(
     manifest: Path,
     *,
     metadata_dir: Path,
+    split_name: str | None = None,
     expected_rate: int = 16000,
     min_duration: float = 0.5,
     max_duration: float = 15.0,
@@ -140,6 +141,10 @@ def validate_manifest(
 ) -> list[dict[str, object]]:
     with manifest.open("r", encoding="utf-8-sig", newline="") as stream:
         manifest_rows = list(csv.DictReader(stream))
+    if split_name is not None:
+        manifest_rows = [
+            row for row in manifest_rows if row.get("split") == split_name
+        ]
 
     speaker_paths = _speaker_audio_paths(metadata_dir)
     results: list[dict[str, object]] = []
@@ -209,6 +214,7 @@ def main() -> int:
         default=Path("reports/command_audio_validation.csv"),
     )
     parser.add_argument("--metadata-dir", type=Path, default=Path("data/metadata"))
+    parser.add_argument("--split", choices=("validation", "test"))
     parser.add_argument("--sample-rate", type=int, default=16000)
     parser.add_argument("--min-duration", type=float, default=0.5)
     parser.add_argument("--max-duration", type=float, default=15.0)
@@ -220,6 +226,7 @@ def main() -> int:
     results = validate_manifest(
         args.manifest,
         metadata_dir=args.metadata_dir,
+        split_name=args.split,
         expected_rate=args.sample_rate,
         min_duration=args.min_duration,
         max_duration=args.max_duration,

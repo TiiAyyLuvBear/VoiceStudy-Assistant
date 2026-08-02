@@ -1,0 +1,11 @@
+command_id,transcript,expected_intent,predicted_intent,correctly_rejected,entities_empty,missing_fields_empty
+VAL0021,Phát bài hát yêu thích.,OUT_OF_SCOPE,OUT_OF_SCOPE,true,true,true
+VAL0022,Ngày mai có nắng không?,OUT_OF_SCOPE,OUT_OF_SCOPE,true,true,true
+VAL0023,Tóm tắt chương một cho tôi.,OUT_OF_SCOPE,OUT_OF_SCOPE,true,true,true
+VAL0024,Viết email cho giảng viên.,OUT_OF_SCOPE,OUT_OF_SCOPE,true,true,true
+VAL0025,Đặt báo thức lúc 6 giờ sáng.,OUT_OF_SCOPE,OUT_OF_SCOPE,true,true,true
+VAL0026,Máy học là gì?,OUT_OF_SCOPE,OUT_OF_SCOPE,true,true,true
+VAL0027,Xem điểm thi của tôi.,OUT_OF_SCOPE,OUT_OF_SCOPE,true,true,true
+VAL0028,Đọc tin tức hôm nay.,OUT_OF_SCOPE,OUT_OF_SCOPE,true,true,true
+VAL0029,Bạn tên là gì?,OUT_OF_SCOPE,OUT_OF_SCOPE,true,true,true
+VAL0030,Thêm một việc vào danh sách.,OUT_OF_SCOPE,OUT_OF_SCOPE,true,true,true

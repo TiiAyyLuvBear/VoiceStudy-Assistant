@@ -96,6 +96,7 @@ def main() -> int:
 
     prediction_path = args.output_dir / f"{args.split_file.stem}_predictions.csv"
     summary_path = args.output_dir / f"{args.split_file.stem}_summary.json"
+    metrics_path = args.output_dir / f"{args.split_file.stem}_metrics.json"
     previous = _load_previous(prediction_path) if args.resume else {}
     asr = get_asr_model(args.config)
     predictions: list[dict[str, str]] = []
@@ -173,6 +174,9 @@ def main() -> int:
     }
     summary_path.parent.mkdir(parents=True, exist_ok=True)
     summary_path.write_text(
+        json.dumps(summary, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
+    metrics_path.write_text(
         json.dumps(summary, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
     print(json.dumps(summary, ensure_ascii=False, indent=2))

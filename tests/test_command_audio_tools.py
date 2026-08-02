@@ -115,6 +115,25 @@ def test_pending_recording_is_reported(tmp_path: Path) -> None:
     assert results[0]["issues"] == ["not_recorded"]
 
 
+def test_validator_can_limit_results_to_one_split(tmp_path: Path) -> None:
+    audio = tmp_path / "sample.wav"
+    manifest = tmp_path / "manifest.csv"
+    _write_tone(audio)
+    validation = _recorded_row(audio)
+    test = _recorded_row(audio, "REC_TST0001")
+    test["split"] = "test"
+    _write_manifest(manifest, [validation, test])
+
+    results = validate_manifest(
+        manifest,
+        metadata_dir=tmp_path,
+        split_name="validation",
+    )
+
+    assert len(results) == 1
+    assert results[0]["split"] == "validation"
+
+
 def test_speaker_training_leakage_is_reported(tmp_path: Path) -> None:
     audio = tmp_path / "sample.wav"
     manifest = tmp_path / "manifest.csv"

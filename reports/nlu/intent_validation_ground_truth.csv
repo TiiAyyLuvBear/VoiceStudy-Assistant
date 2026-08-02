@@ -1,0 +1,31 @@
+command_id,split,transcript,reference_date,expected_intent,predicted_intent,intent_correct,expected_entities,predicted_entities,missing_fields,can_execute,can_write_database
+VAL0001,validation,Xin hỏi bây giờ là mấy giờ?,2026-07-28,GET_TIME,GET_TIME,true,{},{},[],true,false
+VAL0002,validation,Bạn báo giờ hiện tại giúp mình.,2026-07-28,GET_TIME,GET_TIME,true,{},{},[],true,false
+VAL0003,validation,Cho tôi biết hiện tại là mấy giờ.,2026-07-28,GET_TIME,GET_TIME,true,{},{},[],true,false
+VAL0004,validation,Đọc cho tôi giờ hiện tại.,2026-07-28,GET_TIME,GET_TIME,true,{},{},[],true,false
+VAL0005,validation,Hiện tại thời gian là bao nhiêu?,2026-07-28,GET_TIME,GET_TIME,true,{},{},[],true,false
+VAL0006,validation,Xem lịch học hôm nay của tôi.,2026-07-28,VIEW_SCHEDULE,VIEW_SCHEDULE,true,"{""date"": ""2026-07-28""}","{""date"": ""2026-07-28""}",[],true,false
+VAL0007,validation,Hãy mở lịch ngày mai.,2026-07-28,VIEW_SCHEDULE,VIEW_SCHEDULE,true,"{""date"": ""2026-07-29""}","{""date"": ""2026-07-29""}",[],true,false
+VAL0008,validation,Kiểm tra thời khóa biểu thứ tư.,2026-07-28,VIEW_SCHEDULE,VIEW_SCHEDULE,true,"{""date"": ""2026-07-29""}","{""date"": ""2026-07-29""}",[],true,false
+VAL0009,validation,Ngày kia tôi có buổi học gì?,2026-07-28,VIEW_SCHEDULE,VIEW_SCHEDULE,true,"{""date"": ""2026-07-30""}","{""date"": ""2026-07-30""}",[],true,false
+VAL0010,validation,Hiển thị lịch của mình thứ bảy.,2026-07-28,VIEW_SCHEDULE,VIEW_SCHEDULE,true,"{""date"": ""2026-08-01""}","{""date"": ""2026-08-01""}",[],true,false
+VAL0011,validation,Thêm lịch học sâu lúc 7 giờ sáng ngày mai.,2026-07-28,ADD_SCHEDULE,ADD_SCHEDULE,true,"{""date"": ""2026-07-29"", ""time"": ""07:00"", ""title"": ""học sâu""}","{""date"": ""2026-07-29"", ""time"": ""07:00"", ""title"": ""học sâu""}",[],true,true
+VAL0012,validation,Tạo lịch làm đồ án lúc 4 giờ chiều ngày kia.,2026-07-28,ADD_SCHEDULE,ADD_SCHEDULE,true,"{""date"": ""2026-07-30"", ""time"": ""16:00"", ""title"": ""làm đồ án""}","{""date"": ""2026-07-30"", ""time"": ""16:00"", ""title"": ""làm đồ án""}",[],true,true
+VAL0013,validation,Đặt cuộc hẹn trao đổi bài lúc 10h30 thứ năm.,2026-07-28,ADD_SCHEDULE,ADD_SCHEDULE,true,"{""date"": ""2026-07-30"", ""time"": ""10:30"", ""title"": ""trao đổi bài""}","{""date"": ""2026-07-30"", ""time"": ""10:30"", ""title"": ""trao đổi bài""}",[],true,true
+VAL0014,validation,Nhắc tôi nộp bài lúc 11 giờ tối nay.,2026-07-28,ADD_SCHEDULE,ADD_SCHEDULE,true,"{""date"": ""2026-07-28"", ""time"": ""23:00"", ""title"": ""nộp bài""}","{""date"": ""2026-07-28"", ""time"": ""23:00"", ""title"": ""nộp bài""}",[],true,true
+VAL0015,validation,Lập lịch ôn thi lúc chín giờ sáng thứ hai.,2026-07-28,ADD_SCHEDULE,ADD_SCHEDULE,true,"{""date"": ""2026-08-03"", ""time"": ""09:00"", ""title"": ""ôn thi""}","{""date"": ""2026-08-03"", ""time"": ""09:00"", ""title"": ""ôn thi""}",[],true,true
+VAL0016,validation,Xin mở ghi chú bảo mật của tôi.,2026-07-28,VIEW_PRIVATE_NOTE,VIEW_PRIVATE_NOTE,true,{},{},[],true,false
+VAL0017,validation,Cho tôi đọc ghi chú cá nhân.,2026-07-28,VIEW_PRIVATE_NOTE,VIEW_PRIVATE_NOTE,true,{},{},[],true,false
+VAL0018,validation,Hiển thị ghi chú riêng tư mới nhất.,2026-07-28,VIEW_PRIVATE_NOTE,VIEW_PRIVATE_NOTE,true,{},{},[],true,false
+VAL0019,validation,Xem note bảo mật của tôi.,2026-07-28,VIEW_PRIVATE_NOTE,VIEW_PRIVATE_NOTE,true,{},{},[],true,false
+VAL0020,validation,Đọc note riêng tư.,2026-07-28,VIEW_PRIVATE_NOTE,VIEW_PRIVATE_NOTE,true,{},{},[],true,false
+VAL0021,validation,Phát bài hát yêu thích.,2026-07-28,OUT_OF_SCOPE,OUT_OF_SCOPE,true,{},{},[],false,false
+VAL0022,validation,Ngày mai có nắng không?,2026-07-28,OUT_OF_SCOPE,OUT_OF_SCOPE,true,{},{},[],false,false
+VAL0023,validation,Tóm tắt chương một cho tôi.,2026-07-28,OUT_OF_SCOPE,OUT_OF_SCOPE,true,{},{},[],false,false
+VAL0024,validation,Viết email cho giảng viên.,2026-07-28,OUT_OF_SCOPE,OUT_OF_SCOPE,true,{},{},[],false,false
+VAL0025,validation,Đặt báo thức lúc 6 giờ sáng.,2026-07-28,OUT_OF_SCOPE,OUT_OF_SCOPE,true,{},{},[],false,false
+VAL0026,validation,Máy học là gì?,2026-07-28,OUT_OF_SCOPE,OUT_OF_SCOPE,true,{},{},[],false,false
+VAL0027,validation,Xem điểm thi của tôi.,2026-07-28,OUT_OF_SCOPE,OUT_OF_SCOPE,true,{},{},[],false,false
+VAL0028,validation,Đọc tin tức hôm nay.,2026-07-28,OUT_OF_SCOPE,OUT_OF_SCOPE,true,{},{},[],false,false
+VAL0029,validation,Bạn tên là gì?,2026-07-28,OUT_OF_SCOPE,OUT_OF_SCOPE,true,{},{},[],false,false
+VAL0030,validation,Thêm một việc vào danh sách.,2026-07-28,OUT_OF_SCOPE,OUT_OF_SCOPE,true,{},{},[],false,false
