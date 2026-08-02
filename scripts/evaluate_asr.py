@@ -10,8 +10,8 @@ import sys
 from pathlib import Path
 
 from src.asr.metrics import calculate_corpus_error_rates, calculate_error_rates
+from src.asr.text_normalizer import normalize_asr_text
 from src.asr.whisper_model import get_asr_model
-from src.nlu.text_normalizer import normalize_text
 
 
 PREDICTION_FIELDS = (
@@ -102,13 +102,26 @@ def main() -> int:
 
     for index, source in enumerate(source_rows, start=1):
         audio_id = source[id_column]
+        reference = source[text_column]
         cached = previous.get(audio_id)
         if cached and cached.get("success", "").lower() == "true":
+            hypothesis = cached["hypothesis"]
+            rates = calculate_error_rates(reference, hypothesis)
+            cached.update(
+                {
+                    "audio_path": source[path_column],
+                    "original_split": source[split_column] if split_column else "",
+                    "reference_transcript": reference,
+                    "normalized_reference": normalize_asr_text(reference),
+                    "normalized_hypothesis": normalize_asr_text(hypothesis),
+                    "wer": f"{rates['wer']:.6f}",
+                    "cer": f"{rates['cer']:.6f}",
+                }
+            )
             predictions.append(cached)
             print(f"[{index}/{len(source_rows)}] resume {audio_id}")
             continue
 
-        reference = source[text_column]
         result = asr.transcribe(source[path_column])
         hypothesis = result["transcript"]
         rates = calculate_error_rates(reference, hypothesis)
@@ -118,8 +131,8 @@ def main() -> int:
             "original_split": source[split_column] if split_column else "",
             "reference_transcript": reference,
             "hypothesis": hypothesis,
-            "normalized_reference": normalize_text(reference),
-            "normalized_hypothesis": normalize_text(hypothesis),
+            "normalized_reference": normalize_asr_text(reference),
+            "normalized_hypothesis": normalize_asr_text(hypothesis),
             "wer": f"{rates['wer']:.6f}",
             "cer": f"{rates['cer']:.6f}",
             "latency_ms": f"{result['latency_ms']:.3f}",

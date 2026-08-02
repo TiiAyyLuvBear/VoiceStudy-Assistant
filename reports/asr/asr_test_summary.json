@@ -1,0 +1,17 @@
+{
+  "split_file": "data\\metadata\\asr_test.csv",
+  "prediction_file": "reports\\asr\\asr_test_predictions.csv",
+  "sample_count": 125,
+  "successful_count": 125,
+  "failure_count": 0,
+  "wer": 0.2187793427230047,
+  "cer": 0.14397979230985125,
+  "word_edits": 233,
+  "reference_words": 1065,
+  "char_edits": 513,
+  "reference_chars": 3563,
+  "mean_latency_ms": 4476.280679999998,
+  "p95_latency_ms": 4965.402,
+  "model": "whisper-small",
+  "language": "vi"
+}

@@ -23,6 +23,16 @@ def test_identical_vietnamese_after_normalization() -> None:
     assert result["cer"] == 0
 
 
+def test_equivalent_email_and_number_spellings() -> None:
+    result = calculate_error_rates(
+        "m\u1edf email v\u00e0o ng\u00e0y hai m\u01b0\u01a1i b\u1ea3y th\u00e1ng ba "
+        "hai ngh\u00ecn kh\u00f4ng tr\u0103m m\u01b0\u1eddi b\u1ea3y",
+        "M\u1edf e-mail v\u00e0o ng\u00e0y 27 th\u00e1ng 3 2017",
+    )
+    assert result["wer"] == 0
+    assert result["cer"] == 0
+
+
 def test_word_substitution_rate() -> None:
     result = calculate_error_rates("tôi học máy", "tôi học toán")
     assert result["word_edits"] == 1

@@ -5,7 +5,7 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import TypedDict
 
-from src.nlu.text_normalizer import normalize_text
+from src.asr.text_normalizer import normalize_asr_text
 
 
 class ErrorCounts(TypedDict):
@@ -38,8 +38,8 @@ def edit_distance(reference: Sequence[str], hypothesis: Sequence[str]) -> int:
 def error_counts(reference: str, hypothesis: str) -> ErrorCounts:
     """Tính edit counts sau khi normalize giống nhau cho reference/hypothesis."""
 
-    normalized_reference = normalize_text(reference)
-    normalized_hypothesis = normalize_text(hypothesis)
+    normalized_reference = normalize_asr_text(reference)
+    normalized_hypothesis = normalize_asr_text(hypothesis)
     reference_words = normalized_reference.split()
     hypothesis_words = normalized_hypothesis.split()
     reference_chars = list(normalized_reference.replace(" ", ""))

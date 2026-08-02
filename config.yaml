@@ -37,7 +37,7 @@ asr:
   compute_type: int8
   cpu_threads: 0
   num_workers: 1
-  beam_size: 5
+  beam_size: 10
   vad_filter: true
   condition_on_previous_text: false
   word_timestamps: false
