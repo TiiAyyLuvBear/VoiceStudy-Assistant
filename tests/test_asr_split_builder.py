@@ -5,7 +5,7 @@ from __future__ import annotations
 import csv
 from pathlib import Path
 
-from scripts.build_asr_splits import _load_inventory, _select
+from scripts.build_asr_splits_old import _load_inventory, _select
 
 
 def test_selects_only_valid_official_split_deterministically(tmp_path: Path) -> None:

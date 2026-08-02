@@ -1,4 +1,4 @@
-"""Tạo ASR validation/test theo project_split trong data inventory."""
+"""Tạo ASR validation/test từ inventory official split của Speech-MASSIVE."""
 
 from __future__ import annotations
 
@@ -12,7 +12,6 @@ OUTPUT_FIELDS = (
     "audio_id",
     "audio_path",
     "original_split",
-    "project_split",
     "speaker_id",
     "reference_transcript",
     "source_intent",
@@ -44,10 +43,7 @@ def _load_inventory(path: Path) -> tuple[list[dict[str, str]], dict[str, str | N
         columns = {
             "audio_id": _column(fields, "audio_id", "id", "file_id", required=False),
             "audio_path": _column(fields, "audio_path", "file_path", "path"),
-            "original_split": _column(
-                fields, "original_split", "split", "dataset_split"
-            ),
-            "project_split": _column(fields, "project_split"),
+            "split": _column(fields, "original_split", "split", "dataset_split"),
             "speaker_id": _column(
                 fields, "speaker_id", "original_speaker_id", "speaker", required=False
             ),
@@ -58,26 +54,13 @@ def _load_inventory(path: Path) -> tuple[list[dict[str, str]], dict[str, str | N
         return list(reader), columns
 
 
-def _resolve_audio_path(path_value: str, audio_root: Path | None) -> Path:
-    path = Path(path_value)
-    if path.is_absolute() or audio_root is None or path.is_file():
-        return path
-    return audio_root / path
-
-
-def _canonical_row(
-    row: dict[str, str],
-    columns: dict[str, str | None],
-    audio_root: Path | None = None,
-) -> dict[str, str]:
-    path_value = row[str(columns["audio_path"])].strip()
-    resolved_path = _resolve_audio_path(path_value, audio_root)
+def _canonical_row(row: dict[str, str], columns: dict[str, str | None]) -> dict[str, str]:
+    path_value = row[str(columns["audio_path"])]
     audio_id_column = columns["audio_id"]
     return {
         "audio_id": row[str(audio_id_column)] if audio_id_column else Path(path_value).stem,
-        "audio_path": resolved_path.as_posix(),
-        "original_split": row[str(columns["original_split"])],
-        "project_split": row[str(columns["project_split"])],
+        "audio_path": path_value,
+        "original_split": row[str(columns["split"])],
         "speaker_id": row[str(columns["speaker_id"])] if columns["speaker_id"] else "",
         "reference_transcript": row[str(columns["transcript"])],
         "source_intent": row[str(columns["intent"])] if columns["intent"] else "",
@@ -90,9 +73,8 @@ def _select(
     split_names: set[str],
     size: int,
     seed: int,
-    audio_root: Path | None = None,
 ) -> list[dict[str, str]]:
-    split_column = str(columns["project_split"])
+    split_column = str(columns["split"])
     transcript_column = str(columns["transcript"])
     path_column = str(columns["audio_path"])
     valid_column = columns["valid"]
@@ -102,18 +84,10 @@ def _select(
         split = row[split_column].strip().lower()
         transcript = row[transcript_column].strip()
         path_value = row[path_column].strip()
-        resolved_path = _resolve_audio_path(path_value, audio_root)
         valid = not valid_column or _is_valid(row[str(valid_column)])
-        path_exists = audio_root is None or resolved_path.is_file()
-        if (
-            split not in split_names
-            or not transcript
-            or not path_value
-            or not valid
-            or not path_exists
-        ):
+        if split not in split_names or not transcript or not path_value or not valid:
             continue
-        normalized_path = str(resolved_path).casefold()
+        normalized_path = str(Path(path_value)).casefold()
         if normalized_path in seen_paths:
             continue
         seen_paths.add(normalized_path)
@@ -121,13 +95,11 @@ def _select(
 
     if len(candidates) < size:
         raise ValueError(
-            f"Project split {sorted(split_names)} has only {len(candidates)} usable rows; "
+            f"Split {sorted(split_names)} has only {len(candidates)} usable rows; "
             f"requested {size}"
         )
     random.Random(seed).shuffle(candidates)
-    return [
-        _canonical_row(row, columns, audio_root) for row in candidates[:size]
-    ]
+    return [_canonical_row(row, columns) for row in candidates[:size]]
 
 
 def _write(path: Path, rows: list[dict[str, str]]) -> None:
@@ -145,28 +117,15 @@ def main() -> int:
     parser.add_argument("--test-size", type=int, default=125)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument(
-        "--audio-root",
-        type=Path,
-        default=Path("data/audio"),
-        help="Base directory for relative audio_path values",
-    )
-    parser.add_argument(
         "--output-dir", type=Path, default=Path("data/metadata")
     )
     args = parser.parse_args()
 
     rows, columns = _load_inventory(args.inventory)
     validation = _select(
-        rows,
-        columns,
-        {"validation"},
-        args.validation_size,
-        args.seed,
-        args.audio_root,
+        rows, columns, {"validation", "valid", "dev"}, args.validation_size, args.seed
     )
-    test = _select(
-        rows, columns, {"test"}, args.test_size, args.seed + 1, args.audio_root
-    )
+    test = _select(rows, columns, {"test"}, args.test_size, args.seed + 1)
 
     validation_paths = {row["audio_path"].casefold() for row in validation}
     test_paths = {row["audio_path"].casefold() for row in test}
