@@ -1,0 +1,64 @@
+{
+    "dataset_version": "v1",
+    "created_at": "2026-08-04T03:54:15.649512",
+    "random_seed": 42,
+    "preprocessing_version": "v1",
+    "freeze_status": "FROZEN",
+    "rule": [
+        "Do not change speaker assignment",
+        "Do not change split assignment",
+        "Create v2 for any modification"
+    ],
+    "splits": {
+        "svm_closed_set_enrollment.csv": {
+            "num_audio": 50,
+            "num_speaker": 10,
+            "checksum": "4a48344c43713b15856259b972be5b902c9d3b315611f3e2962d8c1268fee925"
+        },
+        "svm_closed_set_train.csv": {
+            "num_audio": 100,
+            "num_speaker": 10,
+            "checksum": "eca4a5444cc24e10dc5cf00e70e493b19720b6b28b8489ee30c102dd83029f7f"
+        },
+        "svm_closed_set_validation.csv": {
+            "num_audio": 50,
+            "num_speaker": 10,
+            "checksum": "81c26de9bdb28050c2375ade62fbb18215765a87e92f693e499e7a53b7648594"
+        },
+        "svm_closed_set_test.csv": {
+            "num_audio": 50,
+            "num_speaker": 10,
+            "checksum": "68f8230be2aca57ccc52029d2c66121790536f39ab3a22836b79e4ddffd4f523"
+        },
+        "cosine_validation_enrollment.csv": {
+            "num_audio": 10,
+            "num_speaker": 2,
+            "checksum": "b42bf20bac893d1096ef394825b6fe03b1d5ffe170d8eb184bef0ce4f9c10169"
+        },
+        "cosine_validation_query.csv": {
+            "num_audio": 10,
+            "num_speaker": 2,
+            "checksum": "dd74aadba37ccd3e7f4c347f94f48e7fe7755e1e9cc28cecb2d5eb9c36b3aacd"
+        },
+        "cosine_validation_unknown.csv": {
+            "num_audio": 144,
+            "num_speaker": 2,
+            "checksum": "7adf6333e6e3922cc2b79e5cc0e1f4029f2bbfb566be7aaf046e1465c799fb38"
+        },
+        "cosine_test_enrollment.csv": {
+            "num_audio": 10,
+            "num_speaker": 2,
+            "checksum": "3c80cbcb3c4c37c86310ee3e2c27570f47e8f9ab6e0928f3383f651f5eb802a3"
+        },
+        "cosine_test_query.csv": {
+            "num_audio": 10,
+            "num_speaker": 2,
+            "checksum": "de2c81ff9ceb9a4005bae97b6e6319e7e1ff41038d31bb2e374ce77c0dfa673e"
+        },
+        "cosine_test_unknown.csv": {
+            "num_audio": 116,
+            "num_speaker": 2,
+            "checksum": "8e6ed2e8834a17c0f2b7115ce19132106f5ef05481742d3abf32aaf1ccd9821f"
+        }
+    }
+}

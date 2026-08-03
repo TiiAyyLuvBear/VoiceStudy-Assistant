@@ -6,3 +6,9 @@ sounddevice>=0.4.6,<1
 
 # Test
 pytest>=8,<10
+
+librosa
+soundfile
+numpy
+pandas
+tqdm

@@ -1,0 +1,6 @@
+﻿check,overlap_speaker,status
+SVM experimental speakers vs Cosine validation speakers,,PASS
+SVM experimental speakers vs Cosine test speakers,,PASS
+Cosine validation speakers vs Cosine test speakers,,PASS
+Validation enrolled speakers vs Validation unknown speakers,,PASS
+Test enrolled speakers vs Test unknown speakers,,PASS
