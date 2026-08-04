@@ -9,6 +9,7 @@ pytest>=8,<10
 
 librosa
 soundfile
+speechbrain==1.1.0
 numpy
 pandas
 tqdm

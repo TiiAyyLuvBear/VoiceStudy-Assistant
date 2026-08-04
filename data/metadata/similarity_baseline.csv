@@ -1,0 +1,7 @@
+audio_id_1,audio_id_2,speaker_id_1,speaker_id_2,pair_type,cosine_similarity
+14920,8447,val_enrolled_spk_0001,val_enrolled_spk_0001,same_speaker,0.51459438
+14920,5456,val_enrolled_spk_0001,val_enrolled_spk_0002,different_speaker,0.20847145
+14920,4156,val_enrolled_spk_0001,val_enrolled_spk_0002,different_speaker,0.15007669
+8447,5456,val_enrolled_spk_0001,val_enrolled_spk_0002,different_speaker,0.33781409
+8447,4156,val_enrolled_spk_0001,val_enrolled_spk_0002,different_speaker,0.27732277
+5456,4156,val_enrolled_spk_0002,val_enrolled_spk_0002,same_speaker,0.47874570

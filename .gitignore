@@ -8,7 +8,6 @@ lib/
 include/
 etc/
 __pycache__/
-tests/
 share/
 # Model weights are downloaded on first use and must not be committed.
 models/cache/

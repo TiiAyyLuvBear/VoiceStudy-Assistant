@@ -1,6 +1,6 @@
 {
   "version": "member2-v1",
-  "frozen_on": "2026-07-28",
+  "frozen_on": "2026-08-04",
   "random_seed": 42,
   "reference_date": "2026-07-28",
   "rules": {
@@ -52,16 +52,24 @@
   },
   "asr_datasets": {
     "asr_validation": {
-      "status": "pending_member1_data"
+      "path": "data/metadata/asr_validation.csv",
+      "sha256": "40ec367cea5dbb9c4dd588ddff2e26e8dbe94bbefe0c0580d71a62591d2b8409",
+      "bytes": 16992,
+      "row_count": 100,
+      "intent_distribution": {}
     },
     "asr_test": {
-      "status": "pending_member1_data"
+      "path": "data/metadata/asr_test.csv",
+      "sha256": "eb99155454dac44d2be0e3ac1cb6ca5467658b36e02038cfadbeaa1afb60634a",
+      "bytes": 20454,
+      "row_count": 125,
+      "intent_distribution": {}
     }
   },
   "command_audio": {
     "path": "data/commands/command_audio_manifest.csv",
     "row_count": 60,
-    "recorded_count": 0,
-    "status": "pending_recording"
+    "recorded_count": 60,
+    "status": "complete"
   }
 }

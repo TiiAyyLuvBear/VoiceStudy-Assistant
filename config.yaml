@@ -46,8 +46,17 @@ asr:
   local_files_only: false
 
 speaker:
+  backend: speechbrain
   embedding_model: speechbrain/spkrec-ecapa-voxceleb
+  pretrained_objective: additive_margin_softmax
+  sample_rate: 16000
+  embedding_dimension: 192
   device: cpu
+  cache_dir: models/cache/ecapa
+  evaluation_mode: true
+  freeze_parameters: true
+  fine_tune: false
+  l2_normalize: true
 
 database:
   path: data/database/voicestudy.db
