@@ -8,7 +8,7 @@ from pathlib import Path
 from src.database.user_repository import get_user
 from src.security.access_policy import PUBLIC, REJECT, SID, SID_AND_SV, get_access_policy
 from src.tasks.note_tasks import get_private_notes
-from src.tasks.schedule_tasks import get_schedules
+from src.tasks.schedule_tasks import add_schedule, get_schedules
 
 
 def _mock_parse(transcript: str) -> tuple[str, dict]:
@@ -24,13 +24,30 @@ def _mock_parse(transcript: str) -> tuple[str, dict]:
     return "OUT_OF_SCOPE", {}
 
 
-def process_request(audio_path: str | Path | None = None, transcript: str | None = None, candidate_user_id: str = "demo-anh", verification_passed: bool = True, database_path: str | Path | None = None) -> dict:
-    """Process Week 1 request. Audio is displayed by UI; ASR is mock until module arrives."""
+def process_request(
+    audio_path: str | Path | None = None,
+    transcript: str | None = None,
+    candidate_user_id: str = "demo-anh",
+    verification_passed: bool = True,
+    database_path: str | Path | None = None,
+    *,
+    intent: str | None = None,
+    entities: dict | None = None,
+    missing_fields: list[str] | None = None,
+) -> dict:
+    """Apply access policy and execute an already-parsed voice command.
+
+    ``intent`` and ``entities`` come from the ASR/NLU pipeline.  Omitting them
+    keeps the deterministic transcript parser available for demo tests.
+    """
     transcript = (transcript or "").strip()
     if not transcript:
         return {"transcript": "", "intent": "OUT_OF_SCOPE", "entities": {}, "speaker": "MOCK_UNKNOWN", "similarity": None, "verification": None, "response": "ASR chưa sẵn sàng. Nhập mock transcript để thử luồng.", "policy": REJECT}
 
-    intent, entities = _mock_parse(transcript)
+    if intent is None:
+        intent, entities = _mock_parse(transcript)
+    entities = entities or {}
+    missing_fields = missing_fields or []
     policy = get_access_policy(intent)
     user = get_user(candidate_user_id, database_path) if policy in (SID, SID_AND_SV) else None
     speaker = user["name"] if user else "MOCK_UNKNOWN"
@@ -51,7 +68,19 @@ def process_request(audio_path: str | Path | None = None, transcript: str | None
     elif intent == "VIEW_PRIVATE_NOTE":
         notes = get_private_notes(candidate_user_id, database_path)
         response = "Chưa có ghi chú riêng tư." if not notes else f"Ghi chú gần nhất: {notes[0]['content']}"
+    elif intent == "ADD_SCHEDULE":
+        if missing_fields or not all(entities.get(key) for key in ("title", "date", "time")):
+            response = "Thiếu thông tin để thêm lịch: tiêu đề, ngày và giờ."
+        else:
+            schedule = add_schedule(
+                candidate_user_id,
+                entities["title"],
+                entities["date"],
+                entities["time"],
+                database_path=database_path,
+            )
+            response = f"Đã thêm lịch {schedule['title']} lúc {schedule['time']}, {schedule['date']}."
     else:
-        response = "Mock ADD_SCHEDULE: chờ module NLU thật trước khi ghi lịch."
+        response = "Câu lệnh ngoài phạm vi hỗ trợ."
 
     return {"transcript": transcript, "intent": intent, "entities": entities, "speaker": speaker, "candidate_user_id": candidate_user_id if user else None, "similarity": similarity, "verification": verification, "response": response, "policy": policy, "audio_path": str(audio_path) if audio_path else None}

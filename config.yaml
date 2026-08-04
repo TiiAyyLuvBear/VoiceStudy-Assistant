@@ -57,6 +57,13 @@ speaker:
   freeze_parameters: true
   fine_tune: false
   l2_normalize: true
+  svm_model_path: models/speaker_svm_linear.pkl
+  svm_centroid_dir:
+  experimental_unknown_threshold_path: models/identification_threshold.json
+  experimental_verification_threshold_path: models/verification_threshold.json
+  application_centroid_dir: models/user_embeddings
+  application_sid_threshold_path: models/identification_threshold.json
+  application_verification_threshold_path: models/verification_threshold.json
 
 database:
   path: data/database/voicestudy.db
