@@ -1,3 +1,4 @@
+# Default configuration for VoiceStudy-Assistant.
 # Cấu hình dùng chung cho VoiceStudy Assistant.
 # Mọi đường dẫn tương đối được tính từ thư mục chứa file config.yaml.
 app:

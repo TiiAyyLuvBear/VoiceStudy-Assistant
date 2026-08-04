@@ -1,3 +1,15 @@
+.pytest_cache/
+.python-version
+pyvenv.cfg
+lib64
+__init__.py
+bin/
+lib/
+include/
+etc/
+__pycache__/
+tests/
+share/
 # Model weights are downloaded on first use and must not be committed.
 models/cache/
 

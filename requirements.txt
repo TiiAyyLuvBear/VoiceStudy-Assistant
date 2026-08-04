@@ -12,3 +12,7 @@ soundfile
 numpy
 pandas
 tqdm
+streamlit>=1.39
+PyYAML>=6.0
+gTTS>=2.5
+pytest>=8.0
