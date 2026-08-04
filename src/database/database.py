@@ -6,7 +6,7 @@ from pathlib import Path
 import yaml
 
 CONFIG_PATH = "config.yaml"
-with open(CONFIG_PATH, 'r') as f:
+with open(CONFIG_PATH, 'r', encoding="utf-8") as f:
     config = yaml.safe_load(f)
 DATABASE_PATH = config.get('database', {}).get('path', 'voicestudy.db')
 

@@ -21,7 +21,7 @@ from src.database.database import create_database, get_connection
 
 def load_config(config_path: Path) -> dict:
     """Load configuration from a YAML file."""
-    with open(config_path, 'r') as f:
+    with open(config_path, 'r', encoding="utf-8") as f:
         config = yaml.safe_load(f)
     return config
 
