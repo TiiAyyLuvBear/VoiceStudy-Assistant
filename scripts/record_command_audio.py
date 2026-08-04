@@ -132,6 +132,12 @@ def _record_one(
     assume_yes: bool,
     manual_stop: bool,
 ) -> None:
+    assigned_speaker = row.get('speaker_id', '').strip()
+    if assigned_speaker and assigned_speaker != speaker_id:
+        command_id = row.get('command_id', 'unknown')
+        raise ValueError(
+            f'{command_id} is assigned to {assigned_speaker}, not {speaker_id}'
+        )
     sd = _sounddevice()
     print(f"\n[{row['command_id']}] {row['expected_transcript']}")
     if not assume_yes:
@@ -224,6 +230,11 @@ def main() -> int:
     speaker_id = _safe_speaker_id(args.speaker_id)
     rows = _load_manifest(args.manifest)
     pending = [row for row in rows if row.get("status") != "recorded"]
+    pending = [
+        row
+        for row in pending
+        if row.get('speaker_id', '').strip() in ('', speaker_id)
+    ]
     if args.split:
         pending = [row for row in pending if row["split"] == args.split]
     if args.command_id:

@@ -75,6 +75,20 @@ def test_prepare_manifest_has_60_prompts() -> None:
     assert len(rows) == 60
     assert {row["split"] for row in rows} == {"validation", "test"}
     assert all(row["status"] == "pending" for row in rows)
+    for split in ('validation', 'test'):
+        split_rows = [row for row in rows if row['split'] == split]
+        for speaker_id in ('cmdspk01', 'cmdspk02', 'cmdspk03'):
+            assigned = [
+                row for row in split_rows if row['speaker_id'] == speaker_id
+            ]
+            assert len(assigned) == 10
+            assert {row['intent'] for row in assigned} == {
+                'GET_TIME',
+                'VIEW_SCHEDULE',
+                'ADD_SCHEDULE',
+                'VIEW_PRIVATE_NOTE',
+                'OUT_OF_SCOPE',
+            }
 
 
 def test_valid_command_audio(tmp_path: Path) -> None:
