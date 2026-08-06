@@ -16,7 +16,7 @@ paths:
   asr_reports: reports/asr
   database: data/database/voicestudy.db
   model_cache: models/cache
-  speaker_model: models/speaker_svm_linear.pkl
+  speaker_model: models/experimental/speaker_svm_linear.pkl
   user_embeddings: models/user_embeddings
   identification_threshold: models/identification_threshold.json
   verification_threshold: models/verification_threshold.json
@@ -57,13 +57,13 @@ speaker:
   freeze_parameters: true
   fine_tune: false
   l2_normalize: true
-  svm_model_path: models/speaker_svm_linear.pkl
+  svm_model_path: models/experimental/speaker_svm_linear.pkl
   svm_centroid_dir:
   experimental_unknown_threshold_path: models/identification_threshold.json
   experimental_verification_threshold_path: models/verification_threshold.json
-  application_centroid_dir: models/user_embeddings
-  application_sid_threshold_path: models/identification_threshold.json
-  application_verification_threshold_path: models/verification_threshold.json
+  application_centroid_dir: models/application/user_embeddings
+  application_sid_threshold_path: models/experimental/cosine_unknown_threshold.json
+  application_verification_threshold_path: models/experimental/verification_threshold.json
 
 database:
   path: data/database/voicestudy.db

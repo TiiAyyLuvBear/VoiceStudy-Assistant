@@ -1,0 +1,18 @@
+{
+  "protocol": "APPLICATION_SID",
+  "threshold_type": "cosine_unknown_threshold",
+  "threshold": 0.51307271,
+  "comparison": "cosine_similarity >= threshold means KNOWN",
+  "selection_criterion": "maximize overall detection accuracy; tie-break by unknown rejection, known acceptance, then smaller threshold",
+  "known_validation_source": "experiments\\validation\\cosine_validation_known_scores.csv",
+  "unknown_validation_source": "experiments\\validation\\cosine_validation_unknown_scores.csv",
+  "known_count": 10,
+  "unknown_count": 144,
+  "metrics": {
+    "known_acceptance_rate": 0.9,
+    "false_unknown_rate": 0.1,
+    "unknown_rejection_rate": 1.0,
+    "false_known_rate": 0.0,
+    "overall_detection_accuracy": 0.99350649
+  }
+}

@@ -1,0 +1,11 @@
+audio_id,true_speaker_id,candidate_speaker_id,max_similarity,correct
+7571,val_enrolled_spk_0001,val_enrolled_spk_0001,0.65813410,true
+12674,val_enrolled_spk_0001,val_enrolled_spk_0001,0.64242852,true
+12205,val_enrolled_spk_0001,val_enrolled_spk_0001,0.77419651,true
+6927,val_enrolled_spk_0001,val_enrolled_spk_0001,0.64504433,true
+15375,val_enrolled_spk_0001,val_enrolled_spk_0001,0.81781560,true
+10039,val_enrolled_spk_0002,val_enrolled_spk_0002,0.76795530,true
+10730,val_enrolled_spk_0002,val_enrolled_spk_0002,0.76869011,true
+12095,val_enrolled_spk_0002,val_enrolled_spk_0002,0.74906558,true
+3613,val_enrolled_spk_0002,val_enrolled_spk_0002,0.37635285,true
+10988,val_enrolled_spk_0002,val_enrolled_spk_0002,0.60641181,true
