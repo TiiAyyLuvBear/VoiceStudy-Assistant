@@ -12,7 +12,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any, Mapping, Protocol, TypedDict
 
-import yaml
+from src.utils.config import load_yaml_mapping
 
 
 class ASRResult(TypedDict):
@@ -108,17 +108,12 @@ class WhisperConfig:
 def load_whisper_config(config_path: str | Path = "config.yaml") -> WhisperConfig:
     """Đọc và kiểm tra mục ``asr`` trong YAML config."""
 
-    path = Path(config_path).expanduser().resolve()
-    if not path.is_file():
-        raise FileNotFoundError(f"Config file does not exist: {path}")
-
-    with path.open("r", encoding="utf-8") as stream:
-        document = yaml.safe_load(stream) or {}
+    document, base_dir = load_yaml_mapping(config_path)
 
     asr_values = document.get("asr")
     if not isinstance(asr_values, Mapping):
         raise ValueError("config.yaml must contain an 'asr' mapping")
-    return WhisperConfig.from_mapping(asr_values, base_dir=path.parent)
+    return WhisperConfig.from_mapping(asr_values, base_dir=base_dir)
 
 
 class WhisperASR:

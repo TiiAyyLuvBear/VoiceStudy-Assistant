@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-import yaml
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 CONFIG_PATH = PROJECT_ROOT / "config.yaml"
@@ -18,11 +17,11 @@ from app.pages.assistant_page import render_assistant_page
 from app.pages.enrollment_page import render_enrollment_page
 from app.pages.user_management_page import render_user_management_page
 from src.database.database import create_database, get_connection
+from src.utils.config import load_yaml_mapping
 
 def load_config(config_path: Path) -> dict:
     """Load configuration from a YAML file."""
-    with open(config_path, 'r', encoding="utf-8") as f:
-        config = yaml.safe_load(f)
+    config, _ = load_yaml_mapping(config_path)
     return config
 
 def main() -> None:

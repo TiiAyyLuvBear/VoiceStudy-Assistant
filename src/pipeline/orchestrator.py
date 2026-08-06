@@ -6,9 +6,118 @@ from datetime import datetime
 from pathlib import Path
 
 from src.database.user_repository import get_user
+from src.pipeline.asr_nlu import run_asr_nlu_pipeline
 from src.security.access_policy import PUBLIC, REJECT, SID, SID_AND_SV, get_access_policy
+from src.speaker.application import identify_application_user, verify_speaker
 from src.tasks.note_tasks import get_private_notes
 from src.tasks.schedule_tasks import add_schedule, get_schedules
+
+
+def _end_to_end_result(**values: object) -> dict:
+    result = {
+        "success": True, "transcript": "", "normalized_transcript": "",
+        "intent": "OUT_OF_SCOPE", "entities": {}, "missing_fields": [],
+        "policy": REJECT, "speaker": {"candidate_user_id": None, "similarity": None,
+        "identified": None, "verified": None, "centroid_path": None},
+        "response": "", "error": None,
+    }
+    result.update(values)
+    return result
+
+
+def process_audio_request(
+    audio_path: str | Path,
+    *,
+    database_path: str | Path | None = None,
+    config_path: str | Path = "config.yaml",
+    reference_date: str | None = None,
+    asr_nlu_runner=run_asr_nlu_pipeline,
+    identifier=identify_application_user,
+    verifier=verify_speaker,
+) -> dict:
+    """Run production audio → ASR/NLU → Application SID/SV → database flow.
+
+    Personal user IDs come only from Application SID; callers cannot select the
+    database owner through a transcript or request parameter.
+    """
+    pipeline = asr_nlu_runner(
+        audio_path, reference_date=reference_date, config_path=config_path,
+    )
+    if not pipeline["success"]:
+        return _end_to_end_result(
+            success=False, transcript=pipeline["transcript"],
+            intent=pipeline["intent"], error=pipeline["error"],
+            response="Không thể xử lý audio. Vui lòng thử lại.",
+        )
+
+    intent = pipeline["intent"]
+    entities = pipeline["entities"]
+    policy = get_access_policy(intent)
+    common = {
+        "transcript": pipeline["transcript"],
+        "normalized_transcript": pipeline["normalized_transcript"],
+        "intent": intent, "entities": entities,
+        "missing_fields": pipeline["missing_fields"], "policy": policy,
+    }
+    if policy == PUBLIC:
+        return _end_to_end_result(
+            **common, response=f"Bây giờ là {datetime.now().strftime('%H:%M')}."
+        )
+    if policy == REJECT:
+        return _end_to_end_result(
+            **common, response="Câu lệnh ngoài phạm vi hỗ trợ.", error="OUT_OF_SCOPE"
+        )
+
+    sid = identifier(audio_path, database_path=database_path, config_path=config_path)
+    speaker = {
+        "candidate_user_id": sid.get("candidate_user_id"),
+        "similarity": sid.get("similarity"),
+        "identified": sid.get("identified"),
+        "verified": None,
+        "centroid_path": sid.get("centroid_path"),
+    }
+    if not sid.get("success") or not sid.get("identified"):
+        return _end_to_end_result(
+            **common, speaker=speaker, error=sid.get("error") or "UNKNOWN_SPEAKER",
+            response="Không nhận diện được người dùng đã đăng ký.",
+        )
+    candidate_user_id = sid["candidate_user_id"]
+
+    if policy == SID_AND_SV:
+        sv = verifier(
+            audio_path, candidate_user_id, database_path=database_path,
+            config_path=config_path,
+        )
+        speaker["verification"] = sv
+        speaker["verified"] = sv.get("verified")
+        if not sv.get("success") or not sv.get("verified"):
+            return _end_to_end_result(
+                **common, speaker=speaker,
+                error=sv.get("error") or "VERIFICATION_FAILED",
+                response="Xác thực giọng nói thất bại. Không thể xem ghi chú riêng tư.",
+            )
+
+    if intent == "VIEW_SCHEDULE":
+        schedules = get_schedules(candidate_user_id, entities.get("date"), database_path)
+        response = "Chưa có lịch học." if not schedules else (
+            f"Bạn có {len(schedules)} lịch. Lịch gần nhất: {schedules[0]['title']} "
+            f"lúc {schedules[0]['time']}, {schedules[0]['date']}."
+        )
+    elif intent == "ADD_SCHEDULE":
+        if pipeline["missing_fields"] or not all(entities.get(key) for key in ("title", "date", "time")):
+            return _end_to_end_result(
+                **common, speaker=speaker, error="MISSING_FIELDS",
+                response="Thiếu thông tin để thêm lịch: tiêu đề, ngày và giờ.",
+            )
+        schedule = add_schedule(
+            candidate_user_id, entities["title"], entities["date"], entities["time"],
+            database_path=database_path,
+        )
+        response = f"Đã thêm lịch {schedule['title']} lúc {schedule['time']}, {schedule['date']}."
+    else:  # VIEW_PRIVATE_NOTE after successful SV
+        notes = get_private_notes(candidate_user_id, database_path)
+        response = "Chưa có ghi chú riêng tư." if not notes else f"Ghi chú gần nhất: {notes[0]['content']}"
+    return _end_to_end_result(**common, speaker=speaker, response=response)
 
 
 def _mock_parse(transcript: str) -> tuple[str, dict]:

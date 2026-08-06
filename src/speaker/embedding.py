@@ -9,7 +9,8 @@ from typing import Any
 import numpy as np
 import torch
 import torch.nn.functional as functional
-import yaml
+
+from src.utils.config import load_yaml_mapping, resolve_path
 
 
 DEFAULT_CONFIG_PATH = Path('config.yaml')
@@ -71,9 +72,7 @@ class ECAPAEmbeddingExtractor:
         *,
         classifier: Any | None = None,
     ) -> ECAPAEmbeddingExtractor:
-        path = Path(config_path)
-        with path.open('r', encoding='utf-8') as stream:
-            config = yaml.safe_load(stream) or {}
+        config, config_root = load_yaml_mapping(config_path)
         speaker = config.get('speaker', {})
         if speaker.get('fine_tune', False):
             raise ValueError('speaker.fine_tune must remain false')
@@ -83,8 +82,7 @@ class ECAPAEmbeddingExtractor:
             raise ValueError('speaker.evaluation_mode must remain true')
 
         cache_dir = Path(speaker.get('cache_dir', 'models/cache/ecapa'))
-        if not cache_dir.is_absolute():
-            cache_dir = path.resolve().parent / cache_dir
+        cache_dir = resolve_path(cache_dir, config_root)
         return cls(
             model_source=speaker.get('embedding_model', DEFAULT_MODEL_SOURCE),
             device=speaker.get('device', 'cpu'),

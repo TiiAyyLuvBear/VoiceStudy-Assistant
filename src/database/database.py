@@ -3,11 +3,10 @@
 import sqlite3
 from pathlib import Path
 
-import yaml
+from src.utils.config import load_yaml_mapping
 
 CONFIG_PATH = "config.yaml"
-with open(CONFIG_PATH, 'r', encoding="utf-8") as f:
-    config = yaml.safe_load(f)
+config, _ = load_yaml_mapping(CONFIG_PATH)
 DATABASE_PATH = config.get('database', {}).get('path', 'voicestudy.db')
 
 def _resolve_database_path(database_path: str | Path | None) -> str | Path:
