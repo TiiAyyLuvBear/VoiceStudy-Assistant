@@ -41,7 +41,7 @@ def _pipeline(intent: str, entities: dict[str, str] | None = None) -> Callable:
 def _known_speaker(*args, **kwargs) -> dict:
     return {
         "success": True,
-        "candidate_user_id": "demo-anh",
+        "candidate_user_id": "user_001",
         "similarity": 0.99,
         "identified": True,
         "centroid_path": "mock-centroid.npy",
@@ -52,7 +52,7 @@ def _known_speaker(*args, **kwargs) -> dict:
 def _verified_speaker(*args, **kwargs) -> dict:
     return {
         "success": True,
-        "candidate_user_id": "demo-anh",
+        "candidate_user_id": "user_001",
         "similarity": 0.99,
         "verified": True,
         "centroid_path": "mock-centroid.npy",
@@ -88,17 +88,17 @@ def run_selftest(database_path: str | Path) -> list[dict]:
         ("public_time", "GET_TIME", {}, {"policy": "PUBLIC", "speaker_id": None,
          "error": None}, _pipeline("GET_TIME")),
         ("view_schedule", "VIEW_SCHEDULE", {}, {"policy": "SID",
-         "speaker_id": "demo-anh", "response_contains": "Học Thống kê", "error": None},
+         "speaker_id": "user_001", "response_contains": "Học Thống kê", "error": None},
          _pipeline("VIEW_SCHEDULE")),
         ("private_note", "VIEW_PRIVATE_NOTE", {}, {"policy": "SID_AND_SV",
-         "speaker_id": "demo-anh", "verified": True,
+         "speaker_id": "user_001", "verified": True,
          "response_contains": "Hoàn thành báo cáo", "error": None},
          _pipeline("VIEW_PRIVATE_NOTE")),
         (
             "add_schedule",
             "ADD_SCHEDULE",
             {"title": "Tự kiểm tra", "date": "2026-08-06", "time": "09:00"},
-            {"policy": "SID", "speaker_id": "demo-anh",
+            {"policy": "SID", "speaker_id": "user_001",
              "response_contains": "Đã thêm lịch Tự kiểm tra", "error": None},
             _pipeline("ADD_SCHEDULE", {
                 "title": "Tự kiểm tra", "date": "2026-08-06", "time": "09:00",

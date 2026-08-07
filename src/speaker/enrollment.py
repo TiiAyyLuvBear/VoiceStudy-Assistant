@@ -15,7 +15,7 @@ from src.speaker.embedding import ECAPAEmbeddingExtractor
 
 APPLICATION_EMBEDDING_DIR = Path("models/application/user_embeddings")
 REQUIRED_AUDIO_COUNT = 5
-_USER_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$")
+_USER_ID_RE = re.compile(r"^user_[A-Za-z0-9][A-Za-z0-9_-]{0,58}$")
 
 
 class EnrollmentResult(TypedDict):
@@ -51,7 +51,7 @@ def enroll_user(user_id: str, audio_paths: list[str]) -> EnrollmentResult:
     try:
         if not isinstance(user_id, str) or not _USER_ID_RE.fullmatch(user_id):
             raise ValueError(
-                "user_id must contain 1-64 ASCII letters, digits, underscores, or hyphens"
+                "user_id must match user_<ascii letters/digits/underscore/hyphen>"
             )
         if not isinstance(audio_paths, list):
             raise TypeError("audio_paths must be a list of strings")

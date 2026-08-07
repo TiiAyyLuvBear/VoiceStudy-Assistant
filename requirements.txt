@@ -19,3 +19,5 @@ gTTS>=2.5
 pytest>=8.0
 scikit-learn>=1.7,<2
 joblib>=1.5,<2
+
+torch>=2.3,<3

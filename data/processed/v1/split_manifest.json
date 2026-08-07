@@ -2,7 +2,7 @@
   "manifest_schema_version": 2,
   "dataset_version": "v1",
   "created_at": "2026-08-04T03:54:15.649512",
-  "verified_at": "2026-08-04T11:15:24+07:00",
+  "verified_at": "2026-08-07T17:51:37+07:00",
   "random_seed": 42,
   "preprocessing_version": "v1",
   "freeze_status": "FROZEN",
@@ -16,52 +16,52 @@
     "svm_closed_set_enrollment.csv": {
       "num_audio": 50,
       "num_speaker": 10,
-      "checksum": "b54fd6c95d206b965d0d9837fd352cf73d3126a93f56cf31de97db30bee4b680"
+      "checksum": "3ad8339c747d40eb2f1c2c6632b72378b8921443a6aa940576bcf87f443e88b4"
     },
     "svm_closed_set_train.csv": {
       "num_audio": 100,
       "num_speaker": 10,
-      "checksum": "1d91cd701ee2e77ca9b82ce8e29727c3fd1dbdfdf5b68db608c3fea95069afea"
+      "checksum": "29ba50ff8ea6cb33218168548ddeddeb29e015cc2f19a9714743f93ccb6e69c9"
     },
     "svm_closed_set_validation.csv": {
       "num_audio": 50,
       "num_speaker": 10,
-      "checksum": "eeef2d7cbf1f5a85186679d0615591cf1bf99ddb2d2001e7573fdb54fe448c7b"
+      "checksum": "765bbe9395cc914811e386b3ed735f73b525d8922c4180857048c2d5511357d5"
     },
     "svm_closed_set_test.csv": {
       "num_audio": 50,
       "num_speaker": 10,
-      "checksum": "6111b8216a0de068c8a695fccbea4d669eb2f36fa86be493d2980c3daf50329f"
+      "checksum": "1b39cf1919bf201938841aa1c17572e80e6c4bc067c47ab0dbe22a0714254b61"
     },
     "cosine_validation_enrollment.csv": {
       "num_audio": 10,
       "num_speaker": 2,
-      "checksum": "79d83bd469ea70a60dd659aad43fc865649aff5dc826fae1200423227f261678"
+      "checksum": "28f284fdb33862ae87ad5a422bdc41aacc62c52c8ab9224b4993114ebc0e5a54"
     },
     "cosine_validation_query.csv": {
       "num_audio": 10,
       "num_speaker": 2,
-      "checksum": "0fce7ba530332a32d13b8a87336e56dd9b72dc4e1534b3f389f7290076373ed2"
+      "checksum": "7a7f0527f9216ff813c4d3fb3e4ade1231d5991b1fd03dc7d9904c3dc699a07d"
     },
     "cosine_validation_unknown.csv": {
       "num_audio": 144,
       "num_speaker": 2,
-      "checksum": "eddb42e04c1ea728a52556a4799b0f6ae5eaf697a0923cc8334b31399504c85a"
+      "checksum": "0c06b43e95c1ea5574913783b532aa7c5e3390b80069b283f0bbc661538cfd2d"
     },
     "cosine_test_enrollment.csv": {
       "num_audio": 10,
       "num_speaker": 2,
-      "checksum": "2a6d04a8b0d470a7c3b0dadb6e5e4e774d89b77764135bf44c3b9b45a5177555"
+      "checksum": "06c91f7133438bd52738d679f9d754d9d923dc65771050e9c051d751470d6459"
     },
     "cosine_test_query.csv": {
       "num_audio": 10,
       "num_speaker": 2,
-      "checksum": "ec25cfbb6cccd88fe0f7a97ec9ef894ccf7fbfff2350cd2cfae356a81d7cc8da"
+      "checksum": "6e4a0398133d82a483322323ddbc10bd7d5b34f42c134d26ad8fd49a92d3f30c"
     },
     "cosine_test_unknown.csv": {
       "num_audio": 116,
       "num_speaker": 2,
-      "checksum": "53e3cd0d8ce444120e6cabc20fc499dc7f05303551dbebb74afa6fb9552dfcaa"
+      "checksum": "9b8a903d08ad35a83b4726783346a69f0d1e4523e4417d25b31e9dc14a5729ab"
     }
   }
 }

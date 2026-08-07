@@ -17,6 +17,7 @@ from src.speaker.embedding import ECAPAEmbeddingExtractor
 
 CONFIG_PATH = Path("config.yaml")
 PROTOCOL = "APPLICATION_SID"
+_USER_ID_RE = __import__("re").compile(r"^user_[A-Za-z0-9][A-Za-z0-9_-]{0,63}$")
 
 
 class ApplicationIdentificationResult(TypedDict):
@@ -86,8 +87,12 @@ def _load_gallery(directory: Path) -> tuple[list[str], np.ndarray]:
             expected_dimension = vector.size
         elif vector.size != expected_dimension:
             raise ValueError("Application centroid dimensions are inconsistent")
+        if not _USER_ID_RE.fullmatch(path.stem):
+            continue
         user_ids.append(path.stem)
         vectors.append(vector)
+    if not vectors:
+        raise FileNotFoundError(f"No application user centroids found in: {directory}")
     return user_ids, np.stack(vectors)
 
 

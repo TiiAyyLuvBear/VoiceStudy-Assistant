@@ -15,12 +15,13 @@ from src.speaker.embedding import EmbeddingError, extract_embedding
 from src.utils.config import load_yaml_mapping, resolve_path
 
 AudioLoader = Callable[[str | Path], tuple[np.ndarray, int]]
-_USER_ID_PATTERN = re.compile(r"^[A-Za-z0-9_-]+$")
+_USER_ID_PATTERN = re.compile(r"^user_[A-Za-z0-9][A-Za-z0-9_-]{0,58}$")
 _ENROLLMENT_AUDIO_COUNT = 5
 
 
 def _result(**values: object) -> dict:
     result = {
+        "protocol": None,
         "success": False,
         "user_id": None,
         "candidate_user_id": None,
@@ -99,11 +100,11 @@ def enroll_user(
 ) -> dict:
     """Create/update enrollment from exactly five audio recordings."""
     if not isinstance(user_id, str) or not _USER_ID_PATTERN.fullmatch(user_id):
-        return _result(error="INVALID_USER_ID")
+        return _result(protocol="APPLICATION_ENROLLMENT", error="INVALID_USER_ID")
     if not isinstance(name, str) or not name.strip():
-        return _result(user_id=user_id, error="INVALID_NAME")
+        return _result(protocol="APPLICATION_ENROLLMENT", user_id=user_id, error="INVALID_NAME")
     if isinstance(audio_paths, (str, bytes)) or len(audio_paths) != _ENROLLMENT_AUDIO_COUNT:
-        return _result(user_id=user_id, error="INVALID_ENROLLMENT_AUDIO_COUNT")
+        return _result(protocol="APPLICATION_ENROLLMENT", user_id=user_id, error="INVALID_ENROLLMENT_AUDIO_COUNT")
 
     try:
         embeddings = [
@@ -112,7 +113,7 @@ def enroll_user(
         ]
         centroid = _normalise(np.mean(embeddings, axis=0))
     except (OSError, ValueError, EmbeddingError):
-        return _result(user_id=user_id, error="INVALID_AUDIO")
+        return _result(protocol="APPLICATION_ENROLLMENT", user_id=user_id, error="INVALID_AUDIO")
 
     try:
         centroid_dir = _centroid_dir(config_path)
@@ -124,9 +125,10 @@ def enroll_user(
         else:
             create_user(user_id, name.strip(), str(centroid_path), database_path)
     except (OSError, sqlite3.Error):
-        return _result(user_id=user_id, error="CENTROID_WRITE_FAILED")
+        return _result(protocol="APPLICATION_ENROLLMENT", user_id=user_id, error="CENTROID_WRITE_FAILED")
 
     return _result(
+        protocol="APPLICATION_ENROLLMENT",
         success=True,
         user_id=user_id,
         embedding_count=len(embeddings),
@@ -147,15 +149,18 @@ def identify_application_user(
     """Identify highest-scoring enrolled application user from audio."""
     users = list_users(database_path)
     if not users:
-        return _result(error="NO_ENROLLMENT")
+        return _result(protocol="APPLICATION_SID", error="NO_ENROLLMENT")
     try:
         query = _embedding_for_audio(audio_path, extractor=extractor, audio_loader=audio_loader)
     except (OSError, ValueError, EmbeddingError):
-        return _result(error="INVALID_AUDIO")
+        return _result(protocol="APPLICATION_SID", error="INVALID_AUDIO")
 
     scores: list[tuple[str, float, Path]] = []
     missing_centroid = False
     for user in users:
+        user_id = str(user.get("user_id", ""))
+        if not _USER_ID_PATTERN.fullmatch(user_id):
+            continue
         path_value = user.get("embedding_path")
         if not path_value:
             missing_centroid = True
@@ -163,18 +168,19 @@ def identify_application_user(
         path = Path(path_value)
         try:
             centroid = _load_centroid(path)
-            scores.append((user["user_id"], float(np.dot(query, centroid)), path))
+            scores.append((user_id, float(np.dot(query, centroid)), path))
         except (OSError, ValueError, EmbeddingError):
             missing_centroid = True
 
     if not scores:
-        return _result(error="CENTROID_NOT_FOUND" if missing_centroid else "NO_ENROLLMENT")
+        return _result(protocol="APPLICATION_SID", error="CENTROID_NOT_FOUND" if missing_centroid else "NO_ENROLLMENT")
     threshold = _threshold(config_path, "application_sid_threshold_path", identification_threshold)
     if threshold is None:
-        return _result(error="THRESHOLD_NOT_CONFIGURED")
+        return _result(protocol="APPLICATION_SID", error="THRESHOLD_NOT_CONFIGURED")
     user_id, similarity, centroid_path = max(scores, key=lambda item: item[1])
     identified = similarity >= threshold
     return _result(
+        protocol="APPLICATION_SID",
         success=True,
         candidate_user_id=user_id if identified else None,
         centroid_path=str(centroid_path),
@@ -195,25 +201,28 @@ def verify_speaker(
     verification_threshold: float | None = None,
 ) -> dict:
     """Verify audio against enrolled centroid for one application user."""
+    if not isinstance(candidate_user_id, str) or not _USER_ID_PATTERN.fullmatch(candidate_user_id):
+        return _result(protocol="APPLICATION_SV", candidate_user_id=candidate_user_id, error="INVALID_USER_ID")
     user = get_user(candidate_user_id, database_path)
     if not user:
-        return _result(candidate_user_id=candidate_user_id, error="NO_ENROLLMENT")
+        return _result(protocol="APPLICATION_SV", candidate_user_id=candidate_user_id, error="NO_ENROLLMENT")
     path_value = user.get("embedding_path")
     if not path_value:
-        return _result(candidate_user_id=candidate_user_id, error="CENTROID_NOT_FOUND")
+        return _result(protocol="APPLICATION_SV", candidate_user_id=candidate_user_id, error="CENTROID_NOT_FOUND")
     try:
         query = _embedding_for_audio(audio_path, extractor=extractor, audio_loader=audio_loader)
     except (OSError, ValueError, EmbeddingError):
-        return _result(candidate_user_id=candidate_user_id, error="INVALID_AUDIO")
+        return _result(protocol="APPLICATION_SV", candidate_user_id=candidate_user_id, error="INVALID_AUDIO")
     try:
         centroid_path = Path(path_value)
         similarity = float(np.dot(query, _load_centroid(centroid_path)))
     except (OSError, ValueError, EmbeddingError):
-        return _result(candidate_user_id=candidate_user_id, error="CENTROID_NOT_FOUND")
+        return _result(protocol="APPLICATION_SV", candidate_user_id=candidate_user_id, error="CENTROID_NOT_FOUND")
     threshold = _threshold(config_path, "application_verification_threshold_path", verification_threshold)
     if threshold is None:
-        return _result(candidate_user_id=candidate_user_id, error="THRESHOLD_NOT_CONFIGURED")
+        return _result(protocol="APPLICATION_SV", candidate_user_id=candidate_user_id, error="THRESHOLD_NOT_CONFIGURED")
     return _result(
+        protocol="APPLICATION_SV",
         success=True,
         candidate_user_id=candidate_user_id,
         centroid_path=str(centroid_path),

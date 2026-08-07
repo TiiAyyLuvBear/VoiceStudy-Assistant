@@ -167,3 +167,17 @@ def test_application_identification_without_enrolled_users(
     assert result["success"] is False
     assert result["candidate_user_id"] is None
     assert "No application user centroids" in (result["error"] or "")
+
+def test_enroll_user_rejects_non_application_prefix(
+    tmp_path: Path,
+) -> None:
+    audio_paths = []
+    for index in range(5):
+        path = tmp_path / f"audio-{index}.wav"
+        path.write_bytes(b"audio")
+        audio_paths.append(str(path))
+
+    result = enrollment.enroll_user("spk0003", audio_paths)
+
+    assert result["success"] is False
+    assert "user_" in (result["error"] or "")

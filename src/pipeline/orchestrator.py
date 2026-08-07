@@ -136,7 +136,7 @@ def _mock_parse(transcript: str) -> tuple[str, dict]:
 def process_request(
     audio_path: str | Path | None = None,
     transcript: str | None = None,
-    candidate_user_id: str = "demo-anh",
+    candidate_user_id: str = "user_001",
     verification_passed: bool = True,
     database_path: str | Path | None = None,
     *,

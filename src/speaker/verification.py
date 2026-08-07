@@ -17,7 +17,7 @@ from src.speaker.embedding import ECAPAEmbeddingExtractor
 
 
 CONFIG_PATH = Path("config.yaml")
-_USER_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$")
+_USER_ID_RE = re.compile(r"^user_[A-Za-z0-9][A-Za-z0-9_-]{0,63}$")
 
 
 class VerificationResult(TypedDict):
@@ -69,7 +69,7 @@ def _load_threshold(path: Path) -> float:
 
 def _load_candidate_centroid(directory: Path, candidate_user_id: str) -> np.ndarray:
     if not _USER_ID_RE.fullmatch(candidate_user_id):
-        raise ValueError("candidate_user_id is not a valid application user ID")
+        raise ValueError("candidate_user_id must start with 'user_'")
     path = directory / f"{candidate_user_id}.npy"
     if not path.is_file():
         raise FileNotFoundError(

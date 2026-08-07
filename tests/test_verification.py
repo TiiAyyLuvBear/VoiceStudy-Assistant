@@ -82,6 +82,7 @@ def test_missing_candidate_centroid_and_non_application_id(
     assert "does not exist" in (missing["error"] or "")
     assert legacy["success"] is False
     assert legacy["candidate_user_id"] == "spk0003"
+    assert "user_" in (legacy["error"] or "")
 
 
 def test_verification_audio_error(tmp_path: Path) -> None:
