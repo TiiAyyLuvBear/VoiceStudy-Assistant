@@ -13,13 +13,13 @@
 - Command audio manifest 60 prompt, recording utility và audio/leakage validator.
 - Checksum freeze manifest cho command datasets v1.
 - API interfaces, runbook và unit tests.
+- ASR validation 100/100 và ASR test 125/125, có WER/CER/latency.
+- Command audio đủ 60/60 và đã qua kiểm định WAV/checksum/leakage.
+- Command validation và command test đã chạy đủ 30/30 audio bằng Whisper.
+- Intent, OUT_OF_SCOPE và entity metrics đã được cập nhật trên bộ test đầy đủ.
 
-## Chờ dữ liệu hoặc thao tác con người
+## Trạng thái còn lại
 
-1. `asr_validation.csv` và `asr_test.csv`: chờ `data_inventory.csv` chứa audio
-   Speech-MASSIVE official validation/test từ Thành viên 1. Script sinh split đã sẵn sàng.
-2. Command audio: manifest hiện có 60 hàng `pending`; cần thành viên thật đọc câu
-   vào microphone. Không sinh TTS giả vì task yêu cầu metadata speaker và audio demo thật.
-3. WER/CER official: chỉ chạy sau khi hai ASR split có audio thật.
-
-Không mục nào ở trạng thái chờ được thay bằng dữ liệu giả trong báo cáo chính thức.
+Không còn dữ liệu ASR hoặc command audio bị thiếu. Hạn chế chất lượng chính là
+VIEW_PRIVATE_NOTE qua Whisper đạt 0/5 dù transcript chuẩn đạt 5/5; kết quả này
+được giữ nguyên, không chỉnh rule theo test.

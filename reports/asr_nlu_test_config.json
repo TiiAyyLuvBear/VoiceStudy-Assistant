@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "purpose": "Week 3 held-out ASR and application command analysis",
-  "frozen_at": "2026-08-08T10:46:35+07:00",
+  "frozen_at": "2026-08-08T17:09:51+07:00",
   "policy": {
     "held_out_test": true,
     "rule_or_config_tuning_after_freeze_allowed": false,
@@ -46,12 +46,20 @@
     }
   },
   "git": {
-    "commit": "e84184f4eabbaffb3bb92ef8e10a3316db5d6248",
+    "commit": "9b16b495058e92947eb349764c6982e18234adb2",
     "worktree_clean_before_snapshot": false,
     "worktree_status_before_snapshot": [
-      "?? scripts/evaluate_week3_nlu.py",
-      "?? scripts/week3_test_config.py",
-      "?? tests/test_week3_nlu_evaluation.py"
+      "M reports/command_audio_validation.csv",
+      " M reports/nlu/intent_validation_whisper.csv",
+      " M reports/nlu/week2_validation_summary.json",
+      "?? docs/week3_asr_nlu_report_partial_20.md",
+      "?? reports/asr_nlu_test_config_partial_20.json",
+      "?? reports/command_audio_validation_pre_completion.csv",
+      "?? reports/nlu/entity_test_results_partial_20.csv",
+      "?? reports/nlu/intent_test_ground_truth_partial_20.csv",
+      "?? reports/nlu/intent_test_metrics_partial_20.json",
+      "?? reports/nlu/intent_test_whisper_partial_20.csv",
+      "?? reports/nlu/out_of_scope_test_results_partial_20.csv"
     ]
   },
   "datasets": {
@@ -66,15 +74,15 @@
     "command_audio_test": {
       "manifest": "data/commands/command_audio_manifest.csv",
       "expected_count": 30,
-      "ready_count_at_freeze": 20,
-      "missing_count_at_freeze": 10
+      "ready_count_at_freeze": 30,
+      "missing_count_at_freeze": 0
     }
   },
   "locked_files": {
     "config.yaml": "4a3b8b28e680c8927279f35706311c231734e7a6e44a24992c1c333d763b7528",
     "data/metadata/asr_test.csv": "eb99155454dac44d2be0e3ac1cb6ca5467658b36e02038cfadbeaa1afb60634a",
     "data/metadata/command_test.csv": "7b35d712331d83326449c9266810c2a5007e3fca845d48ea7686722d5cd9200d",
-    "data/commands/command_audio_manifest.csv": "e64fff9296b579dc5768dd1719ad8070c37d4fb5cca77dbc1e539b3ee6b514a0",
+    "data/commands/command_audio_manifest.csv": "7f2ac6d101197c625e921962fab52caa66724be2cb91a39c4a52d9cde0339a55",
     "src/asr/metrics.py": "4e5139e65beacb0768fb6fe0df36bd16a600b6bb1472482c704d29fb684bab57",
     "src/asr/text_normalizer.py": "986941d7b216bf6e6427daf8c4bdf9b4389603d2a824d7cf911dcc31dad260d6",
     "src/asr/whisper_model.py": "1f3d1a600f76c77954ec91875f6e5cf8c57fc1d25ae3b639a2508f48a2d99fbb",

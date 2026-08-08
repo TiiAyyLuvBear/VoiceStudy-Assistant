@@ -1,31 +1,31 @@
 command_id,expected_intent,entity_bearing_command,expected_title,text_predicted_title,text_title_exact_match,whisper_predicted_title,whisper_title_exact_match,expected_date,text_predicted_date,text_date_exact_match,whisper_predicted_date,whisper_date_exact_match,expected_time,text_predicted_time,text_time_exact_match,whisper_predicted_time,whisper_time_exact_match,text_entity_exact_match,whisper_entity_exact_match,audio_evaluated
 TST0001,GET_TIME,false,,,true,,true,,,true,,true,,,true,,true,true,true,true
 TST0002,GET_TIME,false,,,true,,true,,,true,,true,,,true,,true,true,true,true
-TST0003,GET_TIME,false,,,true,,,,,true,,,,,true,,,true,,false
+TST0003,GET_TIME,false,,,true,,true,,,true,,true,,,true,,true,true,true,true
 TST0004,GET_TIME,false,,,true,,true,,,true,,true,,,true,,true,true,true,true
 TST0005,GET_TIME,false,,,true,,true,,,true,,true,,,true,,true,true,true,true
 TST0006,VIEW_SCHEDULE,true,,,true,,true,2026-07-28,2026-07-28,true,2026-07-28,true,,,true,,true,true,true,true
-TST0007,VIEW_SCHEDULE,true,,,true,,,2026-07-30,2026-07-30,true,,,,,true,,,true,,false
+TST0007,VIEW_SCHEDULE,true,,,true,,true,2026-07-30,2026-07-30,true,2026-07-30,true,,,true,,true,true,true,true
 TST0008,VIEW_SCHEDULE,true,,,true,,true,2026-07-30,2026-07-30,true,,false,,,true,,true,true,false,true
 TST0009,VIEW_SCHEDULE,true,,,true,,true,2026-07-29,2026-07-29,true,,false,,,true,,true,true,false,true
-TST0010,VIEW_SCHEDULE,true,,,true,,,2026-08-02,2026-08-02,true,,,,,true,,,true,,false
-TST0011,ADD_SCHEDULE,true,luyện nghe,luyện nghe,true,,,2026-07-29,2026-07-29,true,,,06:30,06:30,true,,,true,,false
+TST0010,VIEW_SCHEDULE,true,,,true,,true,2026-08-02,2026-08-02,true,2026-08-02,true,,,true,,true,true,true,true
+TST0011,ADD_SCHEDULE,true,luyện nghe,luyện nghe,true,lịch nghe,false,2026-07-29,2026-07-29,true,,false,06:30,06:30,true,06:30,true,true,false,true
 TST0012,ADD_SCHEDULE,true,sửa báo cáo,sửa báo cáo,true,sửa báo cáo,true,2026-07-28,2026-07-28,true,2026-07-28,true,15:00,15:00,true,15:00,true,true,true,true
 TST0013,ADD_SCHEDULE,true,gặp cố vấn,gặp cố vấn,true,,false,2026-07-30,2026-07-30,true,,false,09:00,09:00,true,,false,true,false,true
-TST0014,ADD_SCHEDULE,true,thảo luận,thảo luận,true,,,2026-08-01,2026-08-01,true,,,19:00,19:00,true,,,true,,false
+TST0014,ADD_SCHEDULE,true,thảo luận,thảo luận,true,thảo luận lúc mảy giờ tối,false,2026-08-01,2026-08-01,true,2026-08-01,true,19:00,19:00,true,,false,true,false,true
 TST0015,ADD_SCHEDULE,true,gửi bài,gửi bài,true,gửi bay,false,2026-07-29,2026-07-29,true,2026-07-29,true,11:00,11:00,true,11:00,true,true,false,true
 TST0016,VIEW_PRIVATE_NOTE,false,,,true,,true,,,true,,true,,,true,,true,true,true,true
 TST0017,VIEW_PRIVATE_NOTE,false,,,true,,true,,,true,,true,,,true,,true,true,true,true
-TST0018,VIEW_PRIVATE_NOTE,false,,,true,,,,,true,,,,,true,,,true,,false
+TST0018,VIEW_PRIVATE_NOTE,false,,,true,,true,,,true,,true,,,true,,true,true,true,true
 TST0019,VIEW_PRIVATE_NOTE,false,,,true,,true,,,true,,true,,,true,,true,true,true,true
 TST0020,VIEW_PRIVATE_NOTE,false,,,true,,true,,,true,,true,,,true,,true,true,true,true
 TST0021,OUT_OF_SCOPE,false,,,true,,true,,,true,,true,,,true,,true,true,true,true
-TST0022,OUT_OF_SCOPE,false,,,true,,,,,true,,,,,true,,,true,,false
+TST0022,OUT_OF_SCOPE,false,,,true,,true,,,true,,true,,,true,,true,true,true,true
 TST0023,OUT_OF_SCOPE,false,,,true,,true,,,true,,true,,,true,,true,true,true,true
 TST0024,OUT_OF_SCOPE,false,,,true,,true,,,true,,true,,,true,,true,true,true,true
-TST0025,OUT_OF_SCOPE,false,,,true,,,,,true,,,,,true,,,true,,false
+TST0025,OUT_OF_SCOPE,false,,,true,,true,,,true,,true,,,true,,true,true,true,true
 TST0026,OUT_OF_SCOPE,false,,,true,,true,,,true,,true,,,true,,true,true,true,true
 TST0027,OUT_OF_SCOPE,false,,,true,,true,,,true,,true,,,true,,true,true,true,true
-TST0028,OUT_OF_SCOPE,false,,,true,,,,,true,,,,,true,,,true,,false
+TST0028,OUT_OF_SCOPE,false,,,true,,true,,,true,,true,,,true,,true,true,true,true
 TST0029,OUT_OF_SCOPE,false,,,true,,true,,,true,,true,,,true,,true,true,true,true
-TST0030,OUT_OF_SCOPE,false,,,true,,,,,true,,,,,true,,,true,,false
+TST0030,OUT_OF_SCOPE,false,,,true,,true,,,true,,true,,,true,,true,true,true,true

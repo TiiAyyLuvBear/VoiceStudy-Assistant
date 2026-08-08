@@ -4,11 +4,13 @@ Phụ trách: **Trần Hữu Lộc**
 
 ## 1. Cam kết test và cấu hình khóa
 
-Cấu hình được khóa lúc `2026-08-08T10:46:35+07:00` trong
-`reports/asr_nlu_test_config.json`, trước khi chạy ASR test và command test.
+Cấu hình được khóa lúc `2026-08-08T17:09:51+07:00` trong
+`reports/asr_nlu_test_config.json`, trước khi chạy lại command test hoàn chỉnh.
 Snapshot lưu SHA-256 của cấu hình, dữ liệu test, ASR/NLU normalizer, Whisper
 wrapper, intent rules, entity rules và evaluator. Snapshot đã được kiểm tra lại
-ngay trước command inference.
+ngay trước command inference. Kết quả ASR test được giữ nguyên vì dữ liệu ASR,
+cấu hình và code ASR/NLU không đổi. Lượt command audio hoàn chỉnh được chạy
+lại bằng `--no-resume` để không dùng transcript của audio cũ.
 
 Quy tắc của lượt test:
 
@@ -31,8 +33,8 @@ Whisper được khóa ở `faster-whisper-small`, revision cache
 |---|---:|---|
 | ASR test | 125 audio | Đủ 125/125, tất cả file tồn tại |
 | Command test bằng transcript chuẩn | 30 câu | Đủ 30/30 |
-| Command test bằng audio | 30 câu kỳ vọng | Có 20/30, thiếu 10 bản thu của `cmdspk03` |
-| OUT_OF_SCOPE | 10 câu | Có audio 6/10; artifact vẫn giữ đủ 10 dòng |
+| Command test bằng audio | 30 câu | Đủ 30/30, tất cả file đã được kiểm định |
+| OUT_OF_SCOPE | 10 câu | Đủ audio 10/10 |
 
 ASR test là project test được trích từ dữ liệu Speech-MASSIVE tiếng Việt.
 Command test là bộ câu lệnh riêng của ứng dụng gồm bốn functional intents và
@@ -76,62 +78,55 @@ hoặc loại hai mẫu khỏi kết quả test.
 
 ### 4.2 Audio → Whisper → Intent
 
-Các accuracy sau chỉ tính trên 20 audio đã thu và ASR thành công.
+Các accuracy sau tính trên đủ 30 audio; cả 30 mẫu đều ASR thành công.
 
 | Intent | Đúng / đã đánh giá | Accuracy |
 |---|---:|---:|
-| GET_TIME | 3 / 4 | 75.00% |
-| VIEW_SCHEDULE | 2 / 3 | 66.67% |
-| ADD_SCHEDULE | 2 / 3 | 66.67% |
-| VIEW_PRIVATE_NOTE | 0 / 4 | 0.00% |
-| OUT_OF_SCOPE | 6 / 6 | 100.00% |
-| **Overall 5 labels** | **13 / 20** | **65.00%** |
-| **Bốn functional intents** | **7 / 14** | **50.00%** |
+| GET_TIME | 4 / 5 | 80.00% |
+| VIEW_SCHEDULE | 4 / 5 | 80.00% |
+| ADD_SCHEDULE | 4 / 5 | 80.00% |
+| VIEW_PRIVATE_NOTE | 0 / 5 | 0.00% |
+| OUT_OF_SCOPE | 10 / 10 | 100.00% |
+| **Overall 5 labels** | **22 / 30** | **73.33%** |
+| **Bốn functional intents** | **12 / 20** | **60.00%** |
 
-Coverage audio là 20/30 = 66.67%. Nếu chỉ trình bày số câu đúng trên toàn bộ
-30 câu kỳ vọng, kết quả lần lượt là 13/30 = 43.33% overall, 7/20 = 35.00%
-functional và 6/10 = 60.00% OUT_OF_SCOPE. Đây là tỷ lệ coverage-adjusted,
-không phải accuracy tiêu chuẩn vì 10 câu thiếu audio không tạo prediction.
+Coverage audio là 30/30 = 100%; không còn mẫu thiếu hoặc failure.
 
-Bảy lỗi intent quan sát được:
+Tám lỗi intent quan sát được:
 
 - `TST0004`: “mấy giờ” bị Whisper nhận thành “mấy lần”, GET_TIME thành
   OUT_OF_SCOPE;
 - `TST0009`: “buổi gì” thành “bối gì”, VIEW_SCHEDULE thành OUT_OF_SCOPE;
 - `TST0013`: “lập” thành “lặp”, ADD_SCHEDULE thành OUT_OF_SCOPE;
-- `TST0016`, `TST0017`, `TST0019`, `TST0020`: các từ khóa `ghi chú`, `note`,
-  `riêng tư` hoặc `bảo mật` bị nhận sai, làm cả bốn mẫu VIEW_PRIVATE_NOTE thành
-  OUT_OF_SCOPE.
+- `TST0016` đến `TST0020`: các từ khóa `ghi chú`, `note`, `riêng tư` hoặc
+  `bảo mật` bị nhận sai, làm cả năm mẫu VIEW_PRIVATE_NOTE thành OUT_OF_SCOPE.
 
 ## 5. OUT_OF_SCOPE test
 
-`out_of_scope_test_results.csv` có đủ 10 câu ngoài phạm vi. Text chuẩn bị từ
-chối đúng 10/10. Trong nhánh audio, sáu câu có bản thu đều bị từ chối đúng
-(6/6 = 100%); bốn câu `TST0022`, `TST0025`, `TST0028`, `TST0030` chưa có audio,
-vì vậy chưa thể kết luận tỷ lệ 10/10 cho audio test.
+`out_of_scope_test_results.csv` có đủ 10 câu ngoài phạm vi. Text chuẩn và nhánh
+audio đều từ chối đúng 10/10 (100%).
 
 ## 6. Entity test
 
 | Nguồn | All-command exact match | Entity-bearing exact match | Date | Time | Title |
 |---|---:|---:|---:|---:|---:|
 | Transcript chuẩn | 30/30 = 100% | 10/10 = 100% | 10/10 = 100% | 5/5 = 100% | 5/5 = 100% |
-| Audio → Whisper | 16/20 = 80% | 2/6 = 33.33% | 3/6 = 50% | 2/3 = 66.67% | 1/3 = 33.33% |
+| Audio → Whisper | 24/30 = 80% | 4/10 = 40% | 6/10 = 60% | 3/5 = 60% | 1/5 = 20% |
 
 `All-command exact match` có nhiều câu không cần entity nên có thể làm kết quả
 trông cao hơn. Chỉ số phản ánh đúng các câu cần entity là entity-bearing exact
-match: 2/6 = 33.33% trên audio hiện có. Ví dụ `TST0015` giữ đúng date và time
-nhưng “gửi bài” bị nhận thành “gửi bay”, làm title và toàn bộ entity không exact
-match.
+match: 4/10 = 40% trên đủ audio test.
 
 ## 7. Hạn chế và kết luận
 
-- ASR test và Intent/Entity trên transcript chuẩn đã hoàn thành đầy đủ.
-- Command audio test chưa hoàn chỉnh vì thiếu 10/30 audio, toàn bộ thuộc
-  `cmdspk03`; kết quả audio hiện chỉ đại diện cho 20 bản thu của hai speaker.
+- ASR test, Intent/Entity trên transcript chuẩn và command audio test đã hoàn
+  thành đầy đủ.
+- Manifest có đủ 60/60 command audio (30 validation, 30 test); báo cáo kiểm
+  định không phát hiện lỗi định dạng, mức tín hiệu, trùng nội dung hoặc leakage.
 - Rule-based NLU đạt 100% trên transcript chuẩn nhưng nhạy với lỗi từ khóa của
   Whisper, đặc biệt là VIEW_PRIVATE_NOTE.
-- Kết quả OUT_OF_SCOPE audio 100% chỉ áp dụng cho 6 câu có audio, không được báo
-  cáo thành 10/10.
+- Kết quả OUT_OF_SCOPE audio đạt 10/10; VIEW_PRIVATE_NOTE audio đạt 0/5 và là
+  hạn chế chính còn lại.
 - Không có rule hoặc cấu hình nào được chỉnh sau khi xem test result.
 
 ## 8. Artifact bàn giao
