@@ -1,0 +1,148 @@
+{
+  "overall_5_label_accuracy": 0.65,
+  "functional_4_intent_accuracy": 0.5,
+  "out_of_scope_rejection_accuracy": 1.0,
+  "per_intent_accuracy": {
+    "GET_TIME": 0.75,
+    "VIEW_SCHEDULE": 0.6666666666666666,
+    "ADD_SCHEDULE": 0.6666666666666666,
+    "VIEW_PRIVATE_NOTE": 0.0,
+    "OUT_OF_SCOPE": 1.0
+  },
+  "per_intent_counts": {
+    "GET_TIME": {
+      "correct": 3,
+      "count": 4,
+      "accuracy": 0.75
+    },
+    "VIEW_SCHEDULE": {
+      "correct": 2,
+      "count": 3,
+      "accuracy": 0.6666666666666666
+    },
+    "ADD_SCHEDULE": {
+      "correct": 2,
+      "count": 3,
+      "accuracy": 0.6666666666666666
+    },
+    "VIEW_PRIVATE_NOTE": {
+      "correct": 0,
+      "count": 4,
+      "accuracy": 0.0
+    },
+    "OUT_OF_SCOPE": {
+      "correct": 6,
+      "count": 6,
+      "accuracy": 1.0
+    }
+  },
+  "metric_scope": "successful recorded command audio only",
+  "complete": false,
+  "expected_sample_count": 30,
+  "audio_evaluated_count": 20,
+  "audio_successful_count": 20,
+  "audio_missing_count": 10,
+  "audio_failure_count": 0,
+  "coverage": 0.6666666666666666,
+  "coverage_adjusted_accuracy_missing_not_counted_as_predictions": {
+    "overall_5_label_correct_over_expected": 0.43333333333333335,
+    "functional_4_intent_correct_over_expected": 0.35,
+    "out_of_scope_correct_over_expected": 0.6
+  },
+  "ground_truth_text": {
+    "overall_5_label_accuracy": 1.0,
+    "functional_4_intent_accuracy": 1.0,
+    "out_of_scope_rejection_accuracy": 1.0,
+    "per_intent_accuracy": {
+      "GET_TIME": 1.0,
+      "VIEW_SCHEDULE": 1.0,
+      "ADD_SCHEDULE": 1.0,
+      "VIEW_PRIVATE_NOTE": 1.0,
+      "OUT_OF_SCOPE": 1.0
+    },
+    "per_intent_counts": {
+      "GET_TIME": {
+        "correct": 5,
+        "count": 5,
+        "accuracy": 1.0
+      },
+      "VIEW_SCHEDULE": {
+        "correct": 5,
+        "count": 5,
+        "accuracy": 1.0
+      },
+      "ADD_SCHEDULE": {
+        "correct": 5,
+        "count": 5,
+        "accuracy": 1.0
+      },
+      "VIEW_PRIVATE_NOTE": {
+        "correct": 5,
+        "count": 5,
+        "accuracy": 1.0
+      },
+      "OUT_OF_SCOPE": {
+        "correct": 10,
+        "count": 10,
+        "accuracy": 1.0
+      }
+    }
+  },
+  "entity_exact_match": {
+    "ground_truth_text": {
+      "evaluated_count": 30,
+      "all_command_exact_match": 1.0,
+      "entity_bearing_count": 10,
+      "entity_bearing_exact_match": 1.0,
+      "per_field": {
+        "date": {
+          "correct": 10,
+          "count": 10,
+          "exact_match": 1.0
+        },
+        "time": {
+          "correct": 5,
+          "count": 5,
+          "exact_match": 1.0
+        },
+        "title": {
+          "correct": 5,
+          "count": 5,
+          "exact_match": 1.0
+        }
+      }
+    },
+    "audio_whisper": {
+      "evaluated_count": 20,
+      "all_command_exact_match": 0.8,
+      "entity_bearing_count": 6,
+      "entity_bearing_exact_match": 0.3333333333333333,
+      "per_field": {
+        "date": {
+          "correct": 3,
+          "count": 6,
+          "exact_match": 0.5
+        },
+        "time": {
+          "correct": 2,
+          "count": 3,
+          "exact_match": 0.6666666666666666
+        },
+        "title": {
+          "correct": 1,
+          "count": 3,
+          "exact_match": 0.3333333333333333
+        }
+      }
+    }
+  },
+  "test_config": "reports\\asr_nlu_test_config.json",
+  "test_config_sha256": "30fca0c93ab63f8d2ebcd5ef2093cb65cfc8551c7caccaa9f60de49d2df85957",
+  "label_provenance_note": "Application labels are project-defined. They are not claimed to be the original Speech-MASSIVE intent labels.",
+  "artifacts": {
+    "intent_ground_truth": "reports/nlu/intent_test_ground_truth.csv",
+    "intent_whisper": "reports/nlu/intent_test_whisper.csv",
+    "out_of_scope": "reports/nlu/out_of_scope_test_results.csv",
+    "entities": "reports/nlu/entity_test_results.csv"
+  }
+}

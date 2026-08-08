@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "purpose": "Week 3 held-out ASR and application command analysis",
+  "frozen_at": "2026-08-08T10:46:35+07:00",
+  "policy": {
+    "held_out_test": true,
+    "rule_or_config_tuning_after_freeze_allowed": false,
+    "rerun_to_improve_reported_results_allowed": false,
+    "missing_command_audio_is_reported_not_imputed": true,
+    "speech_massive_source_intent_is_application_ground_truth": false,
+    "label_note": "The five application labels are project-defined labels; source_intent in the Speech-MASSIVE-derived ASR split is informational only."
+  },
+  "application_labels": [
+    "GET_TIME",
+    "VIEW_SCHEDULE",
+    "ADD_SCHEDULE",
+    "VIEW_PRIVATE_NOTE",
+    "OUT_OF_SCOPE"
+  ],
+  "reference_date": "2026-07-28",
+  "asr": {
+    "backend": "faster-whisper",
+    "model_size": "small",
+    "model_name": "whisper-small",
+    "language": "vi",
+    "task": "transcribe",
+    "device": "cpu",
+    "compute_type": "int8",
+    "cpu_threads": 0,
+    "num_workers": 1,
+    "beam_size": 10,
+    "vad_filter": true,
+    "condition_on_previous_text": false,
+    "word_timestamps": false,
+    "download_root": "models/cache/whisper",
+    "local_files_only": false
+  },
+  "model_cache_revision": "536b0662742c02347bc0e980a01041f333bce120",
+  "runtime": {
+    "python": "3.11.0",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "packages": {
+      "faster-whisper": "1.2.1",
+      "ctranslate2": "4.8.1",
+      "PyYAML": "6.0.3"
+    }
+  },
+  "git": {
+    "commit": "e84184f4eabbaffb3bb92ef8e10a3316db5d6248",
+    "worktree_clean_before_snapshot": false,
+    "worktree_status_before_snapshot": [
+      "?? scripts/evaluate_week3_nlu.py",
+      "?? scripts/week3_test_config.py",
+      "?? tests/test_week3_nlu_evaluation.py"
+    ]
+  },
+  "datasets": {
+    "asr_test": {
+      "path": "data/metadata/asr_test.csv",
+      "row_count": 125
+    },
+    "command_test": {
+      "path": "data/metadata/command_test.csv",
+      "row_count": 30
+    },
+    "command_audio_test": {
+      "manifest": "data/commands/command_audio_manifest.csv",
+      "expected_count": 30,
+      "ready_count_at_freeze": 20,
+      "missing_count_at_freeze": 10
+    }
+  },
+  "locked_files": {
+    "config.yaml": "4a3b8b28e680c8927279f35706311c231734e7a6e44a24992c1c333d763b7528",
+    "data/metadata/asr_test.csv": "eb99155454dac44d2be0e3ac1cb6ca5467658b36e02038cfadbeaa1afb60634a",
+    "data/metadata/command_test.csv": "7b35d712331d83326449c9266810c2a5007e3fca845d48ea7686722d5cd9200d",
+    "data/commands/command_audio_manifest.csv": "e64fff9296b579dc5768dd1719ad8070c37d4fb5cca77dbc1e539b3ee6b514a0",
+    "src/asr/metrics.py": "4e5139e65beacb0768fb6fe0df36bd16a600b6bb1472482c704d29fb684bab57",
+    "src/asr/text_normalizer.py": "986941d7b216bf6e6427daf8c4bdf9b4389603d2a824d7cf911dcc31dad260d6",
+    "src/asr/whisper_model.py": "1f3d1a600f76c77954ec91875f6e5cf8c57fc1d25ae3b639a2508f48a2d99fbb",
+    "src/nlu/command_parser.py": "caf8556fe831bf957c418c38b6928f9184fe2502cdb3bf745ca5d076b36d67fa",
+    "src/nlu/entity_extractor.py": "3aba50b49c7d3c700ae02c450209fc687979dc160cbbe6133e7e9f56f1cec4c3",
+    "src/nlu/intent_classifier.py": "c3fa49c05ae463f7a91f8ec69664b2184a4db70a3c257f0f392aa44d8c7cb12f",
+    "src/nlu/intent_schema.py": "5af355103064174e3d819cf45f14d4f946439d550e85edfbfd8a5eb4dbd63f2c",
+    "src/nlu/missing_fields.py": "b68ce860d96002ea1323903765a324c096f8f9c290b12bba227de7a7563aa018",
+    "src/nlu/text_normalizer.py": "82e4eda1019393f32114c825b502c9ff8910da4c580c075c8bf55e63b2592b5d",
+    "src/pipeline/asr_nlu.py": "ecb7e9dcfb984b0b9b51cb55d3f1bf52d50ad624a41ac8ea1836cc2fce3febde",
+    "scripts/evaluate_asr.py": "8f81f09dfed7f3f0d3fcdeb5a3c45d26b0d4c9cc9c5a4a3d0627e64154059f12",
+    "scripts/evaluate_week3_nlu.py": "806c5070974668b92553dc6eae21c465533b0f5132fd6aff2cbf2617207d0a25",
+    "scripts/week3_test_config.py": "09b660c524d41a1c879c566f5c8edcd70c546fc4db4fd7e86d1fdb05b86c3bcc"
+  }
+}

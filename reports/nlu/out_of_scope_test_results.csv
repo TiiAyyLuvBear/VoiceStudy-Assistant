@@ -1,0 +1,11 @@
+command_id,transcript,expected_intent,text_predicted_intent,text_correctly_rejected,audio_available,whisper_transcript,whisper_predicted_intent,whisper_correctly_rejected,error
+TST0021,Mở máy tính giúp tôi.,OUT_OF_SCOPE,OUT_OF_SCOPE,true,true,Mở máy tấn giúp tôi,OUT_OF_SCOPE,true,
+TST0022,Ngày mai nhiệt độ bao nhiêu?,OUT_OF_SCOPE,OUT_OF_SCOPE,true,false,,,,not_recorded
+TST0023,Tính điểm trung bình của tôi.,OUT_OF_SCOPE,OUT_OF_SCOPE,true,true,đánh điểm trung bình của tôi,OUT_OF_SCOPE,true,
+TST0024,Đặt vé xe lúc 8 giờ.,OUT_OF_SCOPE,OUT_OF_SCOPE,true,true,Đặc vẽ xe lúc 8 giờ.,OUT_OF_SCOPE,true,
+TST0025,Đọc bài báo này.,OUT_OF_SCOPE,OUT_OF_SCOPE,true,false,,,,not_recorded
+TST0026,Cho tôi xem ảnh cá nhân.,OUT_OF_SCOPE,OUT_OF_SCOPE,true,true,cho tôi xem ảnh cá nhân,OUT_OF_SCOPE,true,
+TST0027,Thêm sản phẩm vào giỏ hàng.,OUT_OF_SCOPE,OUT_OF_SCOPE,true,true,Thêm sản phẩm vào gió hèn,OUT_OF_SCOPE,true,
+TST0028,Tôi có môn học yêu thích.,OUT_OF_SCOPE,OUT_OF_SCOPE,true,false,,,,not_recorded
+TST0029,Mở note.,OUT_OF_SCOPE,OUT_OF_SCOPE,true,true,Mở nót.,OUT_OF_SCOPE,true,
+TST0030,Hôm nay có sự kiện gì?,OUT_OF_SCOPE,OUT_OF_SCOPE,true,false,,,,not_recorded
