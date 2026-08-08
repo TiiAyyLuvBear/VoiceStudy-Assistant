@@ -19,3 +19,5 @@ __pycache__/
 
 # Local runtime data.
 data/database/*.db
+.venv/
+.tests/
