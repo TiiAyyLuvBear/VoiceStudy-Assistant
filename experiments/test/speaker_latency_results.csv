@@ -1,0 +1,9 @@
+stage,mean_latency_ms
+preprocessing,0.354130
+ecapa_embedding,31.930800
+linear_svm_inference,0.036880
+closed_set_cosine_sid,0.067550
+speaker_disjoint_cosine_sid,0.011014
+unknown_detection,0.016391
+speaker_verification,0.007756
+application_cosine_sid,0.013302

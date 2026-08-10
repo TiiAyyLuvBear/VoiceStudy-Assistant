@@ -1,0 +1,215 @@
+{
+  "protocol": "WEEK3_COSINE_CLOSED_SET_TEST",
+  "test_sample_count": 50,
+  "embedding_dim": 192,
+  "num_classes": 10,
+  "unknown_threshold_applied": false,
+  "threshold_policy": "Closed-set evaluation only; no unknown threshold is applied.",
+  "manifest": "data\\processed\\v1\\metadata\\svm_closed_set_test.csv",
+  "centroid_directory": "models\\experimental\\svm_closed_set_centroids",
+  "metrics": {
+    "accuracy": 0.98,
+    "macro_precision": 0.9833333333333334,
+    "macro_recall": 0.9800000000000001,
+    "macro_f1": 0.9797979797979798,
+    "per_speaker_accuracy": {
+      "exp_svm_spk_0001": {
+        "count": 5,
+        "correct": 5,
+        "accuracy": 1.0
+      },
+      "exp_svm_spk_0002": {
+        "count": 5,
+        "correct": 5,
+        "accuracy": 1.0
+      },
+      "exp_svm_spk_0003": {
+        "count": 5,
+        "correct": 5,
+        "accuracy": 1.0
+      },
+      "exp_svm_spk_0004": {
+        "count": 5,
+        "correct": 5,
+        "accuracy": 1.0
+      },
+      "exp_svm_spk_0005": {
+        "count": 5,
+        "correct": 4,
+        "accuracy": 0.8
+      },
+      "exp_svm_spk_0006": {
+        "count": 5,
+        "correct": 5,
+        "accuracy": 1.0
+      },
+      "exp_svm_spk_0007": {
+        "count": 5,
+        "correct": 5,
+        "accuracy": 1.0
+      },
+      "exp_svm_spk_0008": {
+        "count": 5,
+        "correct": 5,
+        "accuracy": 1.0
+      },
+      "exp_svm_spk_0009": {
+        "count": 5,
+        "correct": 5,
+        "accuracy": 1.0
+      },
+      "exp_svm_spk_0010": {
+        "count": 5,
+        "correct": 5,
+        "accuracy": 1.0
+      }
+    }
+  },
+  "labels": [
+    "exp_svm_spk_0001",
+    "exp_svm_spk_0002",
+    "exp_svm_spk_0003",
+    "exp_svm_spk_0004",
+    "exp_svm_spk_0005",
+    "exp_svm_spk_0006",
+    "exp_svm_spk_0007",
+    "exp_svm_spk_0008",
+    "exp_svm_spk_0009",
+    "exp_svm_spk_0010"
+  ],
+  "confusion_matrix": [
+    [
+      5,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      5,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      5,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      5,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      1,
+      0,
+      4,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      5,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      5,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      5,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      5,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      5
+    ]
+  ],
+  "svm_comparison": {
+    "test_sample_count": 50,
+    "svm_accuracy": 1.0,
+    "cosine_accuracy": 0.98,
+    "accuracy_difference_cosine_minus_svm": -0.02,
+    "both_correct": 49,
+    "svm_only_correct": 1,
+    "cosine_only_correct": 0,
+    "both_wrong": 0,
+    "agreement_count": 49,
+    "agreement_rate": 0.98
+  },
+  "svm_metrics_source": "experiments\\test\\svm_closed_set_metrics.json"
+}

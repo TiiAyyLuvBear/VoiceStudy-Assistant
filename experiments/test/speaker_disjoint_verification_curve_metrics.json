@@ -1,0 +1,14 @@
+{
+  "protocol": "WEEK3_SPEAKER_VERIFICATION_CURVE",
+  "test_trial_count": 252,
+  "genuine_count": 10,
+  "non_genuine_count": 242,
+  "roc_auc": 0.978099173553719,
+  "eer": 0.10165289256198345,
+  "eer_threshold": 0.51262319,
+  "eer_far": 0.10330578512396695,
+  "eer_frr": 0.09999999999999998,
+  "eer_threshold_used_for_system": false,
+  "system_threshold": 0.37547598,
+  "note": "EER is descriptive only. The frozen verification threshold remains unchanged."
+}

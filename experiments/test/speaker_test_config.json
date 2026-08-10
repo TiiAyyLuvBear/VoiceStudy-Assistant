@@ -1,0 +1,62 @@
+﻿{
+  "protocol": "WEEK3_SPEAKER_RECOGNITION_TEST",
+
+  "random_seed": 42,
+
+  "preprocessing": {
+    "version": "v1",
+    "metadata_root": "data/processed/v1/metadata"
+  },
+
+  "ecapa": {
+    "checkpoint_dir": "models/cache/ecapa",
+    "frozen": true
+  },
+
+  "svm_closed_set": {
+    "model_path": "models/experimental/speaker_svm_linear.pkl",
+    "model_type": "LinearSVC",
+    "C": 0.1,
+    "classes": [
+      "exp_svm_spk_0001",
+      "exp_svm_spk_0002",
+      "exp_svm_spk_0003",
+      "exp_svm_spk_0004",
+      "exp_svm_spk_0005",
+      "exp_svm_spk_0006",
+      "exp_svm_spk_0007",
+      "exp_svm_spk_0008",
+      "exp_svm_spk_0009",
+      "exp_svm_spk_0010"
+    ],
+    "unknown_threshold_applied": false
+  },
+
+  "cosine_closed_set": {
+    "centroid_dir": "models/experimental/svm_closed_set_centroids",
+    "unknown_threshold_applied": false
+  },
+
+  "speaker_disjoint_sid": {
+    "unknown_threshold": 0.51307271,
+    "threshold_source": "models/experimental/cosine_unknown_threshold.json"
+  },
+
+  "speaker_disjoint_verification": {
+    "verification_threshold": 0.37547598,
+    "threshold_source": "models/experimental/verification_threshold.json"
+  },
+
+  "test_manifests": {
+    "svm_closed_set": "data/processed/v1/metadata/svm_closed_set_test.csv",
+    "cosine_test_enrollment": "data/processed/v1/metadata/cosine_test_enrollment.csv",
+    "cosine_test_query": "data/processed/v1/metadata/cosine_test_query.csv",
+    "cosine_test_unknown": "data/processed/v1/metadata/cosine_test_unknown.csv"
+  },
+
+  "selection_policy": {
+    "thresholds_locked_from_validation": true,
+    "no_test_threshold_tuning": true,
+    "no_test_eer_threshold_for_system": true
+  }
+}

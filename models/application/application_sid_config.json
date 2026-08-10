@@ -1,0 +1,30 @@
+{
+  "protocol": "APPLICATION_SID",
+  "model": {
+    "embedding_model": "ECAPA-TDNN",
+    "checkpoint": "models\\cache\\ecapa\\embedding_model.ckpt",
+    "embedding_dim": 192
+  },
+  "preprocessing": {
+    "version": "v1"
+  },
+  "decision": {
+    "method": "cosine_centroid",
+    "threshold": 0.51307271,
+    "comparison": "cosine_similarity >= threshold means KNOWN"
+  },
+  "threshold_source": {
+    "type": "frozen_from_validation",
+    "source": "models\\experimental\\cosine_unknown_threshold.json",
+    "selection_criterion": "maximize overall detection accuracy; tie-break by unknown rejection, known acceptance, then smaller threshold"
+  },
+  "application_enrollment": {
+    "directory": "models\\application\\user_embeddings",
+    "embedding_count": 1,
+    "embedding_files": [
+      "models\\application\\user_embeddings\\user_001.npy"
+    ]
+  },
+  "random_seed": 42,
+  "status": "FROZEN"
+}
