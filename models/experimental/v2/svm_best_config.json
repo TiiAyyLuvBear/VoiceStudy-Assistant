@@ -1,0 +1,26 @@
+{
+  "protocol": "SVM_CLOSED_SET",
+  "model_type": "LinearSVC",
+  "candidate_C": [
+    0.1,
+    1.0,
+    10.0
+  ],
+  "selected_C": 0.1,
+  "selection_metrics": {
+    "validation_accuracy": 1.0,
+    "validation_macro_f1": 1.0
+  },
+  "selection_split": "svm_closed_set_validation",
+  "selection_sample_count": 129,
+  "training_split": "svm_closed_set_train",
+  "training_sample_count": 600,
+  "embedding_dim": 192,
+  "tie_breaker": "accuracy, macro_f1, then smaller C",
+  "forbidden_selection_data": [
+    "svm_closed_set_enrollment",
+    "svm_closed_set_test",
+    "cosine_validation_*",
+    "cosine_test_*"
+  ]
+}

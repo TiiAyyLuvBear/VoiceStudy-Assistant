@@ -1,0 +1,85 @@
+{
+  "protocol": "SPEAKER_RECOGNITION_V2_TEST",
+  "dataset_version": "v2",
+  "status": "FROZEN_AFTER_EVALUATION",
+  "random_seed": 42,
+  "preprocessing": {
+    "version": "v1",
+    "embedding_dim": 192
+  },
+  "split_manifest": {
+    "path": "data/processed/v2/split_manifest.json",
+    "sha256": "e5265368c90ee35f8c7836f0065367405ae89ff99a884145fd1c488d68729c41",
+    "freeze_status": "FROZEN",
+    "checksum_algorithm": "sha256-canonical-csv-v1"
+  },
+  "ecapa": {
+    "model_id": "speechbrain/spkrec-ecapa-voxceleb",
+    "checkpoint": "models/cache/ecapa/embedding_model.ckpt",
+    "checkpoint_sha256": "0575cb64845e6b9a10db9bcb74d5ac32b326b8dc90352671d345e2ee3d0126a2",
+    "hyperparameters": "models/cache/ecapa/hyperparams.yaml",
+    "hyperparameters_sha256": "6f78854fa04ba59e761437b76a2575d3aba5e5016de3e9b69f0c9a5077fb1a41",
+    "frozen": true
+  },
+  "embeddings": {
+    "metadata": "data/processed/v2/embedding_metadata.csv",
+    "metadata_sha256": "bd153b0c804a63046b250242c2d15e8ba2b851a31e3f0e768f0b0d11015ffc58",
+    "count": 1251
+  },
+  "svm_closed_set": {
+    "model_path": "models/experimental/v2/speaker_svm_linear.pkl",
+    "model_sha256": "59f31657630e8f338c2e363baf82002ab0a9de653a0dcfc7d604d23360127f29",
+    "model_type": "LinearSVC",
+    "selected_C": 0.1,
+    "selection_split": "svm_closed_set_validation",
+    "training_sample_count": 600,
+    "validation_sample_count": 129,
+    "test_sample_count": 128,
+    "classes": [
+      "exp_svm_spk_0001",
+      "exp_svm_spk_0002",
+      "exp_svm_spk_0003",
+      "exp_svm_spk_0004",
+      "exp_svm_spk_0005",
+      "exp_svm_spk_0006",
+      "exp_svm_spk_0007",
+      "exp_svm_spk_0009",
+      "exp_svm_spk_0010"
+    ],
+    "unknown_threshold_applied": false
+  },
+  "cosine_closed_set": {
+    "centroid_dir": "models/experimental/v2/svm_closed_set_centroids",
+    "centroid_count": 9,
+    "unknown_threshold_applied": false
+  },
+  "speaker_disjoint_sid": {
+    "centroid_dir": "models/experimental/v2/cosine_test_centroids",
+    "centroid_count": 8,
+    "unknown_threshold": 0.51307271,
+    "threshold_config": "models/experimental/v2/cosine_unknown_threshold.json",
+    "threshold_config_sha256": "5d5b606740ac25f708024901e38df6f7116f77e9e0e7b94c62ccd391b006c979",
+    "selection_dataset_version": "v1",
+    "threshold_tuned_on_v2_test": false
+  },
+  "speaker_disjoint_verification": {
+    "verification_threshold": 0.37547598,
+    "threshold_config": "models/experimental/v2/verification_threshold.json",
+    "threshold_config_sha256": "c5f6cf674ae8cb6e951ed219067fe585a0524643210601e4ac99d01e8afa8f6b",
+    "selection_dataset_version": "v1",
+    "threshold_tuned_on_v2_test": false,
+    "test_eer_threshold_used_for_system": false
+  },
+  "test_manifests": {
+    "svm_closed_set": "data/processed/v2/metadata/svm_closed_set_test.csv",
+    "cosine_test_enrollment": "data/processed/v2/metadata/cosine_test_enrollment.csv",
+    "cosine_test_query": "data/processed/v2/metadata/cosine_test_query.csv",
+    "cosine_test_unknown": "data/processed/v2/metadata/cosine_test_unknown.csv"
+  },
+  "selection_policy": {
+    "C_selected_on_validation": true,
+    "thresholds_locked_before_v2_test": true,
+    "no_v2_test_threshold_tuning": true,
+    "no_test_eer_threshold_for_system": true
+  }
+}

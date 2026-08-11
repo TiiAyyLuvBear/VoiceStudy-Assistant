@@ -1,0 +1,20 @@
+{
+  "protocol": "SPEAKER_V2_VERIFICATION_FIXED_THRESHOLD",
+  "threshold": 0.37547598,
+  "threshold_source": "models/experimental/v2/verification_threshold.json",
+  "threshold_selection_dataset_version": "v1",
+  "threshold_tuned_on_v2_test": false,
+  "test_trial_count": 2472,
+  "genuine_count": 200,
+  "non_genuine_count": 2272,
+  "true_accept": 195,
+  "false_reject": 5,
+  "false_accept": 59,
+  "true_reject": 2213,
+  "metrics": {
+    "FAR": 0.02596830985915493,
+    "FRR": 0.025,
+    "verification_accuracy": 0.9741100323624595,
+    "F1": 0.8590308370044053
+  }
+}

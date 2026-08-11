@@ -1,0 +1,161 @@
+{
+  "protocol": "SPEAKER_V2_SVM_CLOSED_SET_TEST",
+  "test_sample_count": 128,
+  "num_classes": 9,
+  "unknown_threshold_applied": false,
+  "metrics": {
+    "accuracy": 1.0,
+    "macro_precision": 1.0,
+    "macro_recall": 1.0,
+    "macro_f1": 1.0
+  },
+  "per_speaker_accuracy": {
+    "exp_svm_spk_0001": {
+      "count": 15,
+      "correct": 15,
+      "accuracy": 1.0
+    },
+    "exp_svm_spk_0002": {
+      "count": 15,
+      "correct": 15,
+      "accuracy": 1.0
+    },
+    "exp_svm_spk_0003": {
+      "count": 14,
+      "correct": 14,
+      "accuracy": 1.0
+    },
+    "exp_svm_spk_0004": {
+      "count": 14,
+      "correct": 14,
+      "accuracy": 1.0
+    },
+    "exp_svm_spk_0005": {
+      "count": 14,
+      "correct": 14,
+      "accuracy": 1.0
+    },
+    "exp_svm_spk_0006": {
+      "count": 14,
+      "correct": 14,
+      "accuracy": 1.0
+    },
+    "exp_svm_spk_0007": {
+      "count": 14,
+      "correct": 14,
+      "accuracy": 1.0
+    },
+    "exp_svm_spk_0009": {
+      "count": 14,
+      "correct": 14,
+      "accuracy": 1.0
+    },
+    "exp_svm_spk_0010": {
+      "count": 14,
+      "correct": 14,
+      "accuracy": 1.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      15,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      15,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      14,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      14,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      14,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      14,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      14,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      14,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      14
+    ]
+  ],
+  "mean_inference_latency_ms": 0.010396875040896703
+}
