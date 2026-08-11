@@ -5,6 +5,7 @@ from __future__ import annotations
 from datetime import datetime
 from pathlib import Path
 
+from src.audio.source import resolve_audio_path
 from src.database.user_repository import get_user
 from src.pipeline.asr_nlu import run_asr_nlu_pipeline
 from src.security.access_policy import PUBLIC, REJECT, SID, SID_AND_SV, get_access_policy
@@ -40,8 +41,19 @@ def process_audio_request(
     Personal user IDs come only from Application SID; callers cannot select the
     database owner through a transcript or request parameter.
     """
+    try:
+        resolved_audio_path = resolve_audio_path(audio_path)
+    except (FileNotFoundError, RuntimeError, ValueError) as exc:
+        return _end_to_end_result(
+            success=False,
+            error=str(exc),
+            response="Không thể tải audio. Vui lòng thử lại.",
+        )
+
     pipeline = asr_nlu_runner(
-        audio_path, reference_date=reference_date, config_path=config_path,
+        resolved_audio_path,
+        reference_date=reference_date,
+        config_path=config_path,
     )
     if not pipeline["success"]:
         return _end_to_end_result(
@@ -68,7 +80,11 @@ def process_audio_request(
             **common, response="Câu lệnh ngoài phạm vi hỗ trợ.", error="OUT_OF_SCOPE"
         )
 
-    sid = identifier(audio_path, database_path=database_path, config_path=config_path)
+    sid = identifier(
+        resolved_audio_path,
+        database_path=database_path,
+        config_path=config_path,
+    )
     speaker = {
         "candidate_user_id": sid.get("candidate_user_id"),
         "similarity": sid.get("similarity"),
@@ -85,7 +101,9 @@ def process_audio_request(
 
     if policy == SID_AND_SV:
         sv = verifier(
-            audio_path, candidate_user_id, database_path=database_path,
+            resolved_audio_path,
+            candidate_user_id,
+            database_path=database_path,
             config_path=config_path,
         )
         speaker["verification"] = sv

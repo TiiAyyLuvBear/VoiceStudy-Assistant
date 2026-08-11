@@ -3,6 +3,8 @@ import librosa
 import numpy as np
 import soundfile as sf
 
+from src.audio.source import resolve_audio_path
+
 TARGET_SAMPLE_RATE = 16000
 TOP_DB = 30
 TARGET_PEAK = 0.99
@@ -93,7 +95,8 @@ def preprocess_audio(input_path: str):
         audio,
         sample_rate
     """
-    audio, sr = sf.read(input_path)
+    source_path = resolve_audio_path(input_path)
+    audio, sr = sf.read(source_path)
     audio = convert_to_mono(audio)
     audio = resample_audio(audio, sr)
     audio = trim_silence(audio)

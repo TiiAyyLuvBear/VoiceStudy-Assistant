@@ -16,6 +16,7 @@ from typing import Protocol
 import numpy as np
 
 from src.audio.preprocessing import preprocess_audio
+from src.audio.source import resolve_audio_path
 from src.speaker.embedding import ECAPAEmbeddingExtractor
 
 
@@ -210,9 +211,7 @@ def extract_all_embeddings(
             print(f"[{index}/{len(rows)}] resume {row['audio_id']}", flush=True)
             continue
 
-        source = audio_root / Path(row["audio_path"])
-        if not source.is_file():
-            raise FileNotFoundError(f"Audio does not exist: {source}")
+        source = resolve_audio_path(audio_root / Path(row["audio_path"]))
         audio, sample_rate = preprocessor(str(source))
         if engine is None:
             engine = ECAPAEmbeddingExtractor.from_config(config_path)

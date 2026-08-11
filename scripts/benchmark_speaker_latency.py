@@ -16,6 +16,8 @@ import numpy as np
 import pandas as pd
 import joblib
 
+from src.audio.source import resolve_audio_path as resolve_project_audio
+
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 TEST_MANIFEST = PROJECT_ROOT / "data/processed/v1/metadata/svm_closed_set_test.csv"
@@ -52,9 +54,15 @@ def resolve_audio_path(value: str) -> Path:
         if candidate.is_file():
             return candidate.resolve()
 
+    for candidate in candidates:
+        try:
+            return resolve_project_audio(candidate)
+        except FileNotFoundError:
+            continue
+
     raise FileNotFoundError(
-        "Audio file not found. Tried:\n" +
-        "\n".join(str(x) for x in candidates)
+        "Audio file not found locally or on Hugging Face. Tried:\n"
+        + "\n".join(str(x) for x in candidates)
     )
 
 def load_embedding(path: Path) -> np.ndarray:

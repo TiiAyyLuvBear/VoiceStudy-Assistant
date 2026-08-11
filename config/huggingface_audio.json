@@ -1,0 +1,15 @@
+{
+  "repo_id": "Loctran123/VoiceStudy-Assistant-audio",
+  "repo_type": "dataset",
+  "revision": "55d065fba341fe54e2a67ebba9f2c3df99e24491",
+  "private": true,
+  "local_first": true,
+  "cache_dir": "models/cache/huggingface/audio",
+  "path_prefixes": [
+    "data/audio/dev/",
+    "data/audio/train-115/",
+    "data/commands/audio/test/",
+    "data/commands/audio/validation/",
+    "data/processed/v1/audio/dev/"
+  ]
+}
