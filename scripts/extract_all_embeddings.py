@@ -279,6 +279,15 @@ def main() -> int:
         default=Path("data/metadata/embedding_metadata.csv"),
     )
     parser.add_argument("--config", type=Path, default=Path("config.yaml"))
+    parser.add_argument(
+        "--protocol-file",
+        action="append",
+        dest="protocol_files",
+        help=(
+            "Protocol CSV filename relative to --metadata-dir; repeat this "
+            "option to select a v2 subset"
+        ),
+    )
     parser.add_argument("--limit", type=int)
     parser.add_argument(
         "--resume",
@@ -293,6 +302,7 @@ def main() -> int:
         embedding_dir=args.embedding_dir,
         output_path=args.output,
         config_path=args.config,
+        protocol_files=args.protocol_files or PROTOCOL_FILES,
         resume=args.resume,
         limit=args.limit,
     )

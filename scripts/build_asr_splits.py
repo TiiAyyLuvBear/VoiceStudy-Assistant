@@ -4,8 +4,12 @@ from __future__ import annotations
 
 import argparse
 import csv
+import json
 import random
+from datetime import datetime
 from pathlib import Path
+
+from src.utils import sha256_file
 
 
 OUTPUT_FIELDS = (
@@ -88,7 +92,7 @@ def _select(
     rows: list[dict[str, str]],
     columns: dict[str, str | None],
     split_names: set[str],
-    size: int,
+    size: int | None,
     seed: int,
     audio_root: Path | None = None,
 ) -> list[dict[str, str]]:
@@ -119,14 +123,17 @@ def _select(
         seen_paths.add(normalized_path)
         candidates.append(row)
 
-    if len(candidates) < size:
+    if size is not None and size < 1:
+        raise ValueError("Split size must be positive or None for all usable rows")
+    if size is not None and len(candidates) < size:
         raise ValueError(
             f"Project split {sorted(split_names)} has only {len(candidates)} usable rows; "
             f"requested {size}"
         )
     random.Random(seed).shuffle(candidates)
+    selected = candidates if size is None else candidates[:size]
     return [
-        _canonical_row(row, columns, audio_root) for row in candidates[:size]
+        _canonical_row(row, columns, audio_root) for row in selected
     ]
 
 
@@ -138,11 +145,99 @@ def _write(path: Path, rows: list[dict[str, str]]) -> None:
         writer.writerows(rows)
 
 
+def _write_manifest(
+    path: Path,
+    inventory: Path,
+    validation_path: Path,
+    test_path: Path,
+    validation: list[dict[str, str]],
+    test: list[dict[str, str]],
+    seed: int,
+    validation_size: int | None,
+    test_size: int | None,
+) -> None:
+    asr_component = {
+        "source_inventory": {
+            "path": inventory.as_posix(),
+            "sha256": sha256_file(inventory),
+        },
+        "selection": {
+            "validation_project_split": "VALIDATION",
+            "test_project_split": "TEST",
+            "use_all_usable_rows": (
+                validation_size is None and test_size is None
+            ),
+            "requested_validation_size": validation_size,
+            "requested_test_size": test_size,
+            "unused_rows_included": False,
+            "require_nonempty_transcript": True,
+            "require_valid_flag": True,
+            "require_existing_audio": True,
+            "deduplicate_audio_path": True,
+            "random_seed": seed,
+            "validation_test_overlap": 0,
+        },
+        "datasets": {
+            "asr_validation": {
+                "path": validation_path.as_posix(),
+                "row_count": len(validation),
+                "sha256": sha256_file(validation_path),
+            },
+            "asr_test": {
+                "path": test_path.as_posix(),
+                "row_count": len(test),
+                "sha256": sha256_file(test_path),
+            },
+        },
+    }
+    if path.is_file():
+        manifest = json.loads(path.read_text(encoding="utf-8"))
+    else:
+        manifest = {}
+    if "components" not in manifest:
+        previous_asr = {
+            key: manifest[key]
+            for key in ("source_inventory", "selection", "datasets")
+            if key in manifest
+        }
+        manifest = {
+            "manifest_schema_version": 1,
+            "dataset_version": "v2",
+            "created_at": manifest.get(
+                "created_at",
+                datetime.now().astimezone().isoformat(timespec="seconds"),
+            ),
+            "random_seed": seed,
+            "components": {"asr": previous_asr},
+        }
+    manifest["dataset_version"] = "v2"
+    manifest["random_seed"] = seed
+    manifest["freeze_status"] = "FROZEN"
+    manifest.setdefault("components", {})["asr"] = asr_component
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    temporary.write_text(
+        json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    temporary.replace(path)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--inventory", type=Path, default=Path("data_inventory.csv"))
-    parser.add_argument("--validation-size", type=int, default=100)
-    parser.add_argument("--test-size", type=int, default=125)
+    parser.add_argument(
+        "--validation-size",
+        type=int,
+        default=None,
+        help="Number of usable VALIDATION rows; default uses all usable rows",
+    )
+    parser.add_argument(
+        "--test-size",
+        type=int,
+        default=None,
+        help="Number of usable TEST rows; default uses all usable rows",
+    )
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument(
         "--audio-root",
@@ -151,7 +246,12 @@ def main() -> int:
         help="Base directory for relative audio_path values",
     )
     parser.add_argument(
-        "--output-dir", type=Path, default=Path("data/metadata")
+        "--output-dir", type=Path, default=Path("data/processed/v2/metadata")
+    )
+    parser.add_argument(
+        "--manifest",
+        type=Path,
+        default=Path("data/processed/v2/split_manifest.json"),
     )
     args = parser.parse_args()
 
@@ -174,8 +274,21 @@ def main() -> int:
     if overlap:
         raise ValueError(f"ASR validation/test overlap detected: {sorted(overlap)[:5]}")
 
-    _write(args.output_dir / "asr_validation.csv", validation)
-    _write(args.output_dir / "asr_test.csv", test)
+    validation_path = args.output_dir / "asr_validation.csv"
+    test_path = args.output_dir / "asr_test.csv"
+    _write(validation_path, validation)
+    _write(test_path, test)
+    _write_manifest(
+        args.manifest,
+        args.inventory,
+        validation_path,
+        test_path,
+        validation,
+        test,
+        args.seed,
+        args.validation_size,
+        args.test_size,
+    )
     print(
         f"Created {len(validation)} validation and {len(test)} test rows "
         f"with seed={args.seed}"

@@ -431,13 +431,15 @@ python -m scripts.build_asr_splits `
 Kiểm tra file và số lượng:
 
 ```powershell
-Get-Item data/metadata/asr_validation.csv
-Get-Item data/metadata/asr_test.csv
-(Import-Csv data/metadata/asr_validation.csv).Count
-(Import-Csv data/metadata/asr_test.csv).Count
+Get-Item data/processed/v2/metadata/asr_validation.csv
+Get-Item data/processed/v2/metadata/asr_test.csv
+(Import-Csv data/processed/v2/metadata/asr_validation.csv).Count
+(Import-Csv data/processed/v2/metadata/asr_test.csv).Count
 ```
 
-Số lượng mặc định là 100 validation và 125 test.
+Mặc định lấy toàn bộ bản ghi hợp lệ: 322 validation và 249 test. Split
+`UNUSED` không được đưa vào. Bộ 100/125 trong `data/metadata/` là mốc v1
+đã khóa và không bị ghi đè.
 
 ### 17. Chạy ASR official evaluation
 
@@ -446,27 +448,32 @@ Số lượng mặc định là 100 validation và 125 test.
 ```powershell
 Measure-Command {
   python -m scripts.evaluate_asr `
-    data/metadata/asr_validation.csv `
-    --limit 5
+    data/processed/v2/metadata/asr_validation.csv `
+    --limit 5 `
+    --output-dir reports/asr/v2
 }
 ```
 
 Chạy đủ validation; năm file đã thành công sẽ được resume:
 
 ```powershell
-python -m scripts.evaluate_asr data/metadata/asr_validation.csv
+python -m scripts.evaluate_asr `
+  data/processed/v2/metadata/asr_validation.csv `
+  --output-dir reports/asr/v2
 ```
 
 Sau khi đã chốt model và normalization mới chạy test:
 
 ```powershell
-python -m scripts.evaluate_asr data/metadata/asr_test.csv
+python -m scripts.evaluate_asr `
+  data/processed/v2/metadata/asr_test.csv `
+  --output-dir reports/asr/v2
 ```
 
 Kiểm tra output:
 
 ```powershell
-Get-ChildItem reports/asr -File |
+Get-ChildItem reports/asr/v2 -File |
   Select-Object Name,Length,LastWriteTime
 ```
 

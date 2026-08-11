@@ -89,3 +89,34 @@ def test_resolves_inventory_paths_from_audio_root(tmp_path: Path) -> None:
     selected = _select(loaded, columns, {"validation"}, 1, 42, audio_root)
 
     assert Path(selected[0]["audio_path"]) == audio_path
+
+
+def test_none_size_selects_all_usable_rows(tmp_path: Path) -> None:
+    inventory = tmp_path / "data_inventory.csv"
+    fields = (
+        "audio_path",
+        "original_split",
+        "project_split",
+        "transcript",
+        "is_valid",
+    )
+    rows = [
+        {
+            "audio_path": f"dev/{index}.wav",
+            "original_split": "validation",
+            "project_split": "VALIDATION",
+            "transcript": f"sample {index}",
+            "is_valid": "true" if index < 3 else "false",
+        }
+        for index in range(4)
+    ]
+    with inventory.open("w", encoding="utf-8", newline="") as stream:
+        writer = csv.DictWriter(stream, fieldnames=fields)
+        writer.writeheader()
+        writer.writerows(rows)
+
+    loaded, columns = _load_inventory(inventory)
+    selected = _select(loaded, columns, {"validation"}, None, 42)
+
+    assert len(selected) == 3
+    assert {row["audio_id"] for row in selected} == {"0", "1", "2"}
