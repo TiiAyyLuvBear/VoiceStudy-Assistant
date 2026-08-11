@@ -42,8 +42,15 @@ def canonical_csv_sha256(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open('r', encoding='utf-8-sig', newline='') as stream:
         for row in csv.reader(stream):
+            # Git may convert LF to CRLF inside quoted multiline fields when
+            # core.autocrlf is enabled. Normalize field contents as well as
+            # record separators so the logical CSV hash remains portable.
+            normalized_row = [
+                value.replace('\r\n', '\n').replace('\r', '\n')
+                for value in row
+            ]
             canonical_row = json.dumps(
-                row,
+                normalized_row,
                 ensure_ascii=False,
                 separators=(',', ':'),
             )

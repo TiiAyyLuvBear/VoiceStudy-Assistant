@@ -5,6 +5,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from src.utils.files import sha256_file
+
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
@@ -13,6 +15,13 @@ EXPERIMENTAL_THRESHOLD = (
     / "models"
     / "experimental"
     / "cosine_unknown_threshold.json"
+)
+
+EXPERIMENTAL_VERIFICATION_THRESHOLD = (
+    PROJECT_ROOT
+    / "models"
+    / "experimental"
+    / "verification_threshold.json"
 )
 
 APPLICATION_EMBEDDINGS_DIR = (
@@ -64,6 +73,17 @@ def main() -> int:
 
     threshold = float(threshold_config["threshold"])
 
+    verification_config = load_json(
+        EXPERIMENTAL_VERIFICATION_THRESHOLD
+    )
+    if "threshold" not in verification_config:
+        raise ValueError(
+            "Verification threshold config does not contain 'threshold'"
+        )
+    verification_threshold = float(
+        verification_config["threshold"]
+    )
+
     # ---------------------------------------------------------
     # 2. Check application enrollment embeddings
     # ---------------------------------------------------------
@@ -88,11 +108,16 @@ def main() -> int:
     # ---------------------------------------------------------
 
     ecapa_embedding_model = ECAPA_DIR / "embedding_model.ckpt"
+    ecapa_hyperparameters = ECAPA_DIR / "hyperparams.yaml"
 
     if not ecapa_embedding_model.is_file():
         raise FileNotFoundError(
             f"Missing ECAPA embedding checkpoint: "
             f"{ecapa_embedding_model}"
+        )
+    if not ecapa_hyperparameters.is_file():
+        raise FileNotFoundError(
+            f"Missing ECAPA hyperparameters: {ecapa_hyperparameters}"
         )
 
     # ---------------------------------------------------------
@@ -104,8 +129,16 @@ def main() -> int:
 
         "model": {
             "embedding_model": "ECAPA-TDNN",
-            "checkpoint": str(
-                ecapa_embedding_model.relative_to(PROJECT_ROOT)
+            "source": "speechbrain/spkrec-ecapa-voxceleb",
+            "checkpoint": ecapa_embedding_model.relative_to(
+                PROJECT_ROOT
+            ).as_posix(),
+            "checkpoint_sha256": sha256_file(ecapa_embedding_model),
+            "hyperparameters": ecapa_hyperparameters.relative_to(
+                PROJECT_ROOT
+            ).as_posix(),
+            "hyperparameters_sha256": sha256_file(
+                ecapa_hyperparameters
             ),
             "embedding_dim": 192,
         },
@@ -124,21 +157,40 @@ def main() -> int:
 
         "threshold_source": {
             "type": "frozen_from_validation",
-            "source": str(
-                EXPERIMENTAL_THRESHOLD.relative_to(PROJECT_ROOT)
-            ),
+            "source": EXPERIMENTAL_THRESHOLD.relative_to(
+                PROJECT_ROOT
+            ).as_posix(),
             "selection_criterion": threshold_config.get(
                 "selection_criterion"
             ),
         },
 
-        "application_enrollment": {
-            "directory": str(
-                APPLICATION_EMBEDDINGS_DIR.relative_to(PROJECT_ROOT)
+        "speaker_verification": {
+            "method": "cosine_centroid",
+            "threshold": verification_threshold,
+            "comparison": (
+                "cosine_similarity >= threshold means VERIFIED"
             ),
+            "threshold_source": {
+                "type": "frozen_from_validation",
+                "source": (
+                    EXPERIMENTAL_VERIFICATION_THRESHOLD.relative_to(
+                        PROJECT_ROOT
+                    ).as_posix()
+                ),
+                "selection_criterion": verification_config.get(
+                    "selection_criterion"
+                ),
+            },
+        },
+
+        "application_enrollment": {
+            "directory": APPLICATION_EMBEDDINGS_DIR.relative_to(
+                PROJECT_ROOT
+            ).as_posix(),
             "embedding_count": len(embedding_files),
             "embedding_files": [
-                str(path.relative_to(PROJECT_ROOT))
+                path.relative_to(PROJECT_ROOT).as_posix()
                 for path in embedding_files
             ],
         },
@@ -170,14 +222,18 @@ def main() -> int:
     print("=" * 60)
     print("APPLICATION SID CONFIGURATION FROZEN")
     print("=" * 60)
-    print(f"Output    : {OUTPUT_CONFIG}")
+    print(
+        f"Output    : "
+        f"{OUTPUT_CONFIG.relative_to(PROJECT_ROOT).as_posix()}"
+    )
     print(f"Threshold : {threshold:.8f}")
+    print(f"SV threshold: {verification_threshold:.8f}")
     print(
         f"Embeddings: {len(embedding_files)}"
     )
     print(
         f"Checkpoint: "
-        f"{ecapa_embedding_model.relative_to(PROJECT_ROOT)}"
+        f"{ecapa_embedding_model.relative_to(PROJECT_ROOT).as_posix()}"
     )
     print("=" * 60)
 

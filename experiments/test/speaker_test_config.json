@@ -8,8 +8,21 @@
     "metadata_root": "data/processed/v1/metadata"
   },
 
+  "split_manifest": {
+    "path": "data/processed/v1/split_manifest.json",
+    "sha256": "bb1c5ade6adb06dbee1d070f5fcf1537ed9cf609e195180f36b05fbc23a96d95",
+    "dataset_version": "v1",
+    "freeze_status": "FROZEN",
+    "checksum_algorithm": "sha256-canonical-csv-v1"
+  },
+
   "ecapa": {
+    "model_id": "speechbrain/spkrec-ecapa-voxceleb",
     "checkpoint_dir": "models/cache/ecapa",
+    "checkpoint": "models/cache/ecapa/embedding_model.ckpt",
+    "checkpoint_sha256": "0575cb64845e6b9a10db9bcb74d5ac32b326b8dc90352671d345e2ee3d0126a2",
+    "hyperparameters": "models/cache/ecapa/hyperparams.yaml",
+    "hyperparameters_sha256": "6f78854fa04ba59e761437b76a2575d3aba5e5016de3e9b69f0c9a5077fb1a41",
     "frozen": true
   },
 
