@@ -28,13 +28,33 @@ def render_assistant_page() -> None:
             path.write_bytes(audio.getvalue())
             with st.spinner("Đang xử lý audio..."):
                 result = process_audio_request(path)
+        speaker = result.get("speaker", {})
+        columns = st.columns(4)
+        columns[0].metric("Intent", result.get("intent") or "-")
+        columns[1].metric(
+            "Speaker",
+            speaker.get("candidate_user_id") or speaker.get("status") or "-",
+        )
+        similarity = speaker.get("cosine_similarity")
+        columns[2].metric(
+            "Cosine",
+            "-" if similarity is None else f"{float(similarity):.4f}",
+        )
+        columns[3].metric(
+            "Tổng latency",
+            f"{float(result.get('latency_ms') or 0):.1f} ms",
+        )
         st.json({
             key: result[key] for key in (
                 "transcript", "intent", "entities", "missing_fields", "speaker",
-                "policy", "response", "error",
+                "policy", "stage_latency_ms", "latency_ms", "response", "error",
             )
         })
-        tts_audio = synthesize_vietnamese(result["response"])
+        if result.get("error"):
+            st.warning(result["response"])
+        else:
+            st.success(result["response"])
+        tts_audio = synthesize_vietnamese(result["response"]) if result["response"] else None
         if tts_audio:
             st.audio(tts_audio, format="audio/mp3")
         else:

@@ -1,0 +1,7 @@
+﻿test_case_id,category,scenario,intent,actual_policy,actual_error,sid_calls,sv_calls,database_integrity_pass,response_scope_pass,latency_ms,passed
+SYS011,SID_WRITE,add_valid,ADD_SCHEDULE,SID,,1,0,true,true,25.068900,true
+SYS012,SID_WRITE,add_claim_other,ADD_SCHEDULE,SID,,1,0,true,true,19.288100,true
+SYS013,SID_WRITE,missing_title,ADD_SCHEDULE,SID,MISSING_FIELDS,1,0,true,true,0.780900,true
+SYS014,SID_WRITE,missing_date,ADD_SCHEDULE,SID,MISSING_FIELDS,1,0,true,true,0.736700,true
+SYS015,SID_WRITE,missing_time,ADD_SCHEDULE,SID,MISSING_FIELDS,1,0,true,true,1.729500,true
+SYS016,SID_WRITE,unknown_add,ADD_SCHEDULE,SID,UNKNOWN_SPEAKER,1,0,true,true,1.728400,true

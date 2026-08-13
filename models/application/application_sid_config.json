@@ -19,25 +19,29 @@
   },
   "threshold_source": {
     "type": "frozen_from_validation",
-    "source": "models/experimental/cosine_unknown_threshold.json",
+    "source": "models/application/application_sid_threshold.json",
     "selection_criterion": "maximize overall detection accuracy; tie-break by unknown rejection, known acceptance, then smaller threshold"
   },
   "speaker_verification": {
     "method": "cosine_centroid",
-    "threshold": 0.37547598,
+    "threshold": 0.46882655,
     "comparison": "cosine_similarity >= threshold means VERIFIED",
     "threshold_source": {
-      "type": "frozen_from_validation",
-      "source": "models/experimental/verification_threshold.json",
-      "selection_criterion": "minimize absolute FAR-FRR gap; tie-break by lower mean error, higher F1, higher accuracy, then smaller threshold"
+      "type": "application_validation",
+      "source": "models/application/application_verification_threshold.json",
+      "selection_criterion": "minimize absolute FAR-FRR gap; tie-break by mean error, F1, accuracy, then smaller threshold"
     }
   },
   "application_enrollment": {
     "directory": "models/application/user_embeddings",
-    "embedding_count": 1,
+    "embedding_count": 3,
     "embedding_files": [
-      "models/application/user_embeddings/user_001.npy"
-    ]
+      "models/application/user_embeddings/user_001.npy",
+      "models/application/user_embeddings/user_002.npy",
+      "models/application/user_embeddings/user_003.npy"
+    ],
+    "required_audio_per_user": 5,
+    "speaker_model_training": false
   },
   "random_seed": 42,
   "status": "FROZEN"

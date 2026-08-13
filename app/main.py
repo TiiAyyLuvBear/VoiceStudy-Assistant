@@ -16,7 +16,7 @@ import streamlit as st
 from app.pages.assistant_page import render_assistant_page
 from app.pages.enrollment_page import render_enrollment_page
 from app.pages.user_management_page import render_user_management_page
-from src.database.database import create_database, get_connection
+from src.database.database import create_database
 from src.utils.config import load_yaml_mapping
 
 def load_config(config_path: Path) -> dict:
@@ -27,8 +27,8 @@ def load_config(config_path: Path) -> dict:
 def main() -> None:
     st.set_page_config(page_title="VoiceStudy Assistant", page_icon="🎙️", layout="wide")
     config = load_config(CONFIG_PATH)
-    DATABASE_PATH = config.get('database', {}).get('path', 'voicestudy.db')
-    get_connection(DATABASE_PATH)  # Ensure the database connection is established
+    database_path = config.get("database", {}).get("path", "voicestudy.db")
+    create_database(database_path)
     st.sidebar.title("VoiceStudy Assistant")
     page = st.sidebar.radio("Trang", ("Voice Assistant", "Speaker Enrollment", "User Management"))
     if page == "Voice Assistant":

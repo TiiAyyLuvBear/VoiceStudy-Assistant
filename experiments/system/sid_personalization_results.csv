@@ -1,0 +1,6 @@
+﻿test_case_id,category,scenario,intent,actual_policy,actual_error,sid_calls,sv_calls,database_integrity_pass,response_scope_pass,latency_ms,passed
+SYS005,SID,view_all,VIEW_SCHEDULE,SID,,1,0,true,true,6.503600,true
+SYS006,SID,view_by_date,VIEW_SCHEDULE,SID,,1,0,true,true,6.699500,true
+SYS007,SID,view_claim_other,VIEW_SCHEDULE,SID,,1,0,true,true,7.304500,true
+SYS008,SID,unknown_view,VIEW_SCHEDULE,SID,UNKNOWN_SPEAKER,1,0,true,true,0.826000,true
+SYS009,SID,no_enrollment,VIEW_SCHEDULE,SID,NO_ENROLLMENT,1,0,true,true,0.703300,true

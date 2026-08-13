@@ -190,3 +190,41 @@ Quy tắc lỗi:
 - `OUT_OF_SCOPE`: không gọi Speaker Recognition và database.
 - SID thất bại cho chức năng cá nhân: không truy vấn dữ liệu cá nhân.
 - SV thất bại cho ghi chú riêng tư: từ chối truy cập.
+
+## 7. Week 3 application speaker contracts
+
+The Streamlit application and orchestrator use `src.speaker.application`.
+Experimental Linear SVM identification remains separate.
+
+```python
+enroll_user(user_id, name, five_audio_paths)
+identify_application_user(audio_path)
+verify_speaker(audio_path, candidate_user_id)
+```
+
+Application SID returns both the canonical Week-3 fields and backward-compatible
+aliases:
+
+```json
+{
+  "protocol": "APPLICATION_SID",
+  "candidate_user_id": "user_003",
+  "cosine_similarity": 0.76,
+  "similarity": 0.76,
+  "unknown_threshold": 0.51307271,
+  "status": "KNOWN",
+  "identified": true,
+  "latency_ms": 25.0,
+  "success": true,
+  "error": null
+}
+```
+
+An unknown result has `status="UNKNOWN"`, `identified=false`, and hides
+`candidate_user_id`. Speaker verification includes
+`verification_threshold`, `verified`, and `latency_ms`.
+
+The orchestrator response uses `response` for display text and contains total
+`latency_ms` plus `stage_latency_ms`. Database ownership is always the
+`candidate_user_id` returned by application SID. A client/transcript
+`user_id` is ignored.

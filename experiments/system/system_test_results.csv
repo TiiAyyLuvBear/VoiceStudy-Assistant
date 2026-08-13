@@ -1,0 +1,31 @@
+﻿test_case_id,category,scenario,intent,actual_policy,actual_error,sid_calls,sv_calls,database_integrity_pass,response_scope_pass,latency_ms,passed
+SYS001,PUBLIC,time_normal,GET_TIME,PUBLIC,,0,0,true,true,1.535400,true
+SYS002,PUBLIC,time_morning,GET_TIME,PUBLIC,,0,0,true,true,1.332500,true
+SYS003,PUBLIC,time_evening,GET_TIME,PUBLIC,,0,0,true,true,1.706700,true
+SYS004,PUBLIC,time_with_user_claim,GET_TIME,PUBLIC,,0,0,true,true,1.697300,true
+SYS005,SID,view_all,VIEW_SCHEDULE,SID,,1,0,true,true,6.503600,true
+SYS006,SID,view_by_date,VIEW_SCHEDULE,SID,,1,0,true,true,6.699500,true
+SYS007,SID,view_claim_other,VIEW_SCHEDULE,SID,,1,0,true,true,7.304500,true
+SYS008,SID,unknown_view,VIEW_SCHEDULE,SID,UNKNOWN_SPEAKER,1,0,true,true,0.826000,true
+SYS009,SID,no_enrollment,VIEW_SCHEDULE,SID,NO_ENROLLMENT,1,0,true,true,0.703300,true
+SYS010,ERROR,bad_audio_view,VIEW_SCHEDULE,REJECT,Audio file does not exist: C:\Users\luong\AppData\Local\Temp\voicestudy-system-tests-ldoe5aay\SYS010.wav,0,0,true,true,1.446900,true
+SYS011,SID_WRITE,add_valid,ADD_SCHEDULE,SID,,1,0,true,true,25.068900,true
+SYS012,SID_WRITE,add_claim_other,ADD_SCHEDULE,SID,,1,0,true,true,19.288100,true
+SYS013,SID_WRITE,missing_title,ADD_SCHEDULE,SID,MISSING_FIELDS,1,0,true,true,0.780900,true
+SYS014,SID_WRITE,missing_date,ADD_SCHEDULE,SID,MISSING_FIELDS,1,0,true,true,0.736700,true
+SYS015,SID_WRITE,missing_time,ADD_SCHEDULE,SID,MISSING_FIELDS,1,0,true,true,1.729500,true
+SYS016,SID_WRITE,unknown_add,ADD_SCHEDULE,SID,UNKNOWN_SPEAKER,1,0,true,true,1.728400,true
+SYS017,ERROR,empty_transcript_add,ADD_SCHEDULE,REJECT,EMPTY_TRANSCRIPT,0,0,true,true,0.658400,true
+SYS018,SID_SV,private_valid,VIEW_PRIVATE_NOTE,SID_AND_SV,,1,1,true,true,15.752700,true
+SYS019,SID_SV,private_claim_other,VIEW_PRIVATE_NOTE,SID_AND_SV,,1,1,true,true,10.941300,true
+SYS020,SID_SV,impostor,VIEW_PRIVATE_NOTE,SID_AND_SV,VERIFICATION_FAILED,1,1,true,true,0.987200,true
+SYS021,SID_SV,unknown_private,VIEW_PRIVATE_NOTE,SID_AND_SV,UNKNOWN_SPEAKER,1,0,true,true,0.771300,true
+SYS022,SID_SV,sv_missing_centroid,VIEW_PRIVATE_NOTE,SID_AND_SV,CENTROID_NOT_FOUND,1,1,true,true,2.371900,true
+SYS023,SID_SV,sv_exception,VIEW_PRIVATE_NOTE,SID_AND_SV,SV_ERROR: simulated SV exception,1,1,true,true,1.290300,true
+SYS024,SID_SV,sid_exception,VIEW_PRIVATE_NOTE,SID_AND_SV,SID_ERROR: simulated SID exception,1,0,true,true,3.117500,true
+SYS025,REJECT,music,OUT_OF_SCOPE,REJECT,OUT_OF_SCOPE,0,0,true,true,0.742700,true
+SYS026,REJECT,weather,OUT_OF_SCOPE,REJECT,OUT_OF_SCOPE,0,0,true,true,0.813200,true
+SYS027,REJECT,phone,OUT_OF_SCOPE,REJECT,OUT_OF_SCOPE,0,0,true,true,1.588500,true
+SYS028,ERROR,empty_transcript_oos,OUT_OF_SCOPE,REJECT,EMPTY_TRANSCRIPT,0,0,true,true,1.956300,true
+SYS029,ERROR,asr_failure,OUT_OF_SCOPE,REJECT,ASR_FAILED,0,0,true,true,1.523800,true
+SYS030,REJECT,unsupported,OUT_OF_SCOPE,REJECT,OUT_OF_SCOPE,0,0,true,true,1.326500,true

@@ -84,7 +84,7 @@ def test_application_config_pins_verification_threshold_and_ecapa() -> None:
         )
     )
     verification = json.loads(
-        Path("models/experimental/verification_threshold.json").read_text(
+        Path("models/application/application_verification_threshold.json").read_text(
             encoding="utf-8"
         )
     )
@@ -96,8 +96,11 @@ def test_application_config_pins_verification_threshold_and_ecapa() -> None:
     )
     assert (
         config["speaker_verification"]["threshold_source"]["source"]
-        == "models/experimental/verification_threshold.json"
+        == "models/application/application_verification_threshold.json"
     )
+    assert verification["application_audio_calibrated"] is True
+    assert verification["threshold_tuned_on_v2_test"] is False
+    assert config["application_enrollment"]["embedding_count"] >= 3
     assert sha256_file(model["checkpoint"]) == model["checkpoint_sha256"]
     assert (
         sha256_file(model["hyperparameters"])

@@ -17,9 +17,9 @@ paths:
   database: data/database/voicestudy.db
   model_cache: models/cache
   speaker_model: models/experimental/speaker_svm_linear.pkl
-  user_embeddings: models/user_embeddings
-  identification_threshold: models/identification_threshold.json
-  verification_threshold: models/verification_threshold.json
+  user_embeddings: models/application/user_embeddings
+  identification_threshold: models/application/application_sid_threshold.json
+  verification_threshold: models/application/application_verification_threshold.json
 
 audio:
   sample_rate: 16000
@@ -62,8 +62,8 @@ speaker:
   experimental_unknown_threshold_path: models/identification_threshold.json
   experimental_verification_threshold_path: models/verification_threshold.json
   application_centroid_dir: models/application/user_embeddings
-  application_sid_threshold_path: models/experimental/cosine_unknown_threshold.json
-  application_verification_threshold_path: models/experimental/verification_threshold.json
+  application_sid_threshold_path: models/application/application_sid_threshold.json
+  application_verification_threshold_path: models/application/application_verification_threshold.json
 
 database:
   path: data/database/voicestudy.db

@@ -3,25 +3,28 @@
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.utils.files import sha256_file
 
 
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-
-EXPERIMENTAL_THRESHOLD = (
+APPLICATION_THRESHOLD = (
     PROJECT_ROOT
     / "models"
-    / "experimental"
-    / "cosine_unknown_threshold.json"
+    / "application"
+    / "application_sid_threshold.json"
 )
 
-EXPERIMENTAL_VERIFICATION_THRESHOLD = (
+APPLICATION_VERIFICATION_THRESHOLD = (
     PROJECT_ROOT
     / "models"
-    / "experimental"
-    / "verification_threshold.json"
+    / "application"
+    / "application_verification_threshold.json"
 )
 
 APPLICATION_EMBEDDINGS_DIR = (
@@ -64,7 +67,7 @@ def main() -> int:
     # 1. Load frozen experimental threshold
     # ---------------------------------------------------------
 
-    threshold_config = load_json(EXPERIMENTAL_THRESHOLD)
+    threshold_config = load_json(APPLICATION_THRESHOLD)
 
     if "threshold" not in threshold_config:
         raise ValueError(
@@ -74,7 +77,7 @@ def main() -> int:
     threshold = float(threshold_config["threshold"])
 
     verification_config = load_json(
-        EXPERIMENTAL_VERIFICATION_THRESHOLD
+        APPLICATION_VERIFICATION_THRESHOLD
     )
     if "threshold" not in verification_config:
         raise ValueError(
@@ -156,8 +159,8 @@ def main() -> int:
         },
 
         "threshold_source": {
-            "type": "frozen_from_validation",
-            "source": EXPERIMENTAL_THRESHOLD.relative_to(
+            "type": threshold_config.get("selection"),
+            "source": APPLICATION_THRESHOLD.relative_to(
                 PROJECT_ROOT
             ).as_posix(),
             "selection_criterion": threshold_config.get(
@@ -172,9 +175,9 @@ def main() -> int:
                 "cosine_similarity >= threshold means VERIFIED"
             ),
             "threshold_source": {
-                "type": "frozen_from_validation",
+                "type": verification_config.get("selection"),
                 "source": (
-                    EXPERIMENTAL_VERIFICATION_THRESHOLD.relative_to(
+                    APPLICATION_VERIFICATION_THRESHOLD.relative_to(
                         PROJECT_ROOT
                     ).as_posix()
                 ),
@@ -193,6 +196,8 @@ def main() -> int:
                 path.relative_to(PROJECT_ROOT).as_posix()
                 for path in embedding_files
             ],
+            "required_audio_per_user": 5,
+            "speaker_model_training": False,
         },
 
         "random_seed": RANDOM_SEED,

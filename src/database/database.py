@@ -1,6 +1,7 @@
 # Viết hàm tạo database và bảng nếu chưa tồn tại (SQLite)
 
 import sqlite3
+from contextlib import closing
 from pathlib import Path
 
 from src.utils.config import load_yaml_mapping
@@ -8,6 +9,7 @@ from src.utils.config import load_yaml_mapping
 CONFIG_PATH = "config.yaml"
 config, _ = load_yaml_mapping(CONFIG_PATH)
 DATABASE_PATH = config.get('database', {}).get('path', 'voicestudy.db')
+SCHEMA_PATH = Path(__file__).with_name("schema.sql")
 
 def _resolve_database_path(database_path: str | Path | None) -> str | Path:
     """Use configured database when caller does not provide a path."""
@@ -15,54 +17,19 @@ def _resolve_database_path(database_path: str | Path | None) -> str | Path:
 
 
 def get_connection(database_path: str | Path | None = None) -> sqlite3.Connection:
-    connection = sqlite3.connect(_resolve_database_path(database_path))
+    resolved = _resolve_database_path(database_path)
+    if str(resolved) != ":memory:":
+        Path(resolved).expanduser().resolve().parent.mkdir(parents=True, exist_ok=True)
+    connection = sqlite3.connect(resolved)
     connection.row_factory = sqlite3.Row
     connection.execute("PRAGMA foreign_keys = ON")
     return connection
 
 
 def create_database(database_path: str | Path | None = None) -> None:
-    conn = get_connection(database_path)
-    cursor = conn.cursor()
-
-    # Tạo bảng users
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS users (
-            user_id TEXT PRIMARY KEY,
-            name TEXT NOT NULL UNIQUE,
-            embedding_path TEXT,
-            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-        )
-    ''')
-
-    # Tạo bảng schedules
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS schedules (
-            schedule_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id TEXT NOT NULL,
-            title TEXT NOT NULL,
-            date TEXT NOT NULL,
-            time TEXT NOT NULL,
-            description TEXT,
-            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
-        )
-    ''')
-
-    # Tạo bảng notes
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS notes (
-            note_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id TEXT NOT NULL,
-            content TEXT NOT NULL,
-            is_private INTEGER NOT NULL DEFAULT 1 CHECK (is_private IN (0, 1)),
-            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
-        )
-    ''')
-
-    conn.commit()
-    conn.close()
+    with closing(get_connection(database_path)) as connection:
+        with connection:
+            connection.executescript(SCHEMA_PATH.read_text(encoding="utf-8"))
 
 def test_database_connection(database_path: str | Path | None = None) -> bool:
     try:

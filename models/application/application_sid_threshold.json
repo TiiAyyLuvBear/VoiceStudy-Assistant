@@ -3,9 +3,11 @@
   "threshold_type": "cosine_similarity",
   "threshold": 0.51307271,
   "comparison": "cosine_similarity >= threshold means KNOWN",
-  "source": "models/experimental/cosine_unknown_threshold.json",
+  "source": "models/experimental/v2/cosine_unknown_threshold.json",
   "selection": "frozen_from_validation",
   "selection_criterion": "maximize overall detection accuracy; tie-break by unknown rejection, known acceptance, then smaller threshold",
   "frozen": true,
-  "test_threshold_tuning": false
+  "test_threshold_tuning": false,
+  "application_audio_calibrated": false,
+  "domain_mismatch_limitation": "Fallback experimental validation threshold; recalibrate only with held-out application-user and non-enrolled audio."
 }

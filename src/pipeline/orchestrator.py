@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from pathlib import Path
+import time
 
 from src.audio.source import resolve_audio_path
 from src.database.user_repository import get_user
@@ -19,11 +20,19 @@ def _end_to_end_result(**values: object) -> dict:
         "success": True, "transcript": "", "normalized_transcript": "",
         "intent": "OUT_OF_SCOPE", "entities": {}, "missing_fields": [],
         "policy": REJECT, "speaker": {"candidate_user_id": None, "similarity": None,
-        "identified": None, "verified": None, "centroid_path": None},
+        "cosine_similarity": None, "unknown_threshold": None, "status": None,
+        "identified": None, "verified": None, "verification_threshold": None,
+        "centroid_path": None, "sid_latency_ms": None, "sv_latency_ms": None},
+        "latency_ms": 0.0, "stage_latency_ms": {},
         "response": "", "error": None,
     }
     result.update(values)
     return result
+
+
+def _finish(started_at: float, **values: object) -> dict:
+    values["latency_ms"] = (time.perf_counter() - started_at) * 1000.0
+    return _end_to_end_result(**values)
 
 
 def process_audio_request(
@@ -41,25 +50,45 @@ def process_audio_request(
     Personal user IDs come only from Application SID; callers cannot select the
     database owner through a transcript or request parameter.
     """
+    started_at = time.perf_counter()
     try:
         resolved_audio_path = resolve_audio_path(audio_path)
     except (FileNotFoundError, RuntimeError, ValueError) as exc:
-        return _end_to_end_result(
+        return _finish(
+            started_at,
             success=False,
             error=str(exc),
             response="Không thể tải audio. Vui lòng thử lại.",
         )
 
-    pipeline = asr_nlu_runner(
-        resolved_audio_path,
-        reference_date=reference_date,
-        config_path=config_path,
-    )
+    try:
+        pipeline = asr_nlu_runner(
+            resolved_audio_path,
+            reference_date=reference_date,
+            config_path=config_path,
+        )
+    except Exception as exc:
+        return _finish(
+            started_at,
+            success=False,
+            error=f"ASR_NLU_ERROR: {exc}",
+            response="Không thể xử lý audio. Vui lòng thử lại.",
+        )
     if not pipeline["success"]:
-        return _end_to_end_result(
+        return _finish(
+            started_at,
             success=False, transcript=pipeline["transcript"],
             intent=pipeline["intent"], error=pipeline["error"],
             response="Không thể xử lý audio. Vui lòng thử lại.",
+        )
+
+    if not str(pipeline.get("transcript", "")).strip():
+        return _finish(
+            started_at,
+            success=False,
+            transcript="",
+            error="EMPTY_TRANSCRIPT",
+            response="Không nhận được nội dung giọng nói. Vui lòng thử lại.",
         )
 
     intent = pipeline["intent"]
@@ -70,72 +99,149 @@ def process_audio_request(
         "normalized_transcript": pipeline["normalized_transcript"],
         "intent": intent, "entities": entities,
         "missing_fields": pipeline["missing_fields"], "policy": policy,
+        "stage_latency_ms": {"asr_nlu": pipeline.get("latency_ms")},
     }
     if policy == PUBLIC:
-        return _end_to_end_result(
+        return _finish(
+            started_at,
             **common, response=f"Bây giờ là {datetime.now().strftime('%H:%M')}."
         )
     if policy == REJECT:
-        return _end_to_end_result(
-            **common, response="Câu lệnh ngoài phạm vi hỗ trợ.", error="OUT_OF_SCOPE"
+        return _finish(
+            started_at,
+            **common,
+            response=(
+                "Câu lệnh ngoài phạm vi. Hệ thống hỗ trợ xem giờ, xem hoặc "
+                "thêm lịch và xem ghi chú riêng tư."
+            ),
+            error="OUT_OF_SCOPE",
         )
 
-    sid = identifier(
-        resolved_audio_path,
-        database_path=database_path,
-        config_path=config_path,
+    try:
+        sid = identifier(
+            resolved_audio_path,
+            database_path=database_path,
+            config_path=config_path,
+        )
+    except Exception as exc:
+        return _finish(
+            started_at,
+            **common,
+            success=False,
+            error=f"SID_ERROR: {exc}",
+            response="Không thể nhận diện người dùng.",
+        )
+    sid_similarity = sid.get("cosine_similarity", sid.get("similarity"))
+    sid_identified = bool(
+        sid.get("identified", sid.get("status") == "KNOWN")
     )
     speaker = {
         "candidate_user_id": sid.get("candidate_user_id"),
-        "similarity": sid.get("similarity"),
-        "identified": sid.get("identified"),
+        "similarity": sid_similarity,
+        "cosine_similarity": sid_similarity,
+        "unknown_threshold": sid.get("unknown_threshold"),
+        "status": sid.get("status"),
+        "identified": sid_identified,
         "verified": None,
+        "verification_threshold": None,
         "centroid_path": sid.get("centroid_path"),
+        "sid_latency_ms": sid.get("latency_ms"),
+        "sv_latency_ms": None,
     }
-    if not sid.get("success") or not sid.get("identified"):
-        return _end_to_end_result(
+    common["stage_latency_ms"]["sid"] = sid.get("latency_ms")
+    if not sid.get("success") or not sid_identified:
+        return _finish(
+            started_at,
             **common, speaker=speaker, error=sid.get("error") or "UNKNOWN_SPEAKER",
             response="Không nhận diện được người dùng đã đăng ký.",
         )
     candidate_user_id = sid["candidate_user_id"]
 
     if policy == SID_AND_SV:
-        sv = verifier(
-            resolved_audio_path,
-            candidate_user_id,
-            database_path=database_path,
-            config_path=config_path,
-        )
+        try:
+            sv = verifier(
+                resolved_audio_path,
+                candidate_user_id,
+                database_path=database_path,
+                config_path=config_path,
+            )
+        except Exception as exc:
+            return _finish(
+                started_at,
+                **common,
+                speaker=speaker,
+                success=False,
+                error=f"SV_ERROR: {exc}",
+                response="Không thể xác thực giọng nói.",
+            )
         speaker["verification"] = sv
         speaker["verified"] = sv.get("verified")
+        speaker["verification_threshold"] = sv.get("verification_threshold")
+        speaker["sv_latency_ms"] = sv.get("latency_ms")
+        common["stage_latency_ms"]["sv"] = sv.get("latency_ms")
         if not sv.get("success") or not sv.get("verified"):
-            return _end_to_end_result(
+            return _finish(
+                started_at,
                 **common, speaker=speaker,
                 error=sv.get("error") or "VERIFICATION_FAILED",
                 response="Xác thực giọng nói thất bại. Không thể xem ghi chú riêng tư.",
             )
 
-    if intent == "VIEW_SCHEDULE":
-        schedules = get_schedules(candidate_user_id, entities.get("date"), database_path)
-        response = "Chưa có lịch học." if not schedules else (
-            f"Bạn có {len(schedules)} lịch. Lịch gần nhất: {schedules[0]['title']} "
-            f"lúc {schedules[0]['time']}, {schedules[0]['date']}."
+    if intent == "ADD_SCHEDULE" and (
+        pipeline["missing_fields"]
+        or not all(entities.get(key) for key in ("title", "date", "time"))
+    ):
+        return _finish(
+            started_at,
+            **common,
+            speaker=speaker,
+            error="MISSING_FIELDS",
+            response="Thiếu thông tin để thêm lịch: tiêu đề, ngày và giờ.",
         )
-    elif intent == "ADD_SCHEDULE":
-        if pipeline["missing_fields"] or not all(entities.get(key) for key in ("title", "date", "time")):
-            return _end_to_end_result(
-                **common, speaker=speaker, error="MISSING_FIELDS",
-                response="Thiếu thông tin để thêm lịch: tiêu đề, ngày và giờ.",
+
+    database_started_at = time.perf_counter()
+    try:
+        if intent == "VIEW_SCHEDULE":
+            schedules = get_schedules(
+                candidate_user_id, entities.get("date"), database_path
             )
-        schedule = add_schedule(
-            candidate_user_id, entities["title"], entities["date"], entities["time"],
-            database_path=database_path,
+            response = "Chưa có lịch học." if not schedules else (
+                f"Bạn có {len(schedules)} lịch. Lịch gần nhất: "
+                f"{schedules[0]['title']} lúc {schedules[0]['time']}, "
+                f"{schedules[0]['date']}."
+            )
+        elif intent == "ADD_SCHEDULE":
+            schedule = add_schedule(
+                candidate_user_id,
+                entities["title"],
+                entities["date"],
+                entities["time"],
+                database_path=database_path,
+            )
+            response = (
+                f"Đã thêm lịch {schedule['title']} lúc {schedule['time']}, "
+                f"{schedule['date']}."
+            )
+        else:  # VIEW_PRIVATE_NOTE after successful SV
+            notes = get_private_notes(candidate_user_id, database_path)
+            response = (
+                "Chưa có ghi chú riêng tư."
+                if not notes
+                else f"Ghi chú gần nhất: {notes[0]['content']}"
+            )
+    except Exception as exc:
+        return _finish(
+            started_at,
+            **common,
+            speaker=speaker,
+            success=False,
+            error=f"DATABASE_ERROR: {exc}",
+            response="Không thể truy cập dữ liệu người dùng.",
         )
-        response = f"Đã thêm lịch {schedule['title']} lúc {schedule['time']}, {schedule['date']}."
-    else:  # VIEW_PRIVATE_NOTE after successful SV
-        notes = get_private_notes(candidate_user_id, database_path)
-        response = "Chưa có ghi chú riêng tư." if not notes else f"Ghi chú gần nhất: {notes[0]['content']}"
-    return _end_to_end_result(**common, speaker=speaker, response=response)
+    common["stage_latency_ms"]["database"] = (
+        time.perf_counter() - database_started_at
+    ) * 1000.0
+    return _finish(started_at, **common, speaker=speaker, response=response)
 
 
 def _mock_parse(transcript: str) -> tuple[str, dict]:

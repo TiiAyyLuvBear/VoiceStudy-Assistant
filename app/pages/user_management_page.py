@@ -8,8 +8,8 @@ from tempfile import TemporaryDirectory
 import streamlit as st
 
 from app.pages.enrollment_page import render_file_status
-from src.database.user_repository import delete_user, list_users
-from src.speaker.application import enroll_user
+from src.database.user_repository import list_users
+from src.speaker.application import delete_application_user, enroll_user
 
 
 def render_user_management_page() -> None:
@@ -38,6 +38,9 @@ def render_user_management_page() -> None:
                 render_file_status(enroll_user(selected_id, selected["name"], paths))
     confirm_delete = st.checkbox(f"Xác nhận xóa {selected_id} cùng lịch và ghi chú")
     if st.button("Xóa user", disabled=not confirm_delete):
-        delete_user(selected_id)
-        st.success("Đã xóa user.")
-        st.rerun()
+        result = delete_application_user(selected_id)
+        if result["success"]:
+            st.success("Đã xóa user, dữ liệu sở hữu và centroid application.")
+            st.rerun()
+        else:
+            st.error(f"Không thể xóa user: {result['error']}")

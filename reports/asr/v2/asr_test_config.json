@@ -42,7 +42,7 @@
     }
   },
   "locked_files": {
-    "config.yaml": "4a3b8b28e680c8927279f35706311c231734e7a6e44a24992c1c333d763b7528",
+    "config.yaml": "9267e9f2ca8db12202d19f3c45e5fcf6124a9e4abefa12a2130f7a416070ba48",
     "src/asr/metrics.py": "4e5139e65beacb0768fb6fe0df36bd16a600b6bb1472482c704d29fb684bab57",
     "src/asr/text_normalizer.py": "986941d7b216bf6e6427daf8c4bdf9b4389603d2a824d7cf911dcc31dad260d6",
     "src/asr/whisper_model.py": "1f3d1a600f76c77954ec91875f6e5cf8c57fc1d25ae3b639a2508f48a2d99fbb",
