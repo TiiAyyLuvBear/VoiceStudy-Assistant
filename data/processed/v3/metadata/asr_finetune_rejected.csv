@@ -1,0 +1,113 @@
+audio_id,audio_path,speaker_id,source_original_split,source_project_split,source_is_valid,rejection_reason,source_transcript
+10137,data/audio/train-115/af92d69ea7b95fb35d777b9c2423f020.wav,5cf03d69b094d700013e4d54,train,UNUSED,False,low_volume,gọi mẹ
+10157,data/audio/dev/99ee2e2801b919410f5598e1d5ae456d.wav,655022ac88df62f61f5b47a6,validation,UNUSED,False,low_volume,bạn có thể chỉ cách công thức nấu mì ý
+10367,data/audio/dev/82656382049376301174a2d881ac4db0.wav,5e4247e718b8910d4a2b9a34,validation,SVM,False,low_volume,bạn có thể đóng vai kẻ địch trong game coc không
+10424,data/audio/dev/35f7acb47d934efbd410d673be178ca5.wav,5fb84feecf0626000b30cbd3,validation,SVM,False,low_volume,liệt kê các mục trong danh sách mua sắm của tôi olly
+10452,data/audio/train-115/d2c639eeec1c9049ab61cf3551cfda62.wav,65718bf0ad0f780a67a20790,train,UNUSED,False,low_volume,bỏ bánh mì ra khỏi danh sách mua sắm
+1100,data/audio/train-115/b6183a1c39fe27478e903d5471695d9d.wav,659ea35db097ea3c414b04c0,train,UNUSED,False,low_volume,bạn hôm nay thế nào
+11048,data/audio/train-115/d3c86159f901c0e0252d7accd290da80.wav,65718bf0ad0f780a67a20790,train,UNUSED,False,low_volume,danh sách của tôi ở đâu
+11178,data/audio/dev/46cefdc45ae3c1d147e3466643df9e5f.wav,6573b7471b56f7fc59a7df63,validation,VALIDATION,False,low_volume,tạo một danh sách cho tạp hóa cần mua hàng tháng
+11374,data/audio/dev/df176441868ebad1bc973aae0bac5111.wav,6549198eec431d4a6768a13e,validation,VALIDATION,False,low_volume,lên phía trước làm ơn
+11399,data/audio/dev/de3231737251274360415626b96c6892.wav,5fb84feecf0626000b30cbd3,validation,SVM,False,low_volume,bỏ qua đến bài tiếp theo
+11440,data/audio/dev/3b61b4d34b5301387b5a3aa67dcbfacb.wav,5fb84feecf0626000b30cbd3,validation,SVM,False,low_volume,phát tập tiếp theo
+1155,data/audio/train-115/1e3fb8cc6f1f9d92674f0ef67ba63aa9.wav,65718bf0ad0f780a67a20790,train,UNUSED,False,low_volume,tắt đèn trong phòng ngủ
+11708,data/audio/dev/d896d382e191f50d4fb642ba261e5b33.wav,5fb84feecf0626000b30cbd3,validation,SVM,False,low_volume,cửa hàng xe đạp tốt ở đà nẵng
+11893,data/audio/train-115/83e363ece538bbd48f645452ee1209b4.wav,659ea35db097ea3c414b04c0,train,UNUSED,False,low_volume,các sự kiện diễn ra cuối tuần này
+11983,data/audio/train-115/83c88be4d53dc357fca9863bb5d72c73.wav,65718bf0ad0f780a67a20790,train,UNUSED,False,low_volume,olly đề xuất một hài kịch lãng mạn trong khu phố
+12033,data/audio/train-115/bf5f569d8280dfd68f64ac0539335991.wav,65718bf0ad0f780a67a20790,train,UNUSED,False,low_volume,danh sách các cửa hàng gần tôi
+12044,data/audio/dev/a3d9267011a56dee60c9080a1a330d4e.wav,6549198eec431d4a6768a13e,validation,VALIDATION,False,low_volume,có gì ngon để ăn ở cincinnati
+12053,data/audio/train-115/ddd9fc1eee9336973c9de546c7af4794.wav,659ea35db097ea3c414b04c0,train,UNUSED,False,low_volume,các bộ phim được đánh giá cao đang chiếu cuối tuần này
+12131,data/audio/train-115/a815d719571a13618cfa3c1b81fa5e9a.wav,659ea35db097ea3c414b04c0,train,UNUSED,False,low_volume,đặt cho tôi một chuyến quay lại từ vinh đến hà nội bằng tàu hỏa
+12136,data/audio/dev/5f5c933783ef87f112cea2e8448bd4dd.wav,5fb84feecf0626000b30cbd3,validation,SVM,False,low_volume,cách tốt nhất để đến việt nam
+12154,data/audio/train-115/0a9f2411e5c09222b1a2b0043a0511c8.wav,65718bf0ad0f780a67a20790,train,UNUSED,False,low_volume,tình trạnh giao thông bên ngoài văn phòng của tôi thế nào
+12356,data/audio/train-115/3bc7349db9598cda788b24325535b59e.wav,659ea35db097ea3c414b04c0,train,UNUSED,False,low_volume,tôi cần một vé tàu hỏa
+12495,data/audio/train-115/13aa4c27059e0ffc998d88df282415e9.wav,659ea35db097ea3c414b04c0,train,UNUSED,False,low_volume,gọi một chiếc ô tô cho tôi
+1255,data/audio/train-115/475ce5b786164340d8425bffd8d680af.wav,659ea35db097ea3c414b04c0,train,UNUSED,False,low_volume,cho chúng tôi biết tin tức về cuộc bầu cử tổng thống
+12667,data/audio/dev/c77c423e2368a2195381c0a45be0fd78.wav,655022ac88df62f61f5b47a6,validation,UNUSED,False,low_volume,thời gian tàu hỏa là gì
+1268,data/audio/dev/f883548c93f53b55aca0b5ba2ebedc8d.wav,6573b7471b56f7fc59a7df63,validation,VALIDATION,False,low_volume,công thức bít tết của bạn thật tuyệt vời
+12828,data/audio/dev/1743907afc97b79e18fc42bb4a935c4a.wav,6549198eec431d4a6768a13e,validation,VALIDATION,False,low_volume,hiện tất cả chuyến tàu và thời gian tới sài gòn
+12944,data/audio/dev/be4fb7672b54a28dcd27fba1d2b2a9c7.wav,5fb84feecf0626000b30cbd3,validation,SVM,False,low_volume,tìm một định nghĩa
+12978,data/audio/dev/19c1e6219046ea5dcb14f776925257f1.wav,5fb84feecf0626000b30cbd3,validation,SVM,False,low_volume,trung tâm duyệt web
+12983,data/audio/train-115/16bb4742f4e9ca5fc775a69c022682b9.wav,65718bf0ad0f780a67a20790,train,UNUSED,False,low_volume,giá dầu hôm nay như thế nào đối với một thùng dầu thô
+13106,data/audio/dev/c1b00f3ef5b64a0e1bc6035bfaecdf2d.wav,655022ac88df62f61f5b47a6,validation,UNUSED,False,low_volume,bạn đã nghe những bài hái của cá hồi hoang chưa
+13107,data/audio/dev/5c406ccf8d3339c0eeaade6cb1edda3a.wav,5fb84feecf0626000b30cbd3,validation,SVM,False,low_volume,đặt lịch họp với đồng nghiệp của tôi
+13311,data/audio/train-115/d381483249dba5a4f96e0ff8000376b3.wav,65718bf0ad0f780a67a20790,train,UNUSED,False,low_volume,tôi có đô la trong tháng tôi có thể chi tiêu bao nhiêu mỗi ngày trong tháng này
+13338,data/audio/dev/499f27dd1ec1e3ac3e585b2d6ecaa2a2.wav,6549198eec431d4a6768a13e,validation,VALIDATION,False,low_volume,đạo đức giả nghĩa là gì
+1346,data/audio/dev/7edb987740209aa5968d5c83eafa2856.wav,5fb84feecf0626000b30cbd3,validation,SVM,False,low_volume,một trăm nghìn hai trăm mười bảy
+13517,data/audio/dev/512b693fc7e8e9b4fc5f6fb8124b9309.wav,6573b7471b56f7fc59a7df63,validation,VALIDATION,False,low_volume,tôi hy vọng chúng ta có thể ăn bữa trưa cùng nhau
+13565,data/audio/train-115/56484e22b2ce80e9bde8ce6178ced117.wav,65718bf0ad0f780a67a20790,train,UNUSED,False,low_volume,một bảng anh bằng bao nhiêu đô la mỹ
+14458,data/audio/dev/12d06c96924e757fc8a0d2871d64c173.wav,5fb84feecf0626000b30cbd3,validation,SVM,False,low_volume,volkswagen golf car trông như thế nào
+14669,data/audio/dev/690d337d2da399180953a8a659f851a1.wav,655022ac88df62f61f5b47a6,validation,UNUSED,False,low_volume,xác định xy
+14745,data/audio/dev/cae7dfbe3a63c87c0a778b3bb5dbb5ad.wav,5c76a2d39dd0fe0001d9dfe0,validation,TEST,False,long_silence,xác định gà công nghiệp cho tôi
+15125,data/audio/dev/029a145ee19a8f7fcc85b6fa294bdeb2.wav,5fb84feecf0626000b30cbd3,validation,SVM,False,low_volume,thứ này là cái gì
+15184,data/audio/train-115/511611cf7651d94e635a1e6c1d62f42d.wav,65718bf0ad0f780a67a20790,train,UNUSED,False,low_volume,trạng thái của tôi từ hôm qua có bao nhiêu lượt thích
+15867,data/audio/dev/bcc5549b8604395a1e7534c38da48121.wav,5fb84feecf0626000b30cbd3,validation,SVM,False,low_volume,vui lòng đưa cho tôi thông tin liên lạc của vy từ danh bạ
+15868,data/audio/dev/81143bf7e5a413ccfc726ac177f8e98f.wav,655022ac88df62f61f5b47a6,validation,UNUSED,False,low_volume,có bất kỳ ai tên hùng trong danh sách của tôi không
+16037,data/audio/dev/5eed8203bf808163629e1302a2dbf736.wav,5fb84feecf0626000b30cbd3,validation,SVM,False,low_volume,vui lòng làm mới hộp thư đến gmail của tôi
+16104,data/audio/dev/892baaf5d1123257b3925b2c58db22a3.wav,5fb84feecf0626000b30cbd3,validation,SVM,False,low_volume,gửi email đến bạn của tôi nói chúc mừng sinh nhật
+1621,data/audio/dev/ef5777ef2d862681c1066859e9b60071.wav,5e4247e718b8910d4a2b9a34,validation,SVM,False,low_volume,xếp hạng
+16601,data/audio/dev/c639483d77370996f840f8e0384b546c.wav,5fb84feecf0626000b30cbd3,validation,SVM,False,low_volume,tôi muốn gửi email đến nam a còng gmail chấm com
+16621,data/audio/train-115/30213f1afa2939a0471b874831924904.wav,65718bf0ad0f780a67a20790,train,UNUSED,False,low_volume,vui lòng thêm danh sách liên hệ và gửi họ một email nhắc nhở
+16795,data/audio/dev/c8842a64f0414cddf5ada3dd31e7b75a.wav,655022ac88df62f61f5b47a6,validation,UNUSED,False,low_volume,tiêu đề là gì và người gửi là ai trong email hôm nay hộp thư đến
+16833,data/audio/dev/13e913aa70aecfe14db33c4201102978.wav,5c76a2d39dd0fe0001d9dfe0,validation,TEST,False,empty_signal,này tôi đã nhận được bất kỳ thư điện tử mới nào không
+2088,data/audio/dev/98393d530cabebc1d38116f63b588654.wav,655022ac88df62f61f5b47a6,validation,UNUSED,False,low_volume,hãy nghe một chút nhạc country và nhạc tây không phải của mỹ
+2353,data/audio/dev/99e1e238faa1ca8a0080cd55c7ce2ce6.wav,5fb84feecf0626000b30cbd3,validation,SVM,False,low_volume,tên của khúc nhạc đang được chơi là gì
+2598,data/audio/dev/7b30502bf76d079709b4ea9c614ab3fe.wav,5c76a2d39dd0fe0001d9dfe0,validation,TEST,False,long_silence,tin tức quốc tế mới nhất là gì
+2742,data/audio/dev/fa5a3e81386a03216ea3f41b34485eb0.wav,6557ebf8541bd32382739c1a,validation,SVM,False,low_volume,họ có bán mang đi không
+276,data/audio/train-115/48fdca30b75b9ae608a1f91ef340ed86.wav,65718bf0ad0f780a67a20790,train,UNUSED,False,low_volume,ai đã cover bài hát ngây thơ
+3271,data/audio/train-115/1bd003c9efc79a2b467772d26f119682.wav,659ea35db097ea3c414b04c0,train,UNUSED,False,low_volume,xóa tất cả báo thức cài đặt ngày hôm nay
+34,data/audio/train-115/e9a5d178a066b64c9e1b3e3120806e9b.wav,65718bf0ad0f780a67a20790,train,UNUSED,False,low_volume,tôi muốn nghe bài hát của hồ ngọc hà một lần nữa
+346,data/audio/dev/559c8a1b0879aaf8194058b12e80e654.wav,5fb84feecf0626000b30cbd3,validation,SVM,False,low_volume,dự báo thời tiết ngày mai như thế nào
+3471,data/audio/dev/bae19fb82df3e47e1da06e0f67423d3b.wav,5fb84feecf0626000b30cbd3,validation,SVM,False,low_volume,lấy những tin tức hiện tại về việc đóng cửa chính phủ
+3530,data/audio/dev/e135610e2db32c0fe728f9fcd29f84e6.wav,655022ac88df62f61f5b47a6,validation,UNUSED,False,low_volume,phát một vài bài lãng mạn
+3721,data/audio/dev/b6ae060fb4e193a74340a5e5ab42e619.wav,655022ac88df62f61f5b47a6,validation,UNUSED,False,low_volume,ở ấn độ hiện đang là mấy giờ
+3811,data/audio/dev/16c18fcd19b1fae6733324fd7a23df61.wav,6549198eec431d4a6768a13e,validation,VALIDATION,False,low_volume,làm chậm âm lượng của loa
+3926,data/audio/dev/77875b3b014c5c5ca43f826ebd718365.wav,5fb84feecf0626000b30cbd3,validation,SVM,False,low_volume,lượng tuyết đã rơi tại maine ngày hôm nay là bao nhiêu
+3948,data/audio/train-115/36d3ce186ec4b08d21b1c0c0dfff44dd.wav,65718bf0ad0f780a67a20790,train,UNUSED,False,low_volume,tôi cần bạn cài một báo thức
+3968,data/audio/dev/cd824e5779989742fe4db67cfffb7254.wav,655022ac88df62f61f5b47a6,validation,UNUSED,False,low_volume,indie
+4277,data/audio/dev/9b051e97279f7c8feb8c047b9cd459d1.wav,5fb84feecf0626000b30cbd3,validation,SVM,False,low_volume,bạn có thể tắt đèn bàn của tôi được không
+4546,data/audio/dev/2f77313051cfffbe5bd7a5b4f0790dc3.wav,6573b7471b56f7fc59a7df63,validation,VALIDATION,False,low_volume,phát từ nhạc quốc tế
+4551,data/audio/dev/05aff2f63e0f6b78b19350d31e5217e3.wav,5fb84feecf0626000b30cbd3,validation,SVM,False,low_volume,cập nhật về hươu cao cổ bé tư
+4705,data/audio/dev/c340249c82382288e5396e70ebf3ff04.wav,655022ac88df62f61f5b47a6,validation,UNUSED,False,low_volume,dự báp cho khu vực của tôi hôm nay như thế nào
+4741,data/audio/dev/506a05db94a086c909c8d7ce3c48ef85.wav,5fb84feecf0626000b30cbd3,validation,SVM,False,low_volume,nói cho tôi tin tức mới nhất là gì
+480,data/audio/dev/2100b14f4ea24d3b90336f3d3775f395.wav,6557ebf8541bd32382739c1a,validation,SVM,False,long_silence,hãy nói cho tôi giờ giấc
+492,data/audio/train-115/f0b284033d2542bd453836da86b4b313.wav,65718bf0ad0f780a67a20790,train,UNUSED,False,low_volume,bạn biết một chuyện đùa ngốc nghếch không
+5025,data/audio/dev/78e27409fb88739fe95aae3ab679a794.wav,655022ac88df62f61f5b47a6,validation,UNUSED,False,low_volume,cho chúng tôi xem màu đỏ
+5142,data/audio/dev/62d9f3a4d6489763f62dbc721dbb065d.wav,655022ac88df62f61f5b47a6,validation,UNUSED,False,low_volume,bạn có thể vui lòng cho tôi biết dự đoán thời tiết trong tuần này như thế nào được không
+517,data/audio/dev/11c34ea57b8ebd09e506cf909c6d8eaf.wav,655022ac88df62f61f5b47a6,validation,UNUSED,False,low_volume,phát bài hát yêu thích của tôi
+523,data/audio/dev/b30acdc7c54b93e86ff646209bb7a276.wav,5fb84feecf0626000b30cbd3,validation,SVM,False,low_volume,cái đó rất nguy hiểm
+5280,data/audio/dev/c0dbffdcba64fc5c2173f3a0c18c3d20.wav,5fb84feecf0626000b30cbd3,validation,SVM,False,low_volume,cho xem những tin tức hiện tại từ b. b. c.
+5359,data/audio/dev/a8d75bd82c465dfe3f709d4fe3aeda50.wav,5fb84feecf0626000b30cbd3,validation,SVM,False,low_volume,đổi qua múi giờ phương đông
+5478,data/audio/dev/032f697efbcb4fd0976556d00189c282.wav,5fb84feecf0626000b30cbd3,validation,SVM,False,low_volume,olly khởi động màu đèn khác
+5556,data/audio/dev/9bce7037bcd7a21fb632256c9cc0096b.wav,5fb84feecf0626000b30cbd3,validation,SVM,False,low_volume,mở một vài bài rap trường phái cũ
+5744,data/audio/dev/596fae01f273e89d980c7629602d268c.wav,5fb84feecf0626000b30cbd3,validation,SVM,False,low_volume,sinh nhật của tôi rơi vào ngày nào năm tới
+5880,data/audio/train-115/db2a7773213c78050437ee4fb38f87bc.wav,65718bf0ad0f780a67a20790,train,UNUSED,False,low_volume,khởi động máy hút bụi
+601,data/audio/dev/4f3022ad47a40eb0f803033a43486d04.wav,5c76a2d39dd0fe0001d9dfe0,validation,TEST,False,long_silence,bắt đầu báo thức
+6599,data/audio/dev/53954debefa4e444fd316fff8c2309d0.wav,6557ebf8541bd32382739c1a,validation,SVM,False,low_volume,vụ trụ
+6659,data/audio/train-115/1ddcd253e4d44d1ea7ece96a2de7edea.wav,659ea35db097ea3c414b04c0,train,UNUSED,False,low_volume,xin chào tôi sẽ cần cà phê pha lúc bảy giờ sáng hôm nay
+6781,data/audio/train-115/cfef92a7d2088c8a50442da6e7d32004.wav,65718bf0ad0f780a67a20790,train,UNUSED,False,low_volume,tuần này tôi hẹn khám bác sĩ lúc mấy giờ
+6912,data/audio/dev/0fc72cf36d361123d723e2df163de00c.wav,5fb84feecf0626000b30cbd3,validation,SVM,False,low_volume,tôi nên kì vọng gặp được ai trong cuộc họp hôm nay
+694,data/audio/train-115/c52af28aedefc39c089491296255f81c.wav,65718bf0ad0f780a67a20790,train,UNUSED,False,low_volume,kiểm tra đơn hàng đang đi đến đâu
+7131,data/audio/dev/940948c11c45e98e30ad7cff5a13ae02.wav,6549198eec431d4a6768a13e,validation,VALIDATION,False,low_volume,xoá đám cưới vào ngày mười ra khỏi lịch của tôi
+7516,data/audio/dev/94dd730fa3e13c4fd754f17007f14392.wav,655022ac88df62f61f5b47a6,validation,UNUSED,False,low_volume,tạo một sự kiện định kì
+7617,data/audio/dev/0c2a7e9f6a8d273002ae951f5ba1e382.wav,5fb84feecf0626000b30cbd3,validation,SVM,False,low_volume,khi nào trận đấu khúc côn cầu bắt đầu vào thứ sáu
+7720,data/audio/dev/6c81ccc4144a7fab2d918cf3bbbba939.wav,5fb84feecf0626000b30cbd3,validation,SVM,False,low_volume,vui lòng cho tôi biết các lời nhắc đang chờ được xử lý
+7977,data/audio/dev/4f47256c26d68462a42251080575d321.wav,5fb84feecf0626000b30cbd3,validation,SVM,False,low_volume,có bất kỳ nhắc nhở nào hôm nay không
+807,data/audio/dev/325f78557027789144af1686993a8334.wav,5fb84feecf0626000b30cbd3,validation,SVM,False,low_volume,bây giờ pha cà phê
+8127,data/audio/dev/93d1266a1da353e407af6977bf5f81ad.wav,5e4247e718b8910d4a2b9a34,validation,SVM,False,low_volume,cuộc họp cập nhật vào lịch của tôi để phản ánh cuộc họp
+8208,data/audio/dev/556c528f2c6100de2e985a5969d9cb7d.wav,655022ac88df62f61f5b47a6,validation,UNUSED,False,low_volume,cuộc họp tối nay tôi gặp nam lúc mấy giờ
+8417,data/audio/dev/27b5d775e7077212bf2774dc22c6f765.wav,5fb84feecf0626000b30cbd3,validation,SVM,False,low_volume,hủy tất cả các cuộc hẹn trên lịch
+8434,data/audio/dev/9f6d816e040e1bdf1a83effadde287c3.wav,655022ac88df62f61f5b47a6,validation,UNUSED,False,low_volume,xoá sự kiện một giờ chiều khỏi lịch của tôi
+8622,data/audio/dev/967d4f509b88b4751e90342c5b96131b.wav,6573b7471b56f7fc59a7df63,validation,VALIDATION,False,low_volume,thêm thời gian cuộc hẹn tiếp theo vào lịch của tôi
+8695,data/audio/train-115/713442e9e642b98c5cc55a60b576b198.wav,65718bf0ad0f780a67a20790,train,UNUSED,False,low_volume,ai là khách mời chính của sự kiện
+87,data/audio/train-115/ccfed11cc314723cb7f0a1eb9da9d88c.wav,659ea35db097ea3c414b04c0,train,UNUSED,False,low_volume,làm ơn đặt sushi cho bữa tối
+8714,data/audio/dev/f8c346367d53fbf69f9364d0fbd3fcb9.wav,655022ac88df62f61f5b47a6,validation,UNUSED,False,low_volume,xóa sự kiện tiếp theo khỏi lịch
+8842,data/audio/dev/7b29d5501d91d190901ce9e9effbb117.wav,655022ac88df62f61f5b47a6,validation,UNUSED,False,low_volume,thêm vào lịch mùng hai tháng năm là sinh nhật của lan mỗi năm
+912,data/audio/train-115/58191964228cf3ba48c1a7a48e4df208.wav,5cf03d69b094d700013e4d54,train,UNUSED,False,low_volume,mở trạm pandora yêu thích của tôi
+9223,data/audio/train-115/a1142846a7468bef23db0fa6e6dc67af.wav,65718bf0ad0f780a67a20790,train,UNUSED,False,low_volume,chuyển đài phát thanh sang chin mươi tám phẩy bảy
+9310,data/audio/dev/ac4d022c857578ae636511c00c833fbc.wav,655022ac88df62f61f5b47a6,validation,UNUSED,False,low_volume,phát giai điệu
+9518,data/audio/dev/136632e8cfe09603115346aa581aa1a1.wav,6549198eec431d4a6768a13e,validation,VALIDATION,False,low_volume,phát tin tức trên kênh fm
+966,data/audio/dev/e5a378ac957f1548acb05dc1177275b4.wav,5c76a2d39dd0fe0001d9dfe0,validation,TEST,False,long_silence,phúc long có chấp nhận đơn hàng mang về không
+9692,data/audio/dev/a366f2f3b01c1ca75dc9159e10628f02.wav,6573b7471b56f7fc59a7df63,validation,VALIDATION,False,low_volume,phát tiếp sách nói những câu chuyện thành rome
+9787,data/audio/dev/53f6a7988090517281c79d03cec038fa.wav,60d3432bc679834595ca8139,validation,UNUSED,False,low_volume,bắt đầu đọc sách
+9911,data/audio/train-115/c37b7c112d045d3f52384ddc2b6f72ef.wav,659ea35db097ea3c414b04c0,train,UNUSED,False,low_volume,tôi nên luộc trứng trong bao lâu

@@ -1,0 +1,9 @@
+# Optional local ASR fine-tuning stack. Production inference remains in requirements.txt.
+torch>=2.6,<3
+transformers>=4.57,<5
+datasets>=4.8,<5
+accelerate>=1.13,<2
+peft>=0.19,<1
+soundfile>=0.13,<1
+librosa>=0.11,<1
+safetensors>=0.5,<1

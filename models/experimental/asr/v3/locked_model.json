@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "dataset_version": "asr-v3",
+  "model_version": "whisper-small-lora-v3",
+  "status": "LOCKED_BEFORE_FINAL_TEST",
+  "locked_at": "2026-08-16T08:38:13+07:00",
+  "selection": {
+    "metric": "validation_loss",
+    "lower_is_better": true,
+    "best_epoch": 2,
+    "best_validation_loss": 0.6902654049434646,
+    "best_adapter_path": "models/experimental/asr/v3/best_adapter"
+  },
+  "training_summary": {
+    "path": "models/experimental/asr/v3/training_summary.json",
+    "sha256": "dcfb567f55b5b205e41227af2edc2b80e4dbb4222288848a570b2650c6edadad"
+  },
+  "export_summary": {
+    "path": "models/experimental/asr/v3/export_summary.json",
+    "sha256": "155703883fb0dbdf1c43f229d8d200f0219d8ea70110b6a3bc394c13bd61d04a"
+  },
+  "datasets": {
+    "train": {
+      "path": "data/processed/v3/metadata/asr_finetune_train.csv",
+      "canonical_csv_sha256": "c5a44563a8b0bb54b95f5da4609abd1052ffbbf907c52868bd0e8c8781e72ac0"
+    },
+    "validation": {
+      "path": "data/processed/v3/metadata/asr_finetune_validation.csv",
+      "canonical_csv_sha256": "a0df3fff3130967c0e5b6306a1b8ba0313b7669ed872e4362f1f9e9512f36e7f"
+    },
+    "test": {
+      "path": "data/processed/v3/metadata/asr_finetune_test.csv",
+      "canonical_csv_sha256": "64e63c301689d1e71ec4c7e792141a578fe9e6f92d8d3e700e9bc6b9b5a737df"
+    }
+  },
+  "inference": {
+    "backend": "faster-whisper",
+    "device": "cpu",
+    "compute_type": "int8",
+    "language": "vi",
+    "task": "transcribe",
+    "beam_size": 10,
+    "vad_filter": true,
+    "condition_on_previous_text": false,
+    "word_timestamps": false
+  },
+  "model_directory": "models/experimental/asr/v3/ctranslate2",
+  "model_files": {
+    "config.json": "f70d958c83258ac55d7146311307345f170847bcd5207b341b3da2bd2fa0a576",
+    "model.bin": "931dd9718c060cb89b69c9201e4e991aac865cc54ec79508ec15f7dbf5bba9aa",
+    "preprocessor_config.json": "e4449dfed25a2b4c054b6103753daebad3cfab42c1ac0421b3e5c621a4de22e1",
+    "tokenizer.json": "f287cbbf9dc4ec909afcad08e9067ba90cfb5672c31e385f82f60b27b74e776a",
+    "vocabulary.json": "aa4e6188766a36f6a7f3e44db3f74823c6fee0bf33a9559247e18fedb3bc8d55"
+  },
+  "test_used_for_training_or_selection": false
+}

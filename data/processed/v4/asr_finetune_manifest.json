@@ -1,0 +1,59 @@
+{
+  "manifest_schema_version": 1,
+  "dataset_version": "v4",
+  "component": "asr_finetune",
+  "freeze_status": "DEVELOPMENT",
+  "created_at": "2026-08-16T16:55:29+07:00",
+  "source": {
+    "dataset_version": "v3",
+    "manifest_path": "data/processed/v3/asr_finetune_manifest.json",
+    "manifest_sha256": "74e598a1e363f0e276ff7a775e4bb3a0a2adf7429facaadee5550e4c03592975",
+    "copy_policy": "exact train/validation/test reuse"
+  },
+  "datasets": {
+    "train": {
+      "path": "data/processed/v4/metadata/asr_finetune_train.csv",
+      "row_count": 1465,
+      "speaker_count": 26,
+      "sha256": "f76bc9e1de74b0bb03f685d5007fe50a3ce3bb6b7127351f083302d229936a40",
+      "canonical_csv_sha256": "c5a44563a8b0bb54b95f5da4609abd1052ffbbf907c52868bd0e8c8781e72ac0",
+      "identical_to_v3": true
+    },
+    "validation": {
+      "path": "data/processed/v4/metadata/asr_finetune_validation.csv",
+      "row_count": 322,
+      "speaker_count": 4,
+      "sha256": "2254bd84b283b1f29bab1d37dc07e5e664c32149040825c2848ab41fd0be72c5",
+      "canonical_csv_sha256": "a0df3fff3130967c0e5b6306a1b8ba0313b7669ed872e4362f1f9e9512f36e7f",
+      "identical_to_v3": true
+    },
+    "test": {
+      "path": "data/processed/v4/metadata/asr_finetune_test.csv",
+      "row_count": 249,
+      "speaker_count": 4,
+      "sha256": "0456d5713ed46a6190250ee54f90d73cd54b2c241eb7aab0ba0d305eda2b8e3e",
+      "canonical_csv_sha256": "64e63c301689d1e71ec4c7e792141a578fe9e6f92d8d3e700e9bc6b9b5a737df",
+      "identical_to_v3": true
+    }
+  },
+  "invariants": {
+    "canonical_rows_identical_to_v3": true,
+    "audio_overlap": {
+      "train_validation": 0,
+      "train_test": 0,
+      "validation_test": 0
+    },
+    "speaker_overlap": {
+      "train_validation": 0,
+      "train_test": 0,
+      "validation_test": 0
+    }
+  },
+  "experiment_protocol": {
+    "train_only_on": "train",
+    "checkpoint_selection_only_on": "validation",
+    "test_used_for_training_or_selection": false,
+    "test_is_fresh_holdout": false,
+    "test_history_note": "This exact test split was already evaluated in the ASR v3 experiment. It supports a controlled same-set comparison, not a new unbiased holdout estimate."
+  }
+}

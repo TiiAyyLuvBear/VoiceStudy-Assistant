@@ -1,0 +1,99 @@
+{
+  "manifest_schema_version": 1,
+  "dataset_version": "v3",
+  "component": "asr_finetune",
+  "freeze_status": "FROZEN",
+  "created_at": "2026-08-15T22:28:00+07:00",
+  "source": {
+    "inventory_path": "data/metadata/data_inventory.csv",
+    "inventory_sha256": "9139f1ec543b9135a98771ec358a60a51a3718c84bd0971a92269340aa67573f",
+    "audio_root": "data/audio",
+    "source_row_count": 2148,
+    "accepted_row_count": 2036,
+    "rejected_row_count": 112,
+    "all_source_rows_accounted_for": true
+  },
+  "selection_policy": {
+    "train_project_splits": [
+      "SVM",
+      "UNUSED"
+    ],
+    "validation_project_splits": [
+      "VALIDATION"
+    ],
+    "test_project_splits": [
+      "TEST"
+    ],
+    "use_every_usable_source_row": true,
+    "require_source_valid_flag": true,
+    "require_existing_audio": true,
+    "require_nonempty_transcript": true,
+    "transcript_normalization": "Unicode NFC plus whitespace collapse",
+    "speaker_disjoint": true,
+    "random_sampling": false
+  },
+  "invariants": {
+    "audio_overlap_across_splits": 0,
+    "speaker_overlap": {
+      "train_validation": 0,
+      "train_test": 0,
+      "validation_test": 0
+    },
+    "accepted_plus_rejected_equals_source": true
+  },
+  "datasets": {
+    "train": {
+      "path": "data/processed/v3/metadata/asr_finetune_train.csv",
+      "row_count": 1465,
+      "speaker_count": 26,
+      "duration_hours": 1.543515,
+      "sha256": "f76bc9e1de74b0bb03f685d5007fe50a3ce3bb6b7127351f083302d229936a40",
+      "canonical_csv_sha256": "c5a44563a8b0bb54b95f5da4609abd1052ffbbf907c52868bd0e8c8781e72ac0"
+    },
+    "validation": {
+      "path": "data/processed/v3/metadata/asr_finetune_validation.csv",
+      "row_count": 322,
+      "speaker_count": 4,
+      "duration_hours": 0.30905,
+      "sha256": "2254bd84b283b1f29bab1d37dc07e5e664c32149040825c2848ab41fd0be72c5",
+      "canonical_csv_sha256": "a0df3fff3130967c0e5b6306a1b8ba0313b7669ed872e4362f1f9e9512f36e7f"
+    },
+    "test": {
+      "path": "data/processed/v3/metadata/asr_finetune_test.csv",
+      "row_count": 249,
+      "speaker_count": 4,
+      "duration_hours": 0.251108,
+      "sha256": "0456d5713ed46a6190250ee54f90d73cd54b2c241eb7aab0ba0d305eda2b8e3e",
+      "canonical_csv_sha256": "64e63c301689d1e71ec4c7e792141a578fe9e6f92d8d3e700e9bc6b9b5a737df"
+    }
+  },
+  "rejected": {
+    "path": "data/processed/v3/metadata/asr_finetune_rejected.csv",
+    "row_count": 112,
+    "reason_counts": {
+      "empty_signal": 1,
+      "long_silence": 5,
+      "low_volume": 106
+    },
+    "sha256": "27c401c9ab759e088b54ad91501f265c57a88c296622218c82578f6c6509df09",
+    "canonical_csv_sha256": "6491eee9430d989a885bc37a024f52c04ec1cea4ab85b87d7e92cb7561fe1116"
+  },
+  "scope_notes": [
+    "Only data/audio rows represented by data_inventory.csv are source data.",
+    "data/commands/audio remains an external real-command evaluation set.",
+    "data/processed and data/samples are excluded because they contain derived copies.",
+    "Do not inspect or tune against the v3 test split before model/configuration lock."
+  ],
+  "frozen_at": "2026-08-16T10:16:00+07:00",
+  "final_evaluation": {
+    "locked_model": "models/experimental/asr/v3/locked_model.json",
+    "locked_model_sha256": "31a45773b25a096172b37638e2ce68ce738a847ca13e7cbb59178dbade90f2fb",
+    "baseline_metrics": "reports/asr/v3/baseline_original/baseline_original_metrics.json",
+    "baseline_metrics_sha256": "3556c5cb0f0c87d78fd7fc8d6d7da753d9e31f1297660f8825dc6f1eea014146",
+    "final_test_metrics": "reports/asr/v3/final_test/test_metrics.json",
+    "final_test_metrics_sha256": "2152b7e16475ac2bf3fe8a9fa8a9f9df74e8ad3fed1bb1aaa281432efab6e340",
+    "comparison": "reports/asr/v3/comparison.json",
+    "comparison_sha256": "03a35e25c53a91612cf11da2051a18caf32f6b619706cd11dc410a36a990fd56",
+    "final_test_runs": 1
+  }
+}
