@@ -3,6 +3,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 import soundfile as sf
+import warnings
 
 from src.audio.preprocessing import preprocess_audio
 
@@ -23,6 +24,24 @@ def test_preprocessing_converts_stereo_8khz_to_mono_16khz(tmp_path) -> None:
     assert 15900 <= audio.size <= 16100
     assert np.isfinite(audio).all()
     assert np.max(np.abs(audio)) == pytest.approx(0.99, abs=1e-3)
+
+
+def test_preprocessing_after_speechbrain_import_has_no_lazy_import_warning(tmp_path) -> None:
+    """Regression: librosa lazy loading probed SpeechBrain's optional k2 module."""
+    import speechbrain  # noqa: F401
+
+    sample_rate = 8000
+    time_axis = np.arange(sample_rate, dtype=np.float32) / sample_rate
+    audio_path = tmp_path / "speechbrain_loaded_8khz.wav"
+    sf.write(audio_path, np.sin(2 * np.pi * 220 * time_axis), sample_rate)
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        audio, output_rate = preprocess_audio(str(audio_path))
+
+    assert output_rate == 16000
+    assert 15900 <= audio.size <= 16100
+    assert np.isfinite(audio).all()
 
 
 def test_preprocessing_rejects_missing_audio(tmp_path) -> None:

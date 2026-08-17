@@ -10,7 +10,7 @@ from typing import TypedDict
 import numpy as np
 
 from src.audio.preprocessing import preprocess_audio
-from src.speaker.embedding import ECAPAEmbeddingExtractor
+from src.speaker.embedding import ECAPAEmbeddingExtractor, get_embedding_extractor
 
 
 APPLICATION_EMBEDDING_DIR = Path("models/application/user_embeddings")
@@ -30,7 +30,7 @@ class EnrollmentResult(TypedDict):
 
 @lru_cache(maxsize=1)
 def _get_extractor() -> ECAPAEmbeddingExtractor:
-    return ECAPAEmbeddingExtractor.from_config()
+    return get_embedding_extractor()
 
 
 def _failure(user_id: str, audio_count: int, error: Exception | str) -> EnrollmentResult:

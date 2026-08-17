@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import hashlib
 import time
+from functools import lru_cache
 from pathlib import Path
-from typing import Any
+from typing import Any, Mapping
 
 import numpy as np
 import torch
@@ -21,6 +23,58 @@ EXPECTED_EMBEDDING_DIMENSION = 192
 
 class EmbeddingError(ValueError):
     '''Raised when input audio or an extracted embedding is invalid.'''
+
+
+class CheckpointValidationError(EmbeddingError):
+    '''Raised when a configured fine-tuned checkpoint cannot be trusted.'''
+
+
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open('rb') as stream:
+        for block in iter(lambda: stream.read(1024 * 1024), b''):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def _checkpoint_document(path: Path, expected_sha256: str) -> Mapping[str, Any]:
+    if not path.is_file():
+        raise CheckpointValidationError(f'ECAPA checkpoint does not exist: {path}')
+    actual_sha256 = _sha256(path)
+    if actual_sha256.lower() != expected_sha256.lower():
+        raise CheckpointValidationError(
+            f'ECAPA checkpoint SHA-256 mismatch: expected {expected_sha256}, '
+            f'received {actual_sha256}'
+        )
+    try:
+        document = torch.load(path, map_location='cpu', weights_only=True)
+    except Exception as error:
+        raise CheckpointValidationError(
+            f'Unable to load ECAPA checkpoint: {path}'
+        ) from error
+    if not isinstance(document, Mapping):
+        raise CheckpointValidationError('ECAPA checkpoint must contain a mapping')
+    epoch = document.get('epoch')
+    if not isinstance(epoch, int) or epoch <= 0:
+        raise CheckpointValidationError('ECAPA checkpoint epoch is missing or invalid')
+    return document
+
+
+def _configured_checkpoint(
+    speaker: Mapping[str, Any],
+    config_root: Path,
+) -> tuple[Path | None, str, str | None, bool, str]:
+    path_value = speaker.get('checkpoint_path')
+    checkpoint_path = (
+        resolve_path(path_value, config_root) if path_value else None
+    )
+    return (
+        checkpoint_path,
+        str(speaker.get('checkpoint_encoder_key', 'encoder')),
+        str(speaker['checkpoint_sha256']) if speaker.get('checkpoint_sha256') else None,
+        bool(speaker.get('checkpoint_strict', True)),
+        str(speaker.get('model_version', 'speechbrain-ecapa-voxceleb')),
+    )
 
 
 def _validate_preprocessed_audio(
@@ -57,12 +111,24 @@ class ECAPAEmbeddingExtractor:
         cache_dir: str | Path = 'models/cache/ecapa',
         expected_dimension: int = EXPECTED_EMBEDDING_DIMENSION,
         classifier: Any | None = None,
+        checkpoint_path: str | Path | None = None,
+        checkpoint_key: str = 'encoder',
+        checkpoint_sha256: str | None = None,
+        checkpoint_strict: bool = True,
+        model_version: str = 'speechbrain-ecapa-voxceleb',
     ) -> None:
         self.model_source = model_source
         self.device = device
         self.cache_dir = Path(cache_dir)
         self.expected_dimension = expected_dimension
+        self.checkpoint_path = Path(checkpoint_path).resolve() if checkpoint_path else None
+        self.checkpoint_key = checkpoint_key
+        self.checkpoint_sha256 = checkpoint_sha256
+        self.checkpoint_strict = checkpoint_strict
+        self.model_version = model_version
+        self.checkpoint_metadata: dict[str, Any] = {}
         self.classifier = classifier if classifier is not None else self._load_classifier()
+        self._load_finetuned_checkpoint()
         self._freeze_for_inference()
 
     @classmethod
@@ -83,6 +149,9 @@ class ECAPAEmbeddingExtractor:
 
         cache_dir = Path(speaker.get('cache_dir', 'models/cache/ecapa'))
         cache_dir = resolve_path(cache_dir, config_root)
+        checkpoint_path, checkpoint_key, checkpoint_sha256, checkpoint_strict, model_version = (
+            _configured_checkpoint(speaker, config_root)
+        )
         return cls(
             model_source=speaker.get('embedding_model', DEFAULT_MODEL_SOURCE),
             device=speaker.get('device', 'cpu'),
@@ -91,6 +160,11 @@ class ECAPAEmbeddingExtractor:
                 speaker.get('embedding_dimension', EXPECTED_EMBEDDING_DIMENSION)
             ),
             classifier=classifier,
+            checkpoint_path=checkpoint_path,
+            checkpoint_key=checkpoint_key,
+            checkpoint_sha256=checkpoint_sha256,
+            checkpoint_strict=checkpoint_strict,
+            model_version=model_version,
         )
 
     def _load_classifier(self) -> Any:
@@ -110,6 +184,48 @@ class ECAPAEmbeddingExtractor:
             freeze_params=True,
             local_strategy=LocalStrategy.COPY,
         )
+
+    def _load_finetuned_checkpoint(self) -> None:
+        if self.checkpoint_path is None:
+            return
+        if not self.checkpoint_sha256:
+            raise CheckpointValidationError(
+                'checkpoint_sha256 is required when checkpoint_path is configured'
+            )
+        document = _checkpoint_document(self.checkpoint_path, self.checkpoint_sha256)
+        state_dict = document.get(self.checkpoint_key)
+        if not isinstance(state_dict, Mapping):
+            raise CheckpointValidationError(
+                f'ECAPA checkpoint key is missing or invalid: {self.checkpoint_key}'
+            )
+        mods = getattr(self.classifier, 'mods', None)
+        embedding_model = getattr(mods, 'embedding_model', None)
+        if embedding_model is None:
+            raise CheckpointValidationError(
+                'SpeechBrain classifier has no mods.embedding_model'
+            )
+        try:
+            incompatible = embedding_model.load_state_dict(
+                state_dict,
+                strict=self.checkpoint_strict,
+            )
+        except (RuntimeError, TypeError, ValueError) as error:
+            raise CheckpointValidationError(
+                'Fine-tuned encoder state is incompatible with SpeechBrain ECAPA'
+            ) from error
+        if self.checkpoint_strict and (
+            incompatible.missing_keys or incompatible.unexpected_keys
+        ):
+            raise CheckpointValidationError(
+                'Fine-tuned encoder state did not load strictly'
+            )
+        validation = document.get('validation', document.get('validation_metrics', {}))
+        self.checkpoint_metadata = {
+            'path': str(self.checkpoint_path),
+            'sha256': self.checkpoint_sha256.lower(),
+            'epoch': int(document['epoch']),
+            'validation': dict(validation) if isinstance(validation, Mapping) else {},
+        }
 
     def _freeze_for_inference(self) -> None:
         self.classifier.eval()
@@ -163,5 +279,24 @@ def extract_embedding(
 ) -> tuple[np.ndarray, int, float]:
     '''Extract one frozen, L2-normalized speaker embedding.'''
 
-    engine = extractor or ECAPAEmbeddingExtractor.from_config(config_path)
+    engine = extractor or get_embedding_extractor(config_path)
     return engine.extract(audio, sample_rate=sample_rate)
+
+
+@lru_cache(maxsize=4)
+def _cached_embedding_extractor(config_path: str) -> ECAPAEmbeddingExtractor:
+    return ECAPAEmbeddingExtractor.from_config(config_path)
+
+
+def get_embedding_extractor(
+    config_path: str | Path = DEFAULT_CONFIG_PATH,
+) -> ECAPAEmbeddingExtractor:
+    '''Return one cached extractor for each resolved configuration path.'''
+
+    return _cached_embedding_extractor(str(Path(config_path).resolve()))
+
+
+def clear_embedding_extractor_cache() -> None:
+    '''Clear cached runtime models for tests or explicit model reloads.'''
+
+    _cached_embedding_extractor.cache_clear()

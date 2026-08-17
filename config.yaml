@@ -5,6 +5,16 @@ app:
   name: VoiceStudy Assistant
   environment: development
 
+backend:
+  host: 127.0.0.1
+  port: 8000
+  base_url: http://127.0.0.1:8000
+  reload: false
+  preload_models: true
+  strict_model_startup: true
+  request_timeout_seconds: 300
+  max_upload_bytes: 26214400
+
 paths:
   raw_data: data/raw
   processed_data: data/processed
@@ -16,10 +26,10 @@ paths:
   asr_reports: reports/asr
   database: data/database/voicestudy.db
   model_cache: models/cache
-  speaker_model: models/experimental/speaker_svm_linear.pkl
+  speaker_model: reports/results/ecapa_voxvietnam_best.pt
   user_embeddings: models/user_embeddings
-  identification_threshold: models/identification_threshold.json
-  verification_threshold: models/verification_threshold.json
+  identification_threshold: reports/results/evaluation/finetuned/open_set_metrics.json
+  verification_threshold: reports/results/evaluation/finetuned/verification_metrics.json
 
 audio:
   sample_rate: 16000
@@ -48,6 +58,11 @@ asr:
 speaker:
   backend: speechbrain
   embedding_model: speechbrain/spkrec-ecapa-voxceleb
+  model_version: ecapa-voxvietnam-epoch-9
+  checkpoint_path: reports/results/ecapa_voxvietnam_best.pt
+  checkpoint_encoder_key: encoder
+  checkpoint_sha256: 7265DAE5CD8EC650E405185888134286687641E77566F5206B0D401545A117CE
+  checkpoint_strict: true
   pretrained_objective: additive_margin_softmax
   sample_rate: 16000
   embedding_dimension: 192
@@ -57,13 +72,39 @@ speaker:
   freeze_parameters: true
   fine_tune: false
   l2_normalize: true
-  svm_model_path: models/experimental/speaker_svm_linear.pkl
   svm_centroid_dir:
-  experimental_unknown_threshold_path: models/identification_threshold.json
-  experimental_verification_threshold_path: models/verification_threshold.json
+  experimental_unknown_threshold_path: reports/results/evaluation/finetuned/open_set_metrics.json
+  experimental_verification_threshold_path: reports/results/evaluation/finetuned/verification_metrics.json
   application_centroid_dir: models/application/user_embeddings
-  application_sid_threshold_path: models/experimental/cosine_unknown_threshold.json
-  application_verification_threshold_path: models/experimental/verification_threshold.json
+  application_sid_threshold_path: reports/results/evaluation/finetuned/open_set_metrics.json
+  application_verification_threshold_path: reports/results/evaluation/finetuned/verification_metrics.json
+  enrollment_audio_count: 5
+  quality_gate:
+    trial_scores_path: reports/results/evaluation/finetuned/verification_trial_scores.csv
+    metrics_path: reports/results/evaluation/finetuned/verification_metrics.json
+    smoke_audio_path: data/datasets/kaggle/VoxVietnam for Speaker Verification/voxvietnam_ecapa_three_task_v1/test/audio/voxvi_spk_0281/voxvi_03fa57cb2fc443efebbd.wav
+    expected_trials: 3000
+    expected_genuine_trials: 500
+    expected_impostor_trials: 2500
+    expected_eer: 0.15
+    expected_min_dcf: 0.5196
+    expected_far: 0.0028
+    expected_frr: 0.364
+    maximum_eer: 0.16
+    maximum_far: 0.01
+    maximum_frr: 0.38
+    metric_tolerance: 0.0000001
+    curve_tolerance: 0.0000001
 
 database:
   path: data/database/voicestudy.db
+
+logging:
+  requests:
+    enabled: true
+    level: INFO
+    console: true
+    file_path: logs/requests.log
+    max_bytes: 5242880
+    backup_count: 3
+    include_transcript: false

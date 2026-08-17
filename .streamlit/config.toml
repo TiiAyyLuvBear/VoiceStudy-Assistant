@@ -1,0 +1,8 @@
+[server]
+# SpeechBrain exposes lazy optional modules. Streamlit's source watcher probes
+# them and triggers irrelevant imports for k2, flair, transformers, and numba.
+fileWatcherType = "none"
+runOnSave = false
+
+[browser]
+gatherUsageStats = false

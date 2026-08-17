@@ -2,19 +2,19 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from tempfile import TemporaryDirectory
-
 import streamlit as st
 
+from app.backend_client import BackendRequestError, get_backend_client
 from app.pages.enrollment_page import render_file_status
-from src.database.user_repository import delete_user, list_users
-from src.speaker.application import enroll_user
 
 
 def render_user_management_page() -> None:
     st.title("User Management")
-    users = list_users()
+    try:
+        users = get_backend_client().list_users()
+    except BackendRequestError as error:
+        st.error(str(error))
+        return
     if not users:
         st.info("Chưa có user. Đăng ký ở Speaker Enrollment.")
         return
@@ -29,15 +29,22 @@ def render_user_management_page() -> None:
         if len(refresh_files) != 5:
             st.error("Cần đúng 5 file WAV.")
         else:
-            with TemporaryDirectory(prefix="voicestudy-refresh-") as directory:
-                paths = []
-                for index, audio_file in enumerate(refresh_files, start=1):
-                    path = Path(directory) / f"{index}.wav"
-                    path.write_bytes(audio_file.getvalue())
-                    paths.append(path)
-                render_file_status(enroll_user(selected_id, selected["name"], paths))
+            files = [
+                (audio_file.name or f"{index}.wav", audio_file.getvalue())
+                for index, audio_file in enumerate(refresh_files, start=1)
+            ]
+            try:
+                result = get_backend_client().enroll(selected_id, selected["name"], files)
+            except BackendRequestError as error:
+                st.error(str(error))
+            else:
+                render_file_status(result)
     confirm_delete = st.checkbox(f"Xác nhận xóa {selected_id} cùng lịch và ghi chú")
     if st.button("Xóa user", disabled=not confirm_delete):
-        delete_user(selected_id)
-        st.success("Đã xóa user.")
-        st.rerun()
+        try:
+            get_backend_client().delete_user(selected_id)
+        except BackendRequestError as error:
+            st.error(str(error))
+        else:
+            st.success("Đã xóa user.")
+            st.rerun()

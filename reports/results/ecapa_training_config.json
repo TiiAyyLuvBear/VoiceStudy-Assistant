@@ -1,0 +1,23 @@
+{
+  "dataset": "voxvietnam_ecapa_three_task_v1",
+  "dataset_root": "/kaggle/input/datasets/anyuuus/statiscal-learning-dataset-for-finetuning-ecapa/VoxVietnam for Speaker Verification/voxvietnam_ecapa_three_task_v1",
+  "device": "cuda:0",
+  "batch_size": 2,
+  "gradient_accumulation": 16,
+  "effective_batch": 32,
+  "segment_seconds": 3,
+  "train_audio": 4600,
+  "train_speakers": 230,
+  "validation_audio": 750,
+  "validation_trials": 3000,
+  "test_audio": 750,
+  "test_trials": 3000,
+  "selection_metric": "validation EER; minDCF tie-break",
+  "max_epochs": 30,
+  "warmup_epochs": 2,
+  "early_stopping_patience": 3,
+  "encoder_learning_rate": 1e-05,
+  "classifier_learning_rate": 0.001,
+  "weight_decay": 2e-06,
+  "checkpoint": "/kaggle/working/ecapa_voxvietnam_best.pt"
+}

@@ -2,12 +2,9 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from tempfile import TemporaryDirectory
-
 import streamlit as st
 
-from src.pipeline.orchestrator import process_audio_request
+from app.backend_client import BackendRequestError, get_backend_client
 from src.tts.text_to_speech import synthesize_vietnamese
 
 
@@ -23,11 +20,15 @@ def render_assistant_page() -> None:
         if audio is None:
             st.error("Hãy thu âm hoặc tải file WAV.")
             return
-        with TemporaryDirectory(prefix="voicestudy-command-") as directory:
-            path = Path(directory) / "command.wav"
-            path.write_bytes(audio.getvalue())
+        try:
             with st.spinner("Đang xử lý audio..."):
-                result = process_audio_request(path)
+                result = get_backend_client().process_audio(
+                    audio.name or "command.wav",
+                    audio.getvalue(),
+                )
+        except BackendRequestError as error:
+            st.error(str(error))
+            return
         st.json({
             key: result[key] for key in (
                 "transcript", "intent", "entities", "missing_fields", "speaker",

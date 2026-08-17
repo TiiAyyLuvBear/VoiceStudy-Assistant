@@ -1,0 +1,21 @@
+{
+  "model": "fine-tuned ECAPA-TDNN",
+  "validation": {
+    "eer": 0.05200000000000002,
+    "eer_threshold": 0.2559107510714761,
+    "min_dcf": 0.23920000000000005,
+    "min_dcf_threshold": 0.4322190229975736,
+    "tar_at_far_1pct": 0.894
+  },
+  "test": {
+    "eer": 0.15000000000000002,
+    "eer_threshold": 0.1490777720285503,
+    "min_dcf": 0.5196,
+    "min_dcf_threshold": 0.5116169691038419,
+    "tar_at_far_1pct": 0.706,
+    "threshold": 0.4322190229975736,
+    "far": 0.0028,
+    "frr": 0.364,
+    "tar": 0.636
+  }
+}

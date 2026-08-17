@@ -11,7 +11,7 @@ import joblib
 import numpy as np
 
 from src.audio.preprocessing import preprocess_audio
-from src.speaker.embedding import ECAPAEmbeddingExtractor
+from src.speaker.embedding import ECAPAEmbeddingExtractor, get_embedding_extractor
 
 
 MODEL_PATH = Path("models/experimental/speaker_svm_linear.pkl")
@@ -42,7 +42,7 @@ def _load_model_bundle(model_path: str = str(MODEL_PATH)) -> dict[str, Any]:
 
 @lru_cache(maxsize=1)
 def _get_extractor() -> ECAPAEmbeddingExtractor:
-    return ECAPAEmbeddingExtractor.from_config()
+    return get_embedding_extractor()
 
 
 def _failure(started_at: float, error: Exception | str) -> ClosedSetIdentificationResult:

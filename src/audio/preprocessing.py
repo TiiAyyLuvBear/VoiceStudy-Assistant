@@ -1,7 +1,9 @@
 from pathlib import Path
-import librosa
+from math import gcd
+
 import numpy as np
 import soundfile as sf
+from scipy.signal import resample_poly
 
 TARGET_SAMPLE_RATE = 16000
 TOP_DB = 30
@@ -41,10 +43,14 @@ def resample_audio(
     if sample_rate == TARGET_SAMPLE_RATE:
         return audio
 
-    return librosa.resample(
+    if sample_rate <= 0:
+        raise ValueError("sample_rate must be positive")
+
+    common_divisor = gcd(sample_rate, TARGET_SAMPLE_RATE)
+    return resample_poly(
         audio,
-        orig_sr=sample_rate,
-        target_sr=TARGET_SAMPLE_RATE
+        up=TARGET_SAMPLE_RATE // common_divisor,
+        down=sample_rate // common_divisor,
     )
 
 def trim_silence(audio: np.ndarray) -> np.ndarray:
@@ -58,12 +64,17 @@ def trim_silence(audio: np.ndarray) -> np.ndarray:
         Trimmed waveform.
     """
 
-    trimmed, _ = librosa.effects.trim(
-        audio,
-        top_db=TOP_DB
-    )
+    if audio.size == 0:
+        return audio
 
-    return trimmed
+    peak = float(np.max(np.abs(audio)))
+    if peak == 0.0:
+        return audio
+    threshold = peak * (10.0 ** (-TOP_DB / 20.0))
+    audible = np.flatnonzero(np.abs(audio) >= threshold)
+    if audible.size == 0:
+        return audio[:0]
+    return audio[audible[0]:audible[-1] + 1]
 
 def normalize_audio(audio: np.ndarray) -> np.ndarray:
     """

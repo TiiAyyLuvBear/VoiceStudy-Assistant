@@ -3,6 +3,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 import torch
+import yaml
 
 from src.speaker.embedding import (
     ECAPAEmbeddingExtractor,
@@ -76,9 +77,24 @@ def test_embedding_rejects_nan_model_output() -> None:
         extractor.extract(_speech())
 
 
-def test_config_keeps_ecapa_frozen() -> None:
+def test_config_keeps_ecapa_frozen(tmp_path) -> None:
+    config_path = tmp_path / 'config.yaml'
+    config_path.write_text(
+        yaml.safe_dump(
+            {
+                'speaker': {
+                    'embedding_model': 'speechbrain/spkrec-ecapa-voxceleb',
+                    'embedding_dimension': 192,
+                    'evaluation_mode': True,
+                    'freeze_parameters': True,
+                    'fine_tune': False,
+                }
+            }
+        ),
+        encoding='utf-8',
+    )
     extractor = ECAPAEmbeddingExtractor.from_config(
-        'config.yaml',
+        config_path,
         classifier=FakeEncoderClassifier(),
     )
 

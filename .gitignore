@@ -1,23 +1,32 @@
-.pytest_cache/
+# Python environments and caches.
+.venv/
 .python-version
 pyvenv.cfg
-lib64
-__init__.py
 bin/
 lib/
+lib64/
 include/
 etc/
-__pycache__/
 share/
-# Model weights are downloaded on first use and must not be committed.
-models/cache/
-
-# Python/test cache.
 __pycache__/
 *.py[cod]
 .pytest_cache/
 
-# Local runtime data.
+# Local secrets.
+.env
+.env.*
+!.env.example
+
+# Downloaded models and per-user runtime state.
+models/cache/
+models/application/user_embeddings/
+
+# Local runtime data and logs.
 data/database/*.db
-.venv/
-.tests/
+data/datasets/
+data/raw/
+data/processed/ecapa_experiment_v1/
+logs/
+
+# Packaged result archive; source result files remain versioned.
+reports/results.zip

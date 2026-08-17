@@ -2,12 +2,9 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-from tempfile import TemporaryDirectory
-
 import streamlit as st
 
-from src.speaker.application import enroll_user
+from app.backend_client import BackendRequestError, get_backend_client
 
 
 def render_file_status(result: dict) -> None:
@@ -35,12 +32,18 @@ def render_enrollment_page() -> None:
         elif len(audio_files) != 5:
             st.error("Cần đúng 5 file WAV.")
         else:
-            with TemporaryDirectory(prefix="voicestudy-enrollment-") as directory:
-                paths: list[Path] = []
-                for index, audio_file in enumerate(audio_files, start=1):
-                    path = Path(directory) / f"{index}.wav"
-                    path.write_bytes(audio_file.getvalue())
-                    paths.append(path)
+            files = [
+                (audio_file.name or f"{index}.wav", audio_file.getvalue())
+                for index, audio_file in enumerate(audio_files, start=1)
+            ]
+            try:
                 with st.spinner("Đang tạo embedding và centroid..."):
-                    result = enroll_user(user_id.strip(), name.strip(), paths)
+                    result = get_backend_client().enroll(
+                        user_id.strip(),
+                        name.strip(),
+                        files,
+                    )
+            except BackendRequestError as error:
+                st.error(str(error))
+                return
             render_file_status(result)

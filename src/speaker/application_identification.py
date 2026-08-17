@@ -12,7 +12,8 @@ import numpy as np
 import yaml
 
 from src.audio.preprocessing import preprocess_audio
-from src.speaker.embedding import ECAPAEmbeddingExtractor
+from src.speaker.embedding import ECAPAEmbeddingExtractor, get_embedding_extractor
+from src.utils.config import threshold_from_metrics_document
 
 
 CONFIG_PATH = Path("config.yaml")
@@ -33,10 +34,10 @@ class ApplicationIdentificationResult(TypedDict):
 
 @lru_cache(maxsize=1)
 def _get_extractor() -> ECAPAEmbeddingExtractor:
-    return ECAPAEmbeddingExtractor.from_config()
+    return get_embedding_extractor()
 
 
-def _load_settings(config_path: Path = CONFIG_PATH) -> tuple[Path, Path]:
+def _load_settings(config_path: Path = CONFIG_PATH) -> tuple[Path, Path | float]:
     with config_path.open("r", encoding="utf-8") as stream:
         config = yaml.safe_load(stream) or {}
     speaker = config.get("speaker", {})
@@ -46,24 +47,35 @@ def _load_settings(config_path: Path = CONFIG_PATH) -> tuple[Path, Path]:
             "models/application/user_embeddings",
         )
     )
-    threshold_path = Path(
-        speaker.get(
-            "application_sid_threshold_path",
-            "models/experimental/cosine_unknown_threshold.json",
+    direct_threshold = speaker.get("application_sid_threshold")
+    threshold_source: Path | float
+    if direct_threshold is not None:
+        threshold_source = float(direct_threshold)
+    else:
+        threshold_source = Path(
+            speaker.get(
+                "application_sid_threshold_path",
+                "reports/results/evaluation/finetuned/open_set_metrics.json",
+            )
         )
-    )
     if not centroid_dir.is_absolute():
         centroid_dir = config_path.resolve().parent / centroid_dir
-    if not threshold_path.is_absolute():
-        threshold_path = config_path.resolve().parent / threshold_path
-    return centroid_dir, threshold_path
+    if isinstance(threshold_source, Path) and not threshold_source.is_absolute():
+        threshold_source = config_path.resolve().parent / threshold_source
+    return centroid_dir, threshold_source
 
 
-def _load_threshold(path: Path) -> float:
+def _load_threshold(path: Path | float) -> float:
+    if isinstance(path, (int, float)):
+        if not np.isfinite(path):
+            raise ValueError("Application SID threshold is missing or invalid")
+        return float(path)
     if not path.is_file():
         raise FileNotFoundError(f"Application SID threshold does not exist: {path}")
-    value = json.loads(path.read_text(encoding="utf-8")).get("threshold")
-    if not isinstance(value, (int, float)) or not np.isfinite(value):
+    value = threshold_from_metrics_document(
+        json.loads(path.read_text(encoding="utf-8"))
+    )
+    if value is None or not np.isfinite(value):
         raise ValueError("Application SID threshold is missing or invalid")
     return float(value)
 

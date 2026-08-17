@@ -11,6 +11,7 @@ from src.security.access_policy import PUBLIC, REJECT, SID, SID_AND_SV, get_acce
 from src.speaker.application import identify_application_user, verify_speaker
 from src.tasks.note_tasks import get_private_notes
 from src.tasks.schedule_tasks import add_schedule, get_schedules
+from src.utils.request_logging import log_audio_request
 
 
 def _end_to_end_result(**values: object) -> dict:
@@ -25,6 +26,55 @@ def _end_to_end_result(**values: object) -> dict:
     return result
 
 
+def _verification_view(result: dict, candidate_user_id: str) -> dict:
+    """Expose only fields that belong to speaker verification."""
+    return {
+        "protocol": result.get("protocol"),
+        "success": result.get("success"),
+        "candidate_user_id": result.get("candidate_user_id") or candidate_user_id,
+        "centroid_path": result.get("centroid_path"),
+        "similarity": result.get("similarity"),
+        "verified": result.get("verified"),
+        "error": result.get("error"),
+    }
+
+
+def _authenticate_audio(
+    audio_path: str | Path,
+    *,
+    database_path: str | Path | None,
+    config_path: str | Path,
+    identifier,
+    verifier,
+) -> tuple[dict, str | None]:
+    """Identify and verify speaker before transcript or intent processing."""
+    sid = identifier(audio_path, database_path=database_path, config_path=config_path)
+    speaker = {
+        "candidate_user_id": sid.get("candidate_user_id"),
+        "similarity": sid.get("similarity"),
+        "identified": sid.get("identified"),
+        "verified": None,
+        "centroid_path": sid.get("centroid_path"),
+    }
+    if not sid.get("success") or not sid.get("identified"):
+        return speaker, sid.get("error") or "UNKNOWN_SPEAKER"
+
+    candidate_user_id = sid["candidate_user_id"]
+    sv = verifier(
+        audio_path,
+        candidate_user_id,
+        database_path=database_path,
+        config_path=config_path,
+    )
+    verification = _verification_view(sv, candidate_user_id)
+    speaker["verification"] = verification
+    speaker["verified"] = verification["verified"]
+    if not verification["success"] or not verification["verified"]:
+        return speaker, verification["error"] or "VERIFICATION_FAILED"
+    return speaker, None
+
+
+@log_audio_request
 def process_audio_request(
     audio_path: str | Path,
     *,
@@ -40,6 +90,26 @@ def process_audio_request(
     Personal user IDs come only from Application SID; callers cannot select the
     database owner through a transcript or request parameter.
     """
+    speaker, authentication_error = _authenticate_audio(
+        audio_path,
+        database_path=database_path,
+        config_path=config_path,
+        identifier=identifier,
+        verifier=verifier,
+    )
+    if authentication_error is not None:
+        verification_failed = bool(speaker.get("identified"))
+        response = (
+            "Xác thực giọng nói thất bại."
+            if verification_failed
+            else "Không nhận diện được người dùng đã đăng ký."
+        )
+        return _end_to_end_result(
+            speaker=speaker,
+            error=authentication_error,
+            response=response,
+        )
+
     pipeline = asr_nlu_runner(
         audio_path, reference_date=reference_date, config_path=config_path,
     )
@@ -47,6 +117,7 @@ def process_audio_request(
         return _end_to_end_result(
             success=False, transcript=pipeline["transcript"],
             intent=pipeline["intent"], error=pipeline["error"],
+            speaker=speaker,
             response="Không thể xử lý audio. Vui lòng thử lại.",
         )
 
@@ -58,6 +129,7 @@ def process_audio_request(
         "normalized_transcript": pipeline["normalized_transcript"],
         "intent": intent, "entities": entities,
         "missing_fields": pipeline["missing_fields"], "policy": policy,
+        "speaker": speaker,
     }
     if policy == PUBLIC:
         return _end_to_end_result(
@@ -68,34 +140,7 @@ def process_audio_request(
             **common, response="Câu lệnh ngoài phạm vi hỗ trợ.", error="OUT_OF_SCOPE"
         )
 
-    sid = identifier(audio_path, database_path=database_path, config_path=config_path)
-    speaker = {
-        "candidate_user_id": sid.get("candidate_user_id"),
-        "similarity": sid.get("similarity"),
-        "identified": sid.get("identified"),
-        "verified": None,
-        "centroid_path": sid.get("centroid_path"),
-    }
-    if not sid.get("success") or not sid.get("identified"):
-        return _end_to_end_result(
-            **common, speaker=speaker, error=sid.get("error") or "UNKNOWN_SPEAKER",
-            response="Không nhận diện được người dùng đã đăng ký.",
-        )
-    candidate_user_id = sid["candidate_user_id"]
-
-    if policy == SID_AND_SV:
-        sv = verifier(
-            audio_path, candidate_user_id, database_path=database_path,
-            config_path=config_path,
-        )
-        speaker["verification"] = sv
-        speaker["verified"] = sv.get("verified")
-        if not sv.get("success") or not sv.get("verified"):
-            return _end_to_end_result(
-                **common, speaker=speaker,
-                error=sv.get("error") or "VERIFICATION_FAILED",
-                response="Xác thực giọng nói thất bại. Không thể xem ghi chú riêng tư.",
-            )
+    candidate_user_id = speaker["candidate_user_id"]
 
     if intent == "VIEW_SCHEDULE":
         schedules = get_schedules(candidate_user_id, entities.get("date"), database_path)
@@ -106,7 +151,7 @@ def process_audio_request(
     elif intent == "ADD_SCHEDULE":
         if pipeline["missing_fields"] or not all(entities.get(key) for key in ("title", "date", "time")):
             return _end_to_end_result(
-                **common, speaker=speaker, error="MISSING_FIELDS",
+                **common, error="MISSING_FIELDS",
                 response="Thiếu thông tin để thêm lịch: tiêu đề, ngày và giờ.",
             )
         schedule = add_schedule(
@@ -117,7 +162,7 @@ def process_audio_request(
     else:  # VIEW_PRIVATE_NOTE after successful SV
         notes = get_private_notes(candidate_user_id, database_path)
         response = "Chưa có ghi chú riêng tư." if not notes else f"Ghi chú gần nhất: {notes[0]['content']}"
-    return _end_to_end_result(**common, speaker=speaker, response=response)
+    return _end_to_end_result(**common, response=response)
 
 
 def _mock_parse(transcript: str) -> tuple[str, dict]:

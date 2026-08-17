@@ -1,0 +1,25 @@
+{
+  "model": "fine-tuned ECAPA-TDNN",
+  "validation": {
+    "threshold": 0.3781695766069066,
+    "known_identification_accuracy": 0.856,
+    "unknown_rejection_rate": 0.892,
+    "known_unknown_auroc": 0.963232,
+    "far": 0.108,
+    "frr": 0.108,
+    "dir_at_far_1pct": 0.664,
+    "dir_far_target": 0.01,
+    "dir_threshold": 0.5097872391746556
+  },
+  "test": {
+    "threshold": 0.3781695766069066,
+    "known_identification_accuracy": 0.64,
+    "unknown_rejection_rate": 0.832,
+    "known_unknown_auroc": 0.8248320000000001,
+    "far": 0.168,
+    "frr": 0.328,
+    "dir_at_far_1pct": 0.56,
+    "dir_far_target": 0.01,
+    "dir_threshold": 0.4732199516795807
+  }
+}

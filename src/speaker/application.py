@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import re
 import sqlite3
 from pathlib import Path
@@ -12,11 +13,19 @@ import numpy as np
 from src.audio.preprocessing import preprocess_audio
 from src.database.user_repository import create_user, get_user, list_users, update_embedding_path
 from src.speaker.embedding import EmbeddingError, extract_embedding
-from src.utils.config import load_yaml_mapping, resolve_path
+from src.utils.config import (
+    load_yaml_mapping,
+    resolve_path,
+    threshold_from_metrics_document,
+)
 
 AudioLoader = Callable[[str | Path], tuple[np.ndarray, int]]
 _USER_ID_PATTERN = re.compile(r"^user_[A-Za-z0-9][A-Za-z0-9_-]{0,58}$")
 _ENROLLMENT_AUDIO_COUNT = 5
+
+
+class CentroidModelMismatchError(ValueError):
+    """Raised when a centroid belongs to another embedding model version."""
 
 
 def _result(**values: object) -> dict:
@@ -28,7 +37,7 @@ def _result(**values: object) -> dict:
         "embedding_count": None,
         "centroid_path": None,
         "similarity": None,
-        "identified": False,
+        "identified": None,
         "verified": None,
         "error": None,
     }
@@ -46,6 +55,22 @@ def _centroid_dir(config_path: str | Path) -> Path:
     return resolve_path(speaker.get("application_centroid_dir", "models/user_embeddings"), root)
 
 
+def _model_version(config_path: str | Path) -> str:
+    speaker, _ = _speaker_config(config_path)
+    value = str(speaker.get("model_version", "")).strip()
+    if not value:
+        raise ValueError("speaker.model_version is required")
+    return value
+
+
+def _enrollment_audio_count(config_path: str | Path) -> int:
+    speaker, _ = _speaker_config(config_path)
+    value = int(speaker.get("enrollment_audio_count", _ENROLLMENT_AUDIO_COUNT))
+    if value <= 0:
+        raise ValueError("speaker.enrollment_audio_count must be positive")
+    return value
+
+
 def _threshold(
     config_path: str | Path,
     setting: str,
@@ -54,13 +79,20 @@ def _threshold(
     if explicit_value is not None:
         return float(explicit_value)
     speaker, root = _speaker_config(config_path)
+    direct_setting = setting.removesuffix("_path")
+    direct_value = speaker.get(direct_setting)
+    if direct_value is not None:
+        try:
+            value = float(direct_value)
+            return value if np.isfinite(value) else None
+        except (TypeError, ValueError):
+            return None
     threshold_path = speaker.get(setting)
     if not threshold_path:
         return None
     try:
         document, _ = load_yaml_mapping(resolve_path(threshold_path, root))
-        value = document.get("threshold")
-        return float(value) if value is not None else None
+        return threshold_from_metrics_document(document)
     except (OSError, TypeError, ValueError):
         return None
 
@@ -84,8 +116,40 @@ def _normalise(vector: np.ndarray) -> np.ndarray:
     return values / norm
 
 
-def _load_centroid(path: Path) -> np.ndarray:
-    return _normalise(np.load(path, allow_pickle=False))
+def _centroid_metadata_path(path: Path) -> Path:
+    return path.with_suffix(".meta.json")
+
+
+def _write_centroid_metadata(
+    path: Path,
+    *,
+    model_version: str,
+    embedding_dimension: int,
+    enrollment_audio_count: int,
+) -> None:
+    document = {
+        "model_version": model_version,
+        "embedding_dimension": int(embedding_dimension),
+        "enrollment_audio_count": int(enrollment_audio_count),
+    }
+    destination = _centroid_metadata_path(path)
+    temporary = destination.with_suffix(destination.suffix + ".tmp")
+    temporary.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")
+    temporary.replace(destination)
+
+
+def _load_centroid(path: Path, expected_model_version: str) -> np.ndarray:
+    metadata_path = _centroid_metadata_path(path)
+    try:
+        metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        raise CentroidModelMismatchError("CENTROID_MODEL_MISMATCH") from error
+    if metadata.get("model_version") != expected_model_version:
+        raise CentroidModelMismatchError("CENTROID_MODEL_MISMATCH")
+    vector = _normalise(np.load(path, allow_pickle=False))
+    if metadata.get("embedding_dimension") != vector.size:
+        raise CentroidModelMismatchError("CENTROID_MODEL_MISMATCH")
+    return vector
 
 
 def enroll_user(
@@ -103,8 +167,18 @@ def enroll_user(
         return _result(protocol="APPLICATION_ENROLLMENT", error="INVALID_USER_ID")
     if not isinstance(name, str) or not name.strip():
         return _result(protocol="APPLICATION_ENROLLMENT", user_id=user_id, error="INVALID_NAME")
-    if isinstance(audio_paths, (str, bytes)) or len(audio_paths) != _ENROLLMENT_AUDIO_COUNT:
+    try:
+        enrollment_audio_count = _enrollment_audio_count(config_path)
+        model_version = _model_version(config_path)
+    except (OSError, TypeError, ValueError):
+        return _result(protocol="APPLICATION_ENROLLMENT", user_id=user_id, error="INVALID_SPEAKER_CONFIG")
+    if isinstance(audio_paths, (str, bytes)) or len(audio_paths) != enrollment_audio_count:
         return _result(protocol="APPLICATION_ENROLLMENT", user_id=user_id, error="INVALID_ENROLLMENT_AUDIO_COUNT")
+    if any(not isinstance(path, (str, Path)) for path in audio_paths):
+        return _result(protocol="APPLICATION_ENROLLMENT", user_id=user_id, error="INVALID_AUDIO")
+    resolved_audio_paths = [Path(path).resolve() for path in audio_paths]
+    if len(set(resolved_audio_paths)) != enrollment_audio_count:
+        return _result(protocol="APPLICATION_ENROLLMENT", user_id=user_id, error="INVALID_AUDIO")
 
     try:
         embeddings = [
@@ -120,6 +194,12 @@ def enroll_user(
         centroid_dir.mkdir(parents=True, exist_ok=True)
         centroid_path = centroid_dir / f"{user_id}.npy"
         np.save(centroid_path, centroid)
+        _write_centroid_metadata(
+            centroid_path,
+            model_version=model_version,
+            embedding_dimension=centroid.size,
+            enrollment_audio_count=len(embeddings),
+        )
         if get_user(user_id, database_path):
             update_embedding_path(user_id, str(centroid_path), database_path)
         else:
@@ -149,14 +229,19 @@ def identify_application_user(
     """Identify highest-scoring enrolled application user from audio."""
     users = list_users(database_path)
     if not users:
-        return _result(protocol="APPLICATION_SID", error="NO_ENROLLMENT")
+        return _result(protocol="APPLICATION_SID", identified=False, error="NO_ENROLLMENT")
     try:
         query = _embedding_for_audio(audio_path, extractor=extractor, audio_loader=audio_loader)
     except (OSError, ValueError, EmbeddingError):
-        return _result(protocol="APPLICATION_SID", error="INVALID_AUDIO")
+        return _result(protocol="APPLICATION_SID", identified=False, error="INVALID_AUDIO")
 
+    try:
+        model_version = _model_version(config_path)
+    except (OSError, TypeError, ValueError):
+        return _result(protocol="APPLICATION_SID", identified=False, error="INVALID_SPEAKER_CONFIG")
     scores: list[tuple[str, float, Path]] = []
     missing_centroid = False
+    mismatched_centroid = False
     for user in users:
         user_id = str(user.get("user_id", ""))
         if not _USER_ID_PATTERN.fullmatch(user_id):
@@ -167,16 +252,21 @@ def identify_application_user(
             continue
         path = Path(path_value)
         try:
-            centroid = _load_centroid(path)
+            centroid = _load_centroid(path, model_version)
             scores.append((user_id, float(np.dot(query, centroid)), path))
+        except CentroidModelMismatchError:
+            mismatched_centroid = True
         except (OSError, ValueError, EmbeddingError):
             missing_centroid = True
 
     if not scores:
-        return _result(protocol="APPLICATION_SID", error="CENTROID_NOT_FOUND" if missing_centroid else "NO_ENROLLMENT")
+        error = "CENTROID_MODEL_MISMATCH" if mismatched_centroid else (
+            "CENTROID_NOT_FOUND" if missing_centroid else "NO_ENROLLMENT"
+        )
+        return _result(protocol="APPLICATION_SID", identified=False, error=error)
     threshold = _threshold(config_path, "application_sid_threshold_path", identification_threshold)
     if threshold is None:
-        return _result(protocol="APPLICATION_SID", error="THRESHOLD_NOT_CONFIGURED")
+        return _result(protocol="APPLICATION_SID", identified=False, error="THRESHOLD_NOT_CONFIGURED")
     user_id, similarity, centroid_path = max(scores, key=lambda item: item[1])
     identified = similarity >= threshold
     return _result(
@@ -215,7 +305,10 @@ def verify_speaker(
         return _result(protocol="APPLICATION_SV", candidate_user_id=candidate_user_id, error="INVALID_AUDIO")
     try:
         centroid_path = Path(path_value)
-        similarity = float(np.dot(query, _load_centroid(centroid_path)))
+        model_version = _model_version(config_path)
+        similarity = float(np.dot(query, _load_centroid(centroid_path, model_version)))
+    except CentroidModelMismatchError:
+        return _result(protocol="APPLICATION_SV", candidate_user_id=candidate_user_id, error="CENTROID_MODEL_MISMATCH")
     except (OSError, ValueError, EmbeddingError):
         return _result(protocol="APPLICATION_SV", candidate_user_id=candidate_user_id, error="CENTROID_NOT_FOUND")
     threshold = _threshold(config_path, "application_verification_threshold_path", verification_threshold)

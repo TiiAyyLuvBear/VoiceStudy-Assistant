@@ -4,6 +4,30 @@ Tài liệu này là hợp đồng dữ liệu giữa ASR, NLU, Speaker Recognit
 Access Policy và Orchestrator. Các module không được tự đổi tên field nếu chưa
 thống nhất với các thành viên còn lại.
 
+## 0. FastAPI backend boundary
+
+Streamlit is now an HTTP client. It does not import pipeline, speaker, or
+database services directly. Start the API with `python -m backend.main` and
+inspect OpenAPI at `http://127.0.0.1:8000/docs`.
+
+| Method | Path | Purpose |
+|---|---|---|
+| `GET` | `/health` | Service and deployed-model status |
+| `POST` | `/api/v1/process` | Multipart WAV through ASR/NLU/SID/SV pipeline |
+| `POST` | `/api/v1/enroll` | User fields plus exactly five multipart WAV files |
+| `GET` | `/api/v1/users` | List application users |
+| `DELETE` | `/api/v1/users/{user_id}` | Delete one application user |
+
+Uploads are written only to request-scoped temporary directories and removed
+after processing. Default per-file limit is 25 MiB. Backend host, port, URL,
+timeout, and upload limit live under `backend` in `config.yaml`.
+
+On startup, backend preloads the configured ECAPA and Whisper models and prints
+one field per line: model identity, checkpoint epoch, device, compute type, and
+loaded state. Strict startup prevents serving when a configured model fails to
+load. Pipeline request console records also use one field per line, while
+`logs/requests.log` remains JSONL for machine processing.
+
 ## 1. ASR
 
 ### Python interface
@@ -136,6 +160,34 @@ commands with missing required entities are always blocked.
 
 ## 4. Speaker Recognition
 
+### Runtime model contract
+
+Enrollment, application speaker identification, and speaker verification use
+the same fine-tuned ECAPA-TDNN encoder. Runtime settings live under `speaker`
+in `config.yaml`, including the checkpoint path and SHA-256, encoder state key,
+model version, embedding dimension, enrollment count, and verification
+threshold.
+
+The runtime loader initializes `speechbrain/spkrec-ecapa-voxceleb`, validates
+the configured checkpoint, and strictly loads only `checkpoint["encoder"]`
+into `classifier.mods.embedding_model`. The 230-speaker training classifier is
+not used for application inference. One frozen evaluation-mode extractor is
+cached and shared by enrollment, SID, and SV.
+
+Enrollment centroids have a sibling `.meta.json` file containing the model
+version and embedding dimension. A missing or mismatched metadata file returns
+`CENTROID_MODEL_MISMATCH`; users enrolled with the former baseline model must
+be enrolled again.
+
+Speaker verification accepts a claim only when:
+
+```text
+cosine_similarity >= 0.4322190229975736
+```
+
+This threshold was selected from validation minDCF. Test-derived thresholds
+must not replace it.
+
 Kết quả nhận diện/xác thực mà Orchestrator sử dụng:
 
 ```json
@@ -149,19 +201,29 @@ Kết quả nhận diện/xác thực mà Orchestrator sử dụng:
 }
 ```
 
-`verified` chỉ có ý nghĩa với intent yêu cầu Speaker Verification.
+Application requests run SID and SV before ASR/NLU, so speaker fields are
+available even when transcription fails or intent is public/out of scope.
+Intent controls the permitted action only; it no longer controls whether
+speaker verification runs.
 
 ## 5. Access Policy
 
 | Intent | Quyền truy cập | Luồng xử lý |
 |---|---|---|
-| `GET_TIME` | Public | Thực hiện trực tiếp |
+| `GET_TIME` | Public action after authentication | SID, SV, rồi thực hiện |
 | `VIEW_SCHEDULE` | SID | Speaker Identification rồi truy vấn lịch |
 | `ADD_SCHEDULE` | SID | Speaker Identification rồi thêm lịch |
 | `VIEW_PRIVATE_NOTE` | SID + SV | Identification, Verification rồi truy vấn ghi chú |
-| `OUT_OF_SCOPE` | Reject | Từ chối, không truy vấn dữ liệu |
+| `OUT_OF_SCOPE` | Reject after authentication | SID, SV, rồi từ chối; không truy vấn dữ liệu |
 
 ## 6. Orchestrator response
+
+Each `process_audio_request()` call writes paired `request_started` and
+`request_finished` JSON events through Python `logging`. Unhandled failures
+write `request_failed`. Events include request ID, duration, intent, policy,
+speaker decisions/similarities, and error state. Transcript inclusion is
+controlled by `logging.requests.include_transcript` and defaults to `false`.
+Audio content and private database content are not logged.
 
 ```json
 {
@@ -176,7 +238,11 @@ Kết quả nhận diện/xác thực mà Orchestrator sử dụng:
     "candidate_user_id": "user001",
     "similarity": 0.82,
     "identified": true,
-    "verified": null
+    "verified": true,
+    "verification": {
+      "similarity": 0.74,
+      "verified": true
+    }
   },
   "response_text": "Xin chào Lộc. Ngày mai bạn có lịch học Máy học lúc 8 giờ.",
   "latency_ms": 1450.5,
@@ -186,7 +252,7 @@ Kết quả nhận diện/xác thực mà Orchestrator sử dụng:
 
 Quy tắc lỗi:
 
-- ASR thất bại: dừng pipeline và trả lỗi ASR.
-- `OUT_OF_SCOPE`: không gọi Speaker Recognition và database.
-- SID thất bại cho chức năng cá nhân: không truy vấn dữ liệu cá nhân.
-- SV thất bại cho ghi chú riêng tư: từ chối truy cập.
+- SID thất bại: dừng trước ASR/NLU và không truy vấn database.
+- SV thất bại: dừng trước ASR/NLU và từ chối yêu cầu.
+- ASR thất bại sau xác thực: giữ kết quả SID/SV rồi trả lỗi ASR.
+- `OUT_OF_SCOPE`: đã xác thực speaker nhưng không truy vấn database.

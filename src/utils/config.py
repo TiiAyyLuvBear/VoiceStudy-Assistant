@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Any, Mapping
 
 import yaml
 
@@ -24,3 +24,15 @@ def resolve_path(value: str | Path, base_dir: str | Path) -> Path:
     """Resolve relative path against explicit base directory."""
     path = Path(value)
     return path if path.is_absolute() else Path(base_dir) / path
+
+
+def threshold_from_metrics_document(document: Mapping[str, Any]) -> float | None:
+    """Read threshold from flat or validation metrics JSON artifact."""
+    value = document.get("threshold")
+    if value is None:
+        validation = document.get("validation")
+        if isinstance(validation, Mapping):
+            value = validation.get("threshold")
+            if value is None:
+                value = validation.get("min_dcf_threshold")
+    return float(value) if isinstance(value, (int, float)) else None

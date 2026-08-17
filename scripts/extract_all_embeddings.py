@@ -282,6 +282,12 @@ def main() -> int:
     parser.add_argument("--config", type=Path, default=Path("config.yaml"))
     parser.add_argument("--limit", type=int)
     parser.add_argument(
+        "--protocol-file",
+        action="append",
+        dest="protocol_files",
+        help="Metadata filename to load; repeat for a custom dataset",
+    )
+    parser.add_argument(
         "--resume",
         action=argparse.BooleanOptionalAction,
         default=True,
@@ -294,6 +300,9 @@ def main() -> int:
         embedding_dir=args.embedding_dir,
         output_path=args.output,
         config_path=args.config,
+        protocol_files=(
+            tuple(args.protocol_files) if args.protocol_files else PROTOCOL_FILES
+        ),
         resume=args.resume,
         limit=args.limit,
     )

@@ -1,0 +1,21 @@
+{
+  "model": "frozen ECAPA-TDNN",
+  "validation": {
+    "eer": 0.06799999999999998,
+    "eer_threshold": 0.4317138623616475,
+    "min_dcf": 0.21760000000000004,
+    "min_dcf_threshold": 0.5794882369366254,
+    "tar_at_far_1pct": 0.868
+  },
+  "test": {
+    "eer": 0.18020000000000003,
+    "eer_threshold": 0.3304404441303941,
+    "min_dcf": 0.6224000000000001,
+    "min_dcf_threshold": 0.6411125193133702,
+    "tar_at_far_1pct": 0.682,
+    "threshold": 0.5794882369366254,
+    "far": 0.0052,
+    "frr": 0.368,
+    "tar": 0.632
+  }
+}
