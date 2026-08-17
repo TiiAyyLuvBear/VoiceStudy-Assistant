@@ -1,0 +1,9 @@
+speaker_id,normalized_speaker_id,protocol,role,project_split,source_project_split,usable_audio_count,enrollment_count,train_count,validation_count,test_query_count,unknown_query_count,speaker_sex,speaker_age
+6551b3e927c9931d057a19a1,v2_test_enrolled_spk_0001,COSINE_TEST,ENROLLED,TEST,UNUSED,56,5,0,0,25,0,Male,45
+60fcdd4360f55caf7828de7b,v2_test_enrolled_spk_0002,COSINE_TEST,ENROLLED,TEST,UNUSED,53,5,0,0,25,0,Female,24
+60d3432bc679834595ca8139,v2_test_enrolled_spk_0003,COSINE_TEST,ENROLLED,TEST,UNUSED,50,5,0,0,25,0,Male,51
+5fa23c9b64b18a4067cc842e,v2_test_enrolled_spk_0004,COSINE_TEST,ENROLLED,TEST,UNUSED,30,5,0,0,25,0,Male,37
+60b0f68c2d6061d4fce96316,v2_test_enrolled_spk_0005,COSINE_TEST,ENROLLED,TEST,UNUSED,30,5,0,0,25,0,Female,29
+6125b9496ba8eb9bcd1f60f1,v2_test_enrolled_spk_0006,COSINE_TEST,ENROLLED,TEST,UNUSED,30,5,0,0,25,0,Male,25
+646fec4b0c1269c0b550130f,v2_test_enrolled_spk_0007,COSINE_TEST,ENROLLED,TEST,UNUSED,30,5,0,0,25,0,Female,26
+650b02ed6511bb3fbf5da880,v2_test_enrolled_spk_0008,COSINE_TEST,ENROLLED,TEST,UNUSED,30,5,0,0,25,0,Female,31

@@ -1,0 +1,12 @@
+{
+  "test_enrolled_spk_0001": {
+    "speaker_id": "6346ccfb37ed7169c9b634fc",
+    "num_enrollment_embeddings": 5,
+    "centroid_path": "D:\\HCMUS\\HOCTAP\\Semesters\\25-26HK3\\HocThongKe\\Project\\VoiceStudy-Assistant\\models\\experimental\\cosine_test_centroids\\test_enrolled_spk_0001.npy"
+  },
+  "test_enrolled_spk_0002": {
+    "speaker_id": "652d516527ad747c966f5af4",
+    "num_enrollment_embeddings": 5,
+    "centroid_path": "D:\\HCMUS\\HOCTAP\\Semesters\\25-26HK3\\HocThongKe\\Project\\VoiceStudy-Assistant\\models\\experimental\\cosine_test_centroids\\test_enrolled_spk_0002.npy"
+  }
+}

@@ -12,8 +12,7 @@ import numpy as np
 import yaml
 
 from src.audio.preprocessing import preprocess_audio
-from src.speaker.embedding import ECAPAEmbeddingExtractor, get_embedding_extractor
-from src.utils.config import threshold_from_metrics_document
+from src.speaker.embedding import ECAPAEmbeddingExtractor
 
 
 CONFIG_PATH = Path("config.yaml")
@@ -131,9 +130,7 @@ def identify_application_user(audio_path: str) -> ApplicationIdentificationResul
     started_at = time.perf_counter()
     threshold: float | None = None
     try:
-        path = Path(audio_path)
-        if not path.is_file():
-            raise FileNotFoundError(f"Audio file does not exist: {path}")
+        path = resolve_audio_path(audio_path)
 
         # This module intentionally uses no SVM model.
         audio, sample_rate = preprocess_audio(str(path))

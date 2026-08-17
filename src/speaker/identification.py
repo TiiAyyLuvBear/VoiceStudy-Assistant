@@ -61,9 +61,7 @@ def identify_closed_set_svm(audio_path: str) -> ClosedSetIdentificationResult:
 
     started_at = time.perf_counter()
     try:
-        path = Path(audio_path)
-        if not path.is_file():
-            raise FileNotFoundError(f"Audio file does not exist: {path}")
+        path = resolve_audio_path(audio_path)
 
         # Initialize Librosa before SpeechBrain registers optional lazy imports.
         audio, sample_rate = preprocess_audio(str(path))

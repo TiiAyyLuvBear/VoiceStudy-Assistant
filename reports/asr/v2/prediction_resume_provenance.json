@@ -1,0 +1,30 @@
+{
+  "policy": "Only successful predictions for the same audio_id and exact reference transcript are reused. Full v2 metrics are recalculated by evaluate_asr.",
+  "model_and_normalization_changed": false,
+  "splits": [
+    {
+      "split": "validation",
+      "split_path": "data/processed/v2/metadata/asr_validation.csv",
+      "split_sha256": "534a4a78a8b6868dec5f5f669ea015fd339c04bf8cd593bd16ab77748a6ea8de",
+      "source_prediction_path": "reports/asr/asr_validation_predictions.csv",
+      "source_prediction_sha256": "0ee88c04be427727156468375bc6e09fe7fb3a3464f08ea0b51195b825af04ee",
+      "target_prediction_path": "reports/asr/v2/asr_validation_predictions.csv",
+      "v2_sample_count": 322,
+      "seeded_count": 92,
+      "reused_from_v1": 92,
+      "reused_existing_v2": 0
+    },
+    {
+      "split": "test",
+      "split_path": "data/processed/v2/metadata/asr_test.csv",
+      "split_sha256": "ac31031089b730f8c1ae2381956208522b5cdadf855245e61099771aaeeed3f0",
+      "source_prediction_path": "reports/asr/asr_test_predictions.csv",
+      "source_prediction_sha256": "b604a07d877e5e44ef4dd38da20e3f92787eb6122cb68b9f66b6b28a4132b8fb",
+      "target_prediction_path": "reports/asr/v2/asr_test_predictions.csv",
+      "v2_sample_count": 249,
+      "seeded_count": 122,
+      "reused_from_v1": 122,
+      "reused_existing_v2": 0
+    }
+  ]
+}

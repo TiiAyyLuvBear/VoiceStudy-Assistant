@@ -1,0 +1,11 @@
+{
+  "execution_mode": "deterministic_integration_contract",
+  "speaker_dataset_version": "v2",
+  "test_case_count": 30,
+  "passed_count": 30,
+  "failed_count": 0,
+  "task_success_rate": 1.0,
+  "mean_system_latency_ms": 4.09766,
+  "max_system_latency_ms": 25.0689,
+  "note": "Measures orchestration, access policy, database ownership and error contracts. ASR and speaker recognition accuracy are evaluated by their frozen component test artifacts."
+}

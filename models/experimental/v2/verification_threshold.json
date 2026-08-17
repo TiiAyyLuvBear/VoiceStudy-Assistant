@@ -1,0 +1,23 @@
+{
+  "protocol": "APPLICATION_SV",
+  "threshold_type": "cosine_verification_threshold",
+  "threshold": 0.37547598,
+  "comparison": "cosine_similarity >= threshold means verified",
+  "selection_criterion": "minimize absolute FAR-FRR gap; tie-break by lower mean error, higher F1, higher accuracy, then smaller threshold",
+  "validation_scores_source": "experiments\\validation\\speaker_disjoint_verification_validation_scores.csv",
+  "genuine_count": 10,
+  "impostor_count": 298,
+  "metrics": {
+    "FAR": 0.02013423,
+    "FRR": 0.0,
+    "accuracy": 0.98051948,
+    "F1": 0.76923077,
+    "eer_gap": 0.02013423,
+    "approximate_EER": 0.010067115
+  },
+  "evaluation_dataset": "speaker-v2",
+  "selection_dataset_version": "v1",
+  "selection_source": "models/experimental/verification_threshold.json",
+  "selection_source_sha256": "61a7913add0488e65953d8cb3ea031d299ae758c719c36676eb3567d202d297c",
+  "threshold_tuned_on_v2_test": false
+}

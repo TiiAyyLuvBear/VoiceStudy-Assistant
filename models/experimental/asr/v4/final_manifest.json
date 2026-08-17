@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "dataset_version": "asr-v4",
+  "model_version": "whisper-small-lora-wide-v4",
+  "status": "FROZEN_COMPARISON_COMPLETED",
+  "frozen_at": "2026-08-16T13:58:03+00:00",
+  "selection": {
+    "metric_order": [
+      "validation_wer",
+      "validation_cer"
+    ],
+    "lower_is_better": true,
+    "best_epoch": 3,
+    "best_validation": {
+      "word_edits": 682,
+      "reference_words": 2849,
+      "char_edits": 1624,
+      "reference_chars": 9456,
+      "wer": 0.23938223938223938,
+      "cer": 0.17174280879864637
+    },
+    "best_adapter_path": "/content/drive/MyDrive/VoiceStudy-Assistant-Colab/whisper-small-lora-wide-v4-run1/models/experimental/asr/v4/best_adapter"
+  },
+  "artifacts": {
+    "dataset_manifest": {
+      "path": "data/processed/v4/asr_finetune_manifest.json",
+      "sha256": "2728409b3bb947a4f180b641575c21f9a8d8cacf1da92bd3c01f26ce7722165e"
+    },
+    "training_summary": {
+      "path": "/content/drive/MyDrive/VoiceStudy-Assistant-Colab/whisper-small-lora-wide-v4-run1/models/experimental/asr/v4/training_summary.json",
+      "sha256": "c9bc359e90c5ca638f6913031a5575ec688aa1264e60ac79e60be827a9bec9bb"
+    },
+    "locked_model": {
+      "path": "/content/drive/MyDrive/VoiceStudy-Assistant-Colab/whisper-small-lora-wide-v4-run1/models/experimental/asr/v4/locked_model.json",
+      "sha256": "19c730e0b566542f9e314d5f2697a23267561fcd6b4901f3a73ec875c5e55876"
+    },
+    "original_metrics": {
+      "path": "reports/asr/v3/baseline_original/baseline_original_metrics.json",
+      "sha256": "bd8ae63f0f0e9aa0adc69be10e15ae1f588208fb7aee6438d70294d87d76c32e"
+    },
+    "v3_metrics": {
+      "path": "reports/asr/v3/final_test/test_metrics.json",
+      "sha256": "c388fca4c200a806524c59d9a30e8ff98a78a0ce4adf9fe25b53a3cc16d0bdea"
+    },
+    "v4_metrics": {
+      "path": "/content/drive/MyDrive/VoiceStudy-Assistant-Colab/whisper-small-lora-wide-v4-run1/reports/asr/v4/final_test/test_metrics.json",
+      "sha256": "d77bd35a496b3f069e46030e981bef0283a3478adebbe7cba00748048c168deb"
+    },
+    "comparison": {
+      "path": "/content/drive/MyDrive/VoiceStudy-Assistant-Colab/whisper-small-lora-wide-v4-run1/reports/asr/v4/comparison.json",
+      "sha256": "cb76d1addfc009846081210f7d54c00133fa2b15970a985f5218cf6093314cca"
+    }
+  },
+  "test_protocol": {
+    "same_test_audio": true,
+    "same_search_settings": true,
+    "same_runtime_precision": false,
+    "runtime_note": "Original and LoRA v3 reference metrics used CPU int8; the Colab v4 test uses CUDA float16. Beam/VAD/search settings remain the same.",
+    "v4_test_used_for_training_or_checkpoint_selection": false,
+    "v4_model_test_runs": 1,
+    "test_is_fresh_holdout": false,
+    "interpretation": "Controlled comparison on the frozen v3 test reused by v4. Since earlier v3 results were already known, this is not a new unbiased holdout estimate."
+  }
+}

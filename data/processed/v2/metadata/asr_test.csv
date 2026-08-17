@@ -1,0 +1,250 @@
+audio_id,audio_path,original_split,project_split,speaker_id,reference_transcript,source_intent
+8282,data/audio/dev/cf0e2055dabd6c28ca9215f9a9456d20.wav,validation,TEST,652d516527ad747c966f5af4,làm ơn xóa hoàn toàn lịch của tôi,calendar_remove
+9023,data/audio/dev/401f5ee24eab106f2de39d3c37cc22b1.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,tạo lời nhắc cho việc nộp đơn xin thị thực vào ngày thứ năm này,calendar_set
+16319,data/audio/dev/f0fe88672149f64b562d8c1b01da83e9.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,trả lời tất cả,email_sendemail
+8619,data/audio/dev/25edfb37039e705304b9e7dc7aab20f3.wav,validation,TEST,6346ccfb37ed7169c9b634fc,đặt lịch vào ngày mười lăm hàng tháng nhắc tôi trả tiền internet,calendar_set
+8834,data/audio/dev/28c5a8f7fbf26e9f0693aae214e900a5.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,hủy tất cả các cuộc họp của tôi cho đến hết tuần,calendar_remove
+11513,data/audio/dev/0e4adc0c063ef472339bbf25a17ec7af.wav,validation,TEST,652d516527ad747c966f5af4,olly mở podcast tâm lý học tuổi trẻ,play_podcasts
+11658,data/audio/dev/8d83c0750c3a98a3aa7ccc7a894ae3bc.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,lễ hội ẩm thực tối nay ở đâu,recommendation_events
+12174,data/audio/dev/306d11d7028de757508c518a55464761.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,gọi cho tôi một chiếc uber ngay bây giờ,transport_taxi
+16478,data/audio/dev/ce249848610a47a24e9b4aa11ba23562.wav,validation,TEST,6346ccfb37ed7169c9b634fc,kiểm tra email của tiên,email_query
+5741,data/audio/dev/f79ac16b2b417b5e8eee4be245c32dfe.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,máy ghi âm orevena cho tôi biết trang hệ thống nơi lưu bài hát,play_music
+10901,data/audio/dev/94789da232b9a304a2f47122d7262968.wav,validation,TEST,6346ccfb37ed7169c9b634fc,tạo một danh sách mới về,lists_createoradd
+10539,data/audio/dev/781f35d7c56feba39a6e36a3a4fd8876.wav,validation,TEST,6346ccfb37ed7169c9b634fc,gửi cho tôi bản danh sách được tải lên cuối cùng,lists_query
+490,data/audio/dev/cf54fcb08b5b6e3784b13ebc6d7f4544.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,ngoài trời nóng phải không,weather_query
+8451,data/audio/dev/424c0d0fa8b977cef5ecebbe69b897d8.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,nhắc tôi về kì nghỉ lễ quốc gia sắp tới,calendar_set
+12669,data/audio/dev/84ceb55a441306b0ec3175dd6631b2be.wav,validation,TEST,652d516527ad747c966f5af4,bạn có thể kiểm tra giao thông trên đường về nhà của chúng tôi không,transport_traffic
+15645,data/audio/dev/9a4f5b62531d45669b51d91aa45be42f.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,thông tin xã hội,social_query
+6963,data/audio/dev/53f19ea11e86791db4673bbdcc6dd7f7.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,vui lòng nhắc tôi một giờ trước cuộc họp mà tôi có vào sáng ngày mai,calendar_set
+9660,data/audio/dev/9d7f1326fffd2c579c8aa82e23ee9409.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,phát chương trình này,play_radio
+3720,data/audio/dev/500a94fa35b9502a521eb081bc59a691.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,thời gian ngay bây giờ ở úc là mấy giờ,datetime_query
+13544,data/audio/dev/228d43a7607bac4b924466dcb1d7cbb6.wav,validation,TEST,652d516527ad747c966f5af4,kẹo ngọt có calo không,qa_factoid
+12181,data/audio/dev/61c21d5c5eb1d4dacc9fd086cbb1b4f4.wav,validation,TEST,6346ccfb37ed7169c9b634fc,gửi grab đến cho tôi ngày bây giờ,transport_taxi
+17018,data/audio/dev/d229c1e1ee0a8a0f11e011de86a1d370.wav,validation,TEST,652d516527ad747c966f5af4,lưu vào danh bạ,email_addcontact
+7086,data/audio/dev/0e7f082e4025563c8ff3ba7a6af5b185.wav,validation,TEST,652d516527ad747c966f5af4,xóa cuộc họp buổi tối hôm nay,calendar_remove
+7374,data/audio/dev/014aceda870882c37d4898a26d0e2361.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,có những cuộc họp nào vào tháng ba,calendar_query
+5034,data/audio/dev/b3fc09c30a477bfa1b5458c675dfe7d7.wav,validation,TEST,6346ccfb37ed7169c9b634fc,hôm nay là tuần mấy,datetime_query
+15900,data/audio/dev/7b018575e3fb8ee9d4409909ba081c04.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,họ của hùng là gì,email_querycontact
+11294,data/audio/dev/743565fe130cb27309223b0b3108ee00.wav,validation,TEST,652d516527ad747c966f5af4,định vị danh sách phát của tôi,play_podcasts
+16140,data/audio/dev/8b2d202f3de6ce13543d2428655d2eaa.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,cho tôi xem toàn bộ email đã nhận gần đây kèm mốc thời gian,email_query
+11300,data/audio/dev/6904f17e7f5f59766d7efb0c34d15681.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,tiến đến tập kế tiếp,play_podcasts
+691,data/audio/dev/a97fd1220dc86eb5358c9b420bae7475.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,tôi không nghe thấy gì tăng âm lượng,audio_volume_up
+15145,data/audio/dev/3f452dc63e575d959eb2ddc00dc7354a.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,điều gì đang là xu hướng trên twitter,social_query
+4326,data/audio/dev/e0f6e72d72f41314eafba2a28678c3cd.wav,validation,TEST,6346ccfb37ed7169c9b634fc,phát dynamite của a. c. d. c.,play_music
+1934,data/audio/dev/a75ad82864f7354e38b1004dfdc11bf1.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,nhóm ngày giờ hiện tại là gì,datetime_query
+5569,data/audio/dev/be9bf20fbd0171cc30e345cc51b42f0e.wav,validation,TEST,6346ccfb37ed7169c9b634fc,mở nhạc của tôi,play_music
+10255,data/audio/dev/bfec0e84edb4e23fafaafc18d314348a.wav,validation,TEST,652d516527ad747c966f5af4,tôi muốn chơi cờ vua bạn mở nó được không,play_game
+718,data/audio/dev/1579f1e79098b372d0fb00640e11b3ab.wav,validation,TEST,6346ccfb37ed7169c9b634fc,tôi có thể biết tin tức nóng hổi từ kênh mười bốn không,news_query
+16971,data/audio/dev/32ab6aaf922a615df5cea5967561731f.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,tôi muốn trả lời email của hùng,email_sendemail
+2425,data/audio/dev/22148119b6415e7139939063857765f7.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,nói cho tôi biết bây giờ mấy giờ,datetime_query
+16821,data/audio/dev/34373509792603e113613866ae3dfec7.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,mở thông tin liên lạc của oanh,email_querycontact
+6111,data/audio/dev/5515af08413aea58f6ae41c046dec00e.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,hey olly đặt hai phần cánh gà và khoai tây chiên ở cửa hàng đồ ăn trung,takeaway_order
+676,data/audio/dev/7a68131e09605cb2a44c710eaf9c25b9.wav,validation,TEST,6346ccfb37ed7169c9b634fc,cài đặt khu vực thời gian,datetime_convert
+5236,data/audio/dev/489dedb7474e790cdbfb775138337b9b.wav,validation,TEST,652d516527ad747c966f5af4,phát danh sách nhạc tập thể dục,play_music
+6198,data/audio/dev/6dcec81b0f5cd42879e70c0cf9e01e75.wav,validation,TEST,652d516527ad747c966f5af4,bạn hiểu tôi như thế nào,general_quirky
+13033,data/audio/dev/2579b1a2be52908063afc90338387ce4.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,ba nhân bảy bằng bao nhiêu,qa_maths
+8548,data/audio/dev/bf69dd8f2a5bd846b17892620c7d7199.wav,validation,TEST,6346ccfb37ed7169c9b634fc,xoá sự kiện tiếp theo trên lịch,calendar_remove
+11712,data/audio/dev/f56690ba87ed38817fe464a3b83d1726.wav,validation,TEST,652d516527ad747c966f5af4,liệt kê cho tôi tất cả các sự kiện ở địa phương,recommendation_events
+5352,data/audio/dev/0f01143e2172da12cccf18ffd9a90be3.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,phát từ danh sách phát của tôi,play_music
+5150,data/audio/dev/693b1e24d2156386fa284e7ccf4388ef.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,bạn có thể cài đặt máy pha cà phê chạy không,iot_coffee
+5063,data/audio/dev/8f8e550c4a6c2c98dcd693fbf51d3432.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,thay đổi độ mờ của màu,iot_hue_lightchange
+3511,data/audio/dev/5b61096b29012b5ba2fe4c0dea7b3d4f.wav,validation,TEST,652d516527ad747c966f5af4,ban đêm,general_quirky
+14269,data/audio/dev/81d06caf4aac392329eea7dd5b56718d.wav,validation,TEST,652d516527ad747c966f5af4,nói với tôi một euro bằng dollars,qa_currency
+10506,data/audio/dev/92d7963f2780f78565db32e9242018aa.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,các danh sách của tôi là gì,lists_query
+2943,data/audio/dev/216094825107b1265c6839ad1d86df9f.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,hôm nay là ngày bao nhiêu,datetime_query
+4729,data/audio/dev/569e604d6c83662d17cbaf0403e48db7.wav,validation,TEST,652d516527ad747c966f5af4,thông báo cho tôi những tin tức mới nhất về thị trường chứng khoán,qa_stock
+12358,data/audio/dev/4203d5b24da27d143ce6275aec7c379c.wav,validation,TEST,652d516527ad747c966f5af4,tôi muốn biết về điều kiện giao thông,transport_traffic
+2846,data/audio/dev/baca8c09c71f0d5a044f9c3211a4d59e.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,hãy nghe bản nhạc này,music_query
+11014,data/audio/dev/92627beafc15f39794408fcb6f89e87b.wav,validation,TEST,652d516527ad747c966f5af4,cho thêm cái phần này vào một danh sách,lists_createoradd
+11212,data/audio/dev/274b58864e722a77181d596393045cd5.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,xóa danh sách phát cũ và tạo cái mới,lists_createoradd
+3202,data/audio/dev/318ebff76f11b62a74b33ce97b395d47.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,bạn nên biết là tôi thích nhạc jazz,music_likeness
+12298,data/audio/dev/7062a8cfdccd9a6e8a6d999b9047d342.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,hãy gọi một chiếc taxi,transport_taxi
+16770,data/audio/dev/e299ea23c50dc4806c58d4387d45bbdc.wav,validation,TEST,652d516527ad747c966f5af4,tìm liên hệ,email_query
+6262,data/audio/dev/4b73f0caff128e0f5dcb294e0c02febf.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,hey google tôi trúng xổ số độc đắc,general_quirky
+14393,data/audio/dev/3ac185b13d11f0841deedcfc147f205e.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,mô tả tình trạng chính trị hiện tại,qa_factoid
+16026,data/audio/dev/6e8a7a5f687d1fbc6d0298e337a14225.wav,validation,TEST,652d516527ad747c966f5af4,tìm kiếm thời hạn của sơn,email_query
+2687,data/audio/dev/eee6801aa17d066cd4f44e8bcaef1c37.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,xác nhận đặt hàng,takeaway_order
+8941,data/audio/dev/516ccd1ba79828dd7d739fedd3685d62.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,khi nào đến kỳ nghỉ của tháng này,calendar_query
+16421,data/audio/dev/fd787531338381f942e2958ac0d487e0.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,tôi có bao nhiêu email chưa đọc,email_query
+1971,data/audio/dev/006de2661c6a59cad50959cc97ab68c6.wav,validation,TEST,6346ccfb37ed7169c9b634fc,lưu thông tin được cung cấp bởi mỹ tâm trên bài hát này,music_likeness
+434,data/audio/dev/808f9029d822d98a52df0ee055d5851c.wav,validation,TEST,6346ccfb37ed7169c9b634fc,hôm nay là ngày mấy,datetime_query
+13935,data/audio/dev/07bf0d98accbf73ec6b04d0d18a4bd63.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,mô tả về tai nghe thực tế ảo là gì,qa_definition
+6699,data/audio/dev/b91536500a94b32d3e33b5e942fa5f26.wav,validation,TEST,6346ccfb37ed7169c9b634fc,nói chuyện phiếm về những người nổi tiếng,general_quirky
+10196,data/audio/dev/0874a6682bc63a5b0d00f5c441f137a0.wav,validation,TEST,652d516527ad747c966f5af4,tôi cần một số ý tưởng cho bữa tối kiểu mexican,cooking_recipe
+13576,data/audio/dev/708f423aeaf2717cc37d1ed970de4a36.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,chuyến lưu diễn tiếp theo là khi nào,general_quirky
+6209,data/audio/dev/9b93aee59f060fea0b760eef86690b0f.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,thật tuyệt nếu ăn tối tại nhà hàng mới mở ở trung tâm thành phố,general_quirky
+756,data/audio/dev/2b97746d01fa44d7fb26c9cbfa3fb970.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,bạn có thể tắt ổ chuyển đổi thông minh không,iot_wemo_off
+13812,data/audio/dev/e180a8de4f5f34968473009bb74adda3.wav,validation,TEST,652d516527ad747c966f5af4,cho tôi biết về nấm hương,qa_definition
+16286,data/audio/dev/443dd257609206f6e43b22db80673865.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,gửi email cho anh bán thuyền nói là tôi có tiền,email_sendemail
+4424,data/audio/dev/340b071359fef5ea6f5f5bcbdb989422.wav,validation,TEST,652d516527ad747c966f5af4,tuần này có mưa không,weather_query
+5100,data/audio/dev/c5a853109dd8fe7cd0523063239c6780.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,siri hủy báo thức tập yoga,alarm_remove
+5057,data/audio/dev/bf1e5bfc23f1c1c862db04f4f6dafa2f.wav,validation,TEST,6346ccfb37ed7169c9b634fc,chạy nhạc từ danh sách phát này,play_music
+16462,data/audio/dev/a4ee4516217b08664d1dd6572b24339a.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,những tin nhắn mới mà tôi có là gì,email_query
+11077,data/audio/dev/f466b4164f385a3ac8f27e3a1c656b40.wav,validation,TEST,6346ccfb37ed7169c9b634fc,cho tôi biết có gì trong danh sách của tôi,lists_query
+3402,data/audio/dev/16e1d78c524495bf7db68c6c0c2b67b9.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,thời tiết tuần tới thế nào,weather_query
+8487,data/audio/dev/cff61d63a9628d50fb0bfcdbebe7ec47.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,vui lòng thêm một cuộc hẹn vào lúc chín giờ sáng thứ tư tại văn phòng bác sĩ trang,calendar_set
+3139,data/audio/dev/af569977636444caa40504c3b247b81c.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,vui lòng giảm âm lượng,audio_volume_down
+8543,data/audio/dev/7e487baab5a3d3570486776d9b05eb52.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,tôi có các sự kiện nào tiếp theo,calendar_query
+14203,data/audio/dev/73d062aaa1dea054445b4675d8b4abe3.wav,validation,TEST,6346ccfb37ed7169c9b634fc,dow jones hôm nay thế nào,qa_stock
+11899,data/audio/dev/c1303583ecf2aef527006d9e55d201d7.wav,validation,TEST,652d516527ad747c966f5af4,có phim gì hay đáng để xem không,recommendation_movies
+4494,data/audio/dev/6e2e41653563c0dddc0c61c014ca02b6.wav,validation,TEST,652d516527ad747c966f5af4,chuyển đèn của tôi sang màu ngẫu nhiên,iot_hue_lightchange
+6914,data/audio/dev/7fd3006d5ce687f73e0812f39a959f65.wav,validation,TEST,652d516527ad747c966f5af4,đặt cuộc họp đầu tuần vào lịch mỗi thứ hai,calendar_set
+658,data/audio/dev/d978bd1d8548858258f0ee0f5316062c.wav,validation,TEST,6346ccfb37ed7169c9b634fc,hiện tại là mấy giờ ở sài gòn,datetime_query
+5021,data/audio/dev/eebcc15d921930f413b164d41bf41739.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,tôi thích r. n. b.,music_likeness
+14156,data/audio/dev/c01de1acb4a6088004e89e8e60543e16.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,tìm trên wikipedia,qa_definition
+1125,data/audio/dev/f9f99550fad9d9f1cfb63bd1c4916b76.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,hôm nay là ngày bao nhiêu,datetime_query
+2112,data/audio/dev/7cfc0b68b5e3405b34c7d95734ff5d90.wav,validation,TEST,652d516527ad747c966f5af4,cho tôi thời gian ở hà nội,datetime_query
+5957,data/audio/dev/bbb73caff6c2f18300b3b28c3760b81e.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,bạn làm ơn giữ im lặng một lúc,audio_volume_mute
+10754,data/audio/dev/b74e46502ddf02851b8788f02befc528.wav,validation,TEST,6346ccfb37ed7169c9b634fc,đọc lại những gì tôi có trong danh sách việc cần làm tuần này,lists_query
+12565,data/audio/dev/12703e2f74199c28047ad8afe4146388.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,tôi muốn một danh sách về giá vé của tất cả chuyến tàu tới địa điểm này,transport_query
+14377,data/audio/dev/28b92456305949a48ca088ef176be2d5.wav,validation,TEST,6346ccfb37ed7169c9b634fc,arnold schwarzenegger là ai,qa_factoid
+15778,data/audio/dev/a53abf9876501384fc25ba3e8561f7e0.wav,validation,TEST,652d516527ad747c966f5af4,gửi email đên cúc nói rằng tôi sẽ đến trễ vui lòng đừng đợi ăn tối,email_sendemail
+7732,data/audio/dev/44eced6d6e80776fb8109b206f1d34d8.wav,validation,TEST,652d516527ad747c966f5af4,đặt lịch sinh nhật của minh vào mỗi ngày ba tháng sáu,calendar_set
+4065,data/audio/dev/3eebb49a4c6b235c3a047e063e4871cc.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,thời gian ở new york là mấy giờ,datetime_query
+12899,data/audio/dev/f84585c74d2357470ce7d0905702b4ec.wav,validation,TEST,6346ccfb37ed7169c9b634fc,đặt trước một chỗ cho tôi trên chuyến tàu ngày hai mươi tháng ba,transport_ticket
+365,data/audio/dev/223ca668645b0f7dd07605bcea91d381.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,hôm nay phải thứ hai không,datetime_query
+7300,data/audio/dev/225fdf9cd498395fcadb6ddaac427419.wav,validation,TEST,6346ccfb37ed7169c9b634fc,đặt lời nhắc về việc tôi đến thăm ba tôi vào ngày mai,calendar_set
+8903,data/audio/dev/a0a36866fab6887ef123309ddd221ead.wav,validation,TEST,652d516527ad747c966f5af4,kể về những sự kiện gần đây nhất,calendar_query
+465,data/audio/dev/cb32af9cd88fc67cfe8f0c69c4243dc8.wav,validation,TEST,6346ccfb37ed7169c9b634fc,ngày hôm nay là ngày gì,datetime_query
+6176,data/audio/dev/b5190fbf5885d11694780a39979575ea.wav,validation,TEST,6346ccfb37ed7169c9b634fc,tôi có thể được giao hàng ở đây không,takeaway_query
+5546,data/audio/dev/b9419ea246f0e2fbcd682200c6cf16f5.wav,validation,TEST,652d516527ad747c966f5af4,cảm ơn đồng minh vì những bức ảnh,general_quirky
+6948,data/audio/dev/895dfa6b2aed466c4ecdae180614efc5.wav,validation,TEST,652d516527ad747c966f5af4,tôi có bao nhiêu cuộc họp tuần này,calendar_query
+15805,data/audio/dev/85bf94f7b9d6f8d56c6fd3b6feedf7a5.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,email cho nam về cuộc họp ngày mai nam chúng ta có cuộc họp buổi chiều,email_sendemail
+11364,data/audio/dev/2a373490cde1addd1585707704f62655.wav,validation,TEST,652d516527ad747c966f5af4,bỏ qua cho tới podcast tiếp theo,play_podcasts
+2495,data/audio/dev/5453aaa88bbe8c9bf032b72b95f9dff7.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,cho tôi biết về tin tức,news_query
+7169,data/audio/dev/0c71ce7d05df66ca642e6db730658f74.wav,validation,TEST,652d516527ad747c966f5af4,ly tôi sẽ đến gặp nhà trị liệu vào mỗi thứ năm lúc hai giờ chiều,calendar_set
+7134,data/audio/dev/64f002be8d833031377563075514cdd8.wav,validation,TEST,652d516527ad747c966f5af4,phải làm gì tiếp theo trong các sự kiện,calendar_query
+682,data/audio/dev/31310fbe07d800ceb544cb60daad7a53.wav,validation,TEST,6346ccfb37ed7169c9b634fc,theo dõi tin tức về sao kê từ thiện trong tương lai,news_query
+2643,data/audio/dev/d3efce1529b836f01c1d795f8643c180.wav,validation,TEST,6346ccfb37ed7169c9b634fc,phát mỹ tâm,play_music
+13615,data/audio/dev/f01c575b27dea6d1e6eeeffb5ec055a7.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,adel đã biến kim cương bao nhiêu lần,qa_factoid
+11477,data/audio/dev/65eafb090172d8d97b154b0fa04002ae.wav,validation,TEST,652d516527ad747c966f5af4,phát tập của thứ mà bạn biết có ở trong danh sách chờ,play_podcasts
+10470,data/audio/dev/238f4970cecdc8009ef70ad42ba1a08b.wav,validation,TEST,6346ccfb37ed7169c9b634fc,xóa danh sách các món thực phẩm đã mua tuần trước,lists_remove
+12455,data/audio/dev/c2a6c5586cb813bf0ede90c3889900e6.wav,validation,TEST,652d516527ad747c966f5af4,thời gian của chuyến tàu tới hà nội ngày hai mươi ba,transport_query
+6361,data/audio/dev/10e01becf591223af5d6f8a1a11e4e7a.wav,validation,TEST,6346ccfb37ed7169c9b634fc,chỉ tôi biết một loại đồ uống có cồn ngon,general_quirky
+3744,data/audio/dev/35604bb5d008d326a48e59f6e24fe61d.wav,validation,TEST,652d516527ad747c966f5af4,cho tôi biết giờ,datetime_query
+7052,data/audio/dev/5c494a4d18556d87c4459decf233c9a4.wav,validation,TEST,652d516527ad747c966f5af4,tôi có lịch nào sắp diễn ra vào thứ bảy này lúc hai giờ đến bốn giờ chiều không,calendar_query
+14145,data/audio/dev/79ea54f7fa407ca2a2ea11f20eb1c241.wav,validation,TEST,6346ccfb37ed7169c9b634fc,bạn có thể cho tôi biết sinh nhật của trấn thành không,qa_factoid
+14866,data/audio/dev/6d093ea4c9580cbd6ec29c093a5bec12.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,có bao nhiêu con sông trên thế giới,qa_factoid
+1928,data/audio/dev/71b11b27c57dac70d15995eac0234b91.wav,validation,TEST,652d516527ad747c966f5af4,phát nhạc,play_music
+2623,data/audio/dev/7c7cebc78fe8d2f98f86ee1bc0187ffc.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,làm ơn đừng nói gì cả,audio_volume_mute
+6265,data/audio/dev/d9738b80182a04c963498902c75d5af2.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,cho tôi biết những tin tức quan trọng hôm nay,news_query
+15921,data/audio/dev/3514ed24bf0f0e10526257733416f5d0.wav,validation,TEST,652d516527ad747c966f5af4,alexa thêm nhung a còng hotmail.com như một liên hệ mới của nguyễn hồng nhung,email_addcontact
+2582,data/audio/dev/7ff3bd01ebe863b107560a1e2916244c.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,nói tôi tên nghệ sĩ,music_query
+12134,data/audio/dev/6093013f9ba96799fc22cd9a68722d47.wav,validation,TEST,6346ccfb37ed7169c9b634fc,chuyến tàu tiếp theo tới sài gòn là khi nào,transport_query
+1349,data/audio/dev/6162c3fcaafd1650c997bcea326e5050.wav,validation,TEST,6346ccfb37ed7169c9b634fc,thời tiết tuần này thế nào,weather_query
+4008,data/audio/dev/7e4eb5f231b8c4ab09e2a9b64bb33a25.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,phát lại bài này,music_settings
+13071,data/audio/dev/7937a36d5cc5be37bb9a1af67a61403b.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,căn bậc hai của bốn mươi hai là bao nhiêu,qa_maths
+331,data/audio/dev/b60b21767172c1db12093e9fd48e1119.wav,validation,TEST,652d516527ad747c966f5af4,yên tĩnh hơn,audio_volume_down
+9454,data/audio/dev/fc39787c41016843ddf47f8db6d05d46.wav,validation,TEST,652d516527ad747c966f5af4,cho tôi một chút nhạc đài từ đài xone f. m.,play_radio
+2886,data/audio/dev/75d2e87964dbd95ea3e16b45455dd496.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,vui lòng cho xem các bài viết về chú chó ngồi ở tin tức buổi sáng,news_query
+15014,data/audio/dev/258f990577fc285322e27e5d5e39b277.wav,validation,TEST,6346ccfb37ed7169c9b634fc,nhật bản rộng bao nhiêu,qa_factoid
+12325,data/audio/dev/a986b57dc70ac06febd00ed33788f044.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,xe khách và giá vé,transport_ticket
+14849,data/audio/dev/fd7016e2d8c1c0f3da4c0f07150aff6c.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,câu trả lời cho hai lần ba là gì,qa_maths
+8122,data/audio/dev/bf0cf07430540310ba6a8a1ce7b6baeb.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,sự kiện ăn trưa nhắc lại vào mỗi thứ sáu,calendar_set
+7968,data/audio/dev/cb410fef3c28e032b49e0c7f69b1645a.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,tôi cần biết gì về buổi biểu diễn,calendar_query
+7846,data/audio/dev/8b61bdea61350fbcb3aae44fd23cbc0c.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,có những lời nhắc nào sắp tới trong tuần này,calendar_query
+7688,data/audio/dev/6398ab1d24a76a7cf004f3c18628ccbf.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,tôi có bất kỳ lời nhắc nào còn dang dở không,calendar_query
+3705,data/audio/dev/f3fa11ba1ef991625ed33a7f4d7912b3.wav,validation,TEST,652d516527ad747c966f5af4,ngày và giờ hôm nay là gì,datetime_query
+13281,data/audio/dev/19c4412d3ec0010890bac0623408b190.wav,validation,TEST,652d516527ad747c966f5af4,tôi muốn tôi viết những tin nhắn lãng mạn ban đầu cho vợ của tôi,general_quirky
+14516,data/audio/dev/8477dc7dd7405d4c2fbd53e7e8cf7f90.wav,validation,TEST,652d516527ad747c966f5af4,điện thoại thông minh tốt nhất vào năm hai không mười bảy là cái nào,qa_factoid
+11631,data/audio/dev/f2389b73b062a0e6db85520c501615d2.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,tôi cần ít sushi gần nhất,recommendation_locations
+16206,data/audio/dev/a3fc40cbdef287ec211383efda3d7b54.wav,validation,TEST,6346ccfb37ed7169c9b634fc,gửi tin nhắn này đến nhóm gia đình bắt đầu với một,email_sendemail
+9065,data/audio/dev/5e2c2956033e8849da985adfb6fccb12.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,tạo một sự kiện lặp lại vào lịch,calendar_set
+9798,data/audio/dev/4df8c0fba392b74c1f2812ca9d4ba506.wav,validation,TEST,652d516527ad747c966f5af4,phát tiếp the last kingdom,play_audiobook
+2120,data/audio/dev/15e5fe52ce60d8d0da8b73162934fa44.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,chuyển các đèn thành màu xanh dương,iot_hue_lightchange
+13024,data/audio/dev/c784627eed63ffea4819fa28622649be.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,gửi thư điện tử cho bạn bè,email_sendemail
+4867,data/audio/dev/fe3be7afd88575a63ea6aac40e908959.wav,validation,TEST,6346ccfb37ed7169c9b634fc,gọi pf chang đặt cho tôi trứng foo young,takeaway_order
+9831,data/audio/dev/677cef44f6177e7fa8a442fcd26962f6.wav,validation,TEST,6346ccfb37ed7169c9b634fc,bắt đầu đọc tam quốc diễn nghĩa từ chương bốn,play_audiobook
+2599,data/audio/dev/b9e57ef8b8332997879f37d1ed09d580.wav,validation,TEST,6346ccfb37ed7169c9b634fc,tôi muốn cà phê ngay bây giờ,iot_coffee
+12284,data/audio/dev/968b6746a21dafade43faa93be4deca6.wav,validation,TEST,652d516527ad747c966f5af4,chuyến tàu hỏa tiếp theo đi nha trang vào lúc nào,transport_query
+3437,data/audio/dev/838ae0f22a3cade95663278e50664bdf.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,vui lòng tăng ánh sáng lên,iot_hue_lightup
+4622,data/audio/dev/4c7317e2f6e872e7a0fa715836a924f0.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,làm mờ các đèn thành mức độ hai,iot_hue_lightdim
+12165,data/audio/dev/bd59ca3112716984b10b5cd321ef88d6.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,đặt vé tàu hỏa ghế hạng a. c. từ hà nội đến nghệ an,transport_ticket
+5322,data/audio/dev/639bb8d0ed91a7cb1c5eb99e5e6930ca.wav,validation,TEST,6346ccfb37ed7169c9b634fc,thời tiết tại dĩ an bình dương hôm nay thế nào,weather_query
+11045,data/audio/dev/0e2fcf7a6f028054784c112e62e4e28c.wav,validation,TEST,6346ccfb37ed7169c9b634fc,mở danh sách của tôi,lists_query
+11326,data/audio/dev/15eb1552ae855e95ba51d0799aee3c92.wav,validation,TEST,652d516527ad747c966f5af4,phát tập số bảy của vov,play_podcasts
+11064,data/audio/dev/dac3dc6f09002b75d1c0a87ddf52975d.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,này danh sách của tôi là những gì,lists_query
+8146,data/audio/dev/fb4627e59a2e707b18ea52bfef93e5b3.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,xóa cuộc họp của tôi ngày mười bốn,calendar_remove
+13227,data/audio/dev/aae627bbecf66e91b36d546b24c7ac96.wav,validation,TEST,6346ccfb37ed7169c9b634fc,người hãy quên em đi người hãy quên em đi,general_quirky
+9256,data/audio/dev/ed1737818d05f485dd164d230de85d85.wav,validation,TEST,652d516527ad747c966f5af4,mở đài phát thanh,play_radio
+13198,data/audio/dev/8a6c44358895265042f036dadb06f64a.wav,validation,TEST,652d516527ad747c966f5af4,tính phường trình này,qa_maths
+11562,data/audio/dev/a58ffdb04ef281afadb642076a191bf6.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,tôi muốn nghe podcast này,play_podcasts
+11883,data/audio/dev/0870a9d56e6956aafba4519fb13d4916.wav,validation,TEST,652d516527ad747c966f5af4,nên gọi xe hãng nào thì tốt nhất,recommendation_events
+8287,data/audio/dev/6e2950e4a7876fd336de41983d59afa7.wav,validation,TEST,652d516527ad747c966f5af4,vui lòng xóa cuộc họp tôi có với oanh tối nay,calendar_remove
+3758,data/audio/dev/7d1dc139fc609add8db6cb58be5f1654.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,sau bài này phát cho tôi người hãy quên em đi,play_music
+298,data/audio/dev/f6fe5579948108d66e846d13e9443c64.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,phát nhạc của chopin,play_music
+7164,data/audio/dev/bbf0dd0cb4029e5e72b5ff1e3dcbc38f.wav,validation,TEST,6346ccfb37ed7169c9b634fc,bốn giờ chiều,calendar_set
+4604,data/audio/dev/dbe203875f6e888123c5d2d936c4ad2c.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,kiểm tra xem đơn đặt hàng của tôi tại pizza hut có giao chưa,takeaway_query
+4664,data/audio/dev/f19b5d832712c5a34d2536c603933b1e.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,tên nhóm nhạc này là gì,music_query
+14657,data/audio/dev/855cf8ef34f878109f74c54b7e6fc40b.wav,validation,TEST,6346ccfb37ed7169c9b634fc,cho tôi mô tả của mạch máy tính xách tay,qa_definition
+7523,data/audio/dev/6b70e7727685bb2e7bd1d76e1cdee6cd.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,chúng ta nhận được gì trong cuộc họp được tổ chức ngày hôm qua,calendar_query
+1948,data/audio/dev/12f49cc87aa198142eb41f6787489759.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,truyện cười vui nhộn,general_joke
+10135,data/audio/dev/28eb18a12d750e6de51dc0b3bf2018a6.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,tìm thực đơn không chứa gluten,cooking_recipe
+16580,data/audio/dev/9b438379aa5b48a2fadf31dd2f4f58b7.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,google tìm địa chỉ email mới của dũng tôi đã thêm vào hôm thứ sáu,email_query
+8859,data/audio/dev/011c7ae4be35efcf1bb05b4e411ee595.wav,validation,TEST,652d516527ad747c966f5af4,lịch hẹn của tôi vào ngày mười bốn tháng sáu năm hai nghìn không trăm mười bảy là gì,calendar_query
+431,data/audio/dev/464c3dec71583a3b3e01a32bfc36f28a.wav,validation,TEST,6346ccfb37ed7169c9b634fc,thời tiết vào thứ sáu như thế nào,weather_query
+3404,data/audio/dev/5d2fe1dc8553ec0787bdcee3f4fa486d.wav,validation,TEST,6346ccfb37ed7169c9b634fc,làm thế nào phát lại bài hát,music_query
+8606,data/audio/dev/66e18cf2f04974cd8f584148224efbe0.wav,validation,TEST,652d516527ad747c966f5af4,tôi muốn gặp hoa vào ngày mai,calendar_set
+7495,data/audio/dev/7ceb758134bf3d55be51c1cce08e2459.wav,validation,TEST,6346ccfb37ed7169c9b634fc,nhắc tôi về cuộc phỏng vấn ngày mai,calendar_set
+9382,data/audio/dev/a42b0fb9a99c8a6c30059faeeb28f67d.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,phát b. b. c. radio số bốn,play_radio
+3599,data/audio/dev/627536323d90fd338ee39fdaaab699a6.wav,validation,TEST,6346ccfb37ed7169c9b634fc,đặt báo thức lúc một giờ chiều,alarm_set
+16829,data/audio/dev/bfb02594f88a2384b506175574aa8281.wav,validation,TEST,6346ccfb37ed7169c9b634fc,gửi email trả lời đến linh,email_sendemail
+9492,data/audio/dev/82608555461b4873ee80300e8eec53d4.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,mở danh sách phát hiện tại,play_music
+12236,data/audio/dev/513389246cda8484384bf5c22df55cff.wav,validation,TEST,652d516527ad747c966f5af4,đặt grab từ nhà tôi,transport_taxi
+2825,data/audio/dev/6316cc3cc18e43cb417bcf62a12a57a9.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,ngày mười sáu tháng tư rơi vào ngày nào,datetime_query
+3421,data/audio/dev/b18e14c5f13aa4f03f35ef9df7646713.wav,validation,TEST,652d516527ad747c966f5af4,đó là nhạc gì,music_query
+5060,data/audio/dev/822c23a0038f203a6f056c891b229677.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,thông báo cho tôi khi có tin tức mới từ tin tức địa phương của tôi,news_query
+13037,data/audio/dev/4babb46fe76efc2f940fba95ac1b24a9.wav,validation,TEST,652d516527ad747c966f5af4,tôi nên nấu món gì tối nay,general_quirky
+11041,data/audio/dev/bbca61021d0975ec86bdc1c42bad9e48.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,nhắc tôi đặt thêm xà bông,lists_createoradd
+3160,data/audio/dev/8a95815d5e3be9bbde7fc758b6d2de96.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,mở nhạc thính phòng danh sách phát nhạc,play_music
+6642,data/audio/dev/5592e797ed420aa9e8a9a994d1cfb64b.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,lời khuyên kinh tế gần đây,general_quirky
+11785,data/audio/dev/4ac5f738cb388bd9ad7f6b77f33bec72.wav,validation,TEST,6346ccfb37ed7169c9b634fc,phim người sói,recommendation_movies
+26,data/audio/dev/c5810df13e751bb7f2eea8d9aa4dccad.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,lau dọn căn hộ,iot_cleaning
+6991,data/audio/dev/29a85caca9e37444d1ad5bb76e182eae.wav,validation,TEST,6346ccfb37ed7169c9b634fc,sự kiện mới nhất,calendar_query
+14582,data/audio/dev/8092c5373759cc8edb0ac164ed6298b1.wav,validation,TEST,652d516527ad747c966f5af4,cho tôi biết làm thế nào để đi bali mà không cần máy bay với chi phí thấp nhất thời gian tùy chọn không thành vấn đề tôi có thời gian đi lại hai trăm ngày và chỉ có đô la để chi tiêu,general_quirky
+1839,data/audio/dev/03e4ab971fa7bfc7ff4cf78b7d1a5c0c.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,đi đên youtube và phát cho tôi bộ sưu tập các bài hát cưới hay nhất,play_music
+6571,data/audio/dev/9e04dae80046852e3e637c6b3cf0a766.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,các sự kiện đang diễn ra ở h. c. m.,recommendation_events
+17009,data/audio/dev/1171f8669b74c14c393e06173fd31937.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,kiểm tra hộp thư cho tôi,email_query
+10146,data/audio/dev/be5ab535d6d0aa2939d150d3e1dc12dd.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,làm thế nào để bạn nấu một món trứng tráng phô mai,cooking_recipe
+1177,data/audio/dev/1eba2546a0e8bb7479c113aa77105f58.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,lời bài hát người hãy quên em đi của mỹ tâm,music_query
+15475,data/audio/dev/93e6443ba86c9dbd7c47374181133dcd.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,cho điện lực hà nội biết rằng điện lại bị mất,social_post
+5084,data/audio/dev/3bc8cd9e7f4a2489cb6657a9e1d0ea10.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,đặt báo thức lúc sáu giờ sáng,alarm_set
+2963,data/audio/dev/e9d62c6bba29da6a6b6682ae11a7a7a4.wav,validation,TEST,6346ccfb37ed7169c9b634fc,làm ơn phát bài hát yêu thích của tôi của mỹ tâm,play_music
+15462,data/audio/dev/3c439786acfd24d786629ecf5dfb78f1.wav,validation,TEST,652d516527ad747c966f5af4,bạn có thể tweet một lời phàn nàn đến bộ phận dịch vụ khách hàng shopee được không,social_post
+15427,data/audio/dev/9ab2ba8322fd97188f7f91b2559b3fc2.wav,validation,TEST,6346ccfb37ed7169c9b634fc,đăng ảnh trên điện thoại của tôi trên facebook alexa,social_post
+1430,data/audio/dev/881bee9bdd48fa239a355ac359f77017.wav,validation,TEST,652d516527ad747c966f5af4,tìm và bỏ vào danh sách tất cả bài hát của mỹ tâm và phát tất cả không xáo trộn,play_music
+5372,data/audio/dev/0a10f7222fa91281ff666e37717c4fb1.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,có gì mới trên zing m. p. ba,music_query
+11690,data/audio/dev/26a205d86ebc7b0f42d1c72481963302.wav,validation,TEST,6346ccfb37ed7169c9b634fc,tìm cho tôi địa chỉ của cửa hàng này,recommendation_locations
+9214,data/audio/dev/e4c277accb67f5d0e84624d9f5310122.wav,validation,TEST,6346ccfb37ed7169c9b634fc,mở pandora và phát trạm rock,play_radio
+13118,data/audio/dev/a0b30385652c820f08ed41da1a216114.wav,validation,TEST,6346ccfb37ed7169c9b634fc,không có gì,qa_factoid
+138,data/audio/dev/726f83cd268524a2d077ec4e0e9b26f8.wav,validation,TEST,652d516527ad747c966f5af4,bài hát đó là gì,music_query
+4495,data/audio/dev/720ddbfae5d244d5f860ca4932dfd701.wav,validation,TEST,652d516527ad747c966f5af4,cho tôi những tin tức mới nhất từ tờ tuổi trẻ,news_query
+13157,data/audio/dev/c4e084a417931d18fac5fcb6f46e3bd9.wav,validation,TEST,6346ccfb37ed7169c9b634fc,google từ,qa_definition
+10324,data/audio/dev/671577f83e139468780a56c9d6cc4582.wav,validation,TEST,6346ccfb37ed7169c9b634fc,chơi con rắn với tôi,play_game
+14565,data/audio/dev/f50af11a5fcac9fa6f36398e8990d482.wav,validation,TEST,6346ccfb37ed7169c9b634fc,vấn đề quan tâm nhất ở mỹ ngày nay và những gì có thể được thực hiện để đối phó với nó một cách hiệu quả,general_quirky
+6071,data/audio/dev/0b9d6977aca029096e10359a4bd68090.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,có phải đơn hàng của tôi sẵn sàng để lấy bây giờ,takeaway_query
+4675,data/audio/dev/1450be9e9427cbf1134151ff614d9461.wav,validation,TEST,6346ccfb37ed7169c9b634fc,giá cổ phiếu gần đây của google là bao nhiêu,qa_stock
+3270,data/audio/dev/71c3911f8f3ff36638f3393e8ab78afd.wav,validation,TEST,6346ccfb37ed7169c9b634fc,bỏ báo thức đặt cho ngày mai,alarm_remove
+10518,data/audio/dev/c47eb3234e452a997e98693f6bae1545.wav,validation,TEST,6346ccfb37ed7169c9b634fc,những danh sách nào có sẵn,lists_query
+2515,data/audio/dev/4560d3790a61371e9ffdd4fb7b1c03e9.wav,validation,TEST,6346ccfb37ed7169c9b634fc,nói cho tôi biết thời tiết tuần này,weather_query
+9008,data/audio/dev/fbdb93c647f9042802c62c5774f5aeac.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,xóa sự kiện sinh nhật khỏi lịch của tôi,calendar_remove
+14865,data/audio/dev/3089c19f25f35187dd6f62d97e6ec9d6.wav,validation,TEST,652d516527ad747c966f5af4,xác định mặt trăng cho tôi,qa_definition
+9428,data/audio/dev/bcb6cf4f542e46f9eb83e314f889b7c9.wav,validation,TEST,652d516527ad747c966f5af4,phát trò chơi bóng đà trên đài,play_radio
+13533,data/audio/dev/f46a4df2049082e260fa2702d1f948ab.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,bạn gái của tôi hiện giờ ở đâu,general_quirky
+2318,data/audio/dev/c68c5217e66d4ed84763e736fe828113.wav,validation,TEST,6393bb7fbbd2bb29f99e6c9b,giảm tối đa nguồn đèn,iot_hue_lightdim
+9756,data/audio/dev/dd47b3ffde0298b02a2da162646f9113.wav,validation,TEST,652d516527ad747c966f5af4,tiếp tục phát sách nói của tôi chỗ chúng ta đã ngừng lại gần nhất,play_audiobook
+11496,data/audio/dev/dbb2710a60e8e53f5dd4d2f3c37b1f0b.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,phát podcast thời sự,play_podcasts
+5175,data/audio/dev/c21e103dcf62964a49fe601500e34fa6.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,thời tiết sẽ như thế nào trong tuần này,weather_query
+42,data/audio/dev/e17f9bc83fd7f711247f00ef8c7340f0.wav,validation,TEST,6346ccfb37ed7169c9b634fc,cho tôi biết trạng thái trên bộ nhớ có sẵn của tôi,general_quirky
+3997,data/audio/dev/02415083c571d4564c4d5c0411390c11.wav,validation,TEST,6346ccfb37ed7169c9b634fc,alexa có tin tức gì mới trong khu vực của tôi,news_query
+8311,data/audio/dev/7d5d933bd53d3778fffc62e57564f086.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,đặt nhắc nhở cho các thứ tư lúc hai giờ chiều,calendar_set
+14953,data/audio/dev/9e667ab8d45ce37bb13ce4190fa5a605.wav,validation,TEST,652d516527ad747c966f5af4,bởi là gì,qa_definition
+5989,data/audio/dev/d138df3e4ee1f8cc96e5aabf31593622.wav,validation,TEST,652d516527ad747c966f5af4,tôi muốn một ít cà phê bây giờ,iot_coffee
+9432,data/audio/dev/bb2270c39c7d9a1363edad59ab35706b.wav,validation,TEST,6346ccfb37ed7169c9b634fc,có bao nhiêu podcast thể thao của tôi có tập mới tôi chưa nghe,play_radio
+12363,data/audio/dev/2334d9a243ddc0664f0a7e0c5b9984e7.wav,validation,TEST,6346ccfb37ed7169c9b634fc,đặt chuyến taxi có sẵn gần tôi nhất,transport_taxi
+13224,data/audio/dev/9432a009255596a1e23a554db10748e9.wav,validation,TEST,652d516527ad747c966f5af4,jennifer lopez bao nhiêu tuổi,qa_factoid
+13617,data/audio/dev/eaa1a929ab7a8e7782bf4d176dd72635.wav,validation,TEST,652d516527ad747c966f5af4,kể cho tôi nghe điều kỳ lạ nhất đang xảy ra trên thế giới hôm nay,general_quirky
+1545,data/audio/dev/6da39151fcc4ac9c71fd678d1c717120.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,phát billboard top ten,play_music
+2620,data/audio/dev/84a6bf78a08c3db6a678f4b93d8aa45a.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,hãy khởi động máy hút bụi,iot_cleaning
+17034,data/audio/dev/15d8611dbfad21e4146babfc09b429ea.wav,validation,TEST,5c76a2d39dd0fe0001d9dfe0,đưa cho tôi tất cả các thư điện tử của tôi gần đây,email_query
+7309,data/audio/dev/22fe6375d0a874c0553d0dfedff6c16e.wav,validation,TEST,6346ccfb37ed7169c9b634fc,cuộc hẹn đầu tiên hôm nay của tôi là gì,calendar_query

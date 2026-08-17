@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "dataset_version": "asr-v4",
+  "model_version": "whisper-small-lora-wide-v4",
+  "role": "test",
+  "sample_count": 249,
+  "successful_count": 249,
+  "failure_count": 0,
+  "word_edits": 393,
+  "reference_words": 2180,
+  "char_edits": 849,
+  "reference_chars": 7221,
+  "wer": 0.18027522935779816,
+  "cer": 0.1175737432488575,
+  "mean_latency_ms": 500.3892931726907,
+  "lock_sha256": "19c730e0b566542f9e314d5f2697a23267561fcd6b4901f3a73ec875c5e55876",
+  "split_canonical_csv_sha256": "64e63c301689d1e71ec4c7e792141a578fe9e6f92d8d3e700e9bc6b9b5a737df",
+  "predictions_sha256": "6b539b339c6a8f8b07153fe464dee704fd341380235776860d65feb35bc7fb56",
+  "completed_at": "2026-08-16T13:57:05+00:00"
+}

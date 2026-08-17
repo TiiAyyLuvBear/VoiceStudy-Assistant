@@ -1,0 +1,60 @@
+{
+  "protocol": "SPEAKER_V2_COSINE_CLOSED_SET_TEST",
+  "test_sample_count": 128,
+  "num_classes": 9,
+  "unknown_threshold_applied": false,
+  "metrics": {
+    "accuracy": 0.9921875,
+    "macro_precision": 0.9925925925925926,
+    "macro_recall": 0.9920634920634921,
+    "macro_f1": 0.9920533560380304
+  },
+  "per_speaker_accuracy": {
+    "exp_svm_spk_0001": {
+      "count": 15,
+      "correct": 15,
+      "accuracy": 1.0
+    },
+    "exp_svm_spk_0002": {
+      "count": 15,
+      "correct": 15,
+      "accuracy": 1.0
+    },
+    "exp_svm_spk_0003": {
+      "count": 14,
+      "correct": 14,
+      "accuracy": 1.0
+    },
+    "exp_svm_spk_0004": {
+      "count": 14,
+      "correct": 14,
+      "accuracy": 1.0
+    },
+    "exp_svm_spk_0005": {
+      "count": 14,
+      "correct": 13,
+      "accuracy": 0.9285714285714286
+    },
+    "exp_svm_spk_0006": {
+      "count": 14,
+      "correct": 14,
+      "accuracy": 1.0
+    },
+    "exp_svm_spk_0007": {
+      "count": 14,
+      "correct": 14,
+      "accuracy": 1.0
+    },
+    "exp_svm_spk_0009": {
+      "count": 14,
+      "correct": 14,
+      "accuracy": 1.0
+    },
+    "exp_svm_spk_0010": {
+      "count": 14,
+      "correct": 14,
+      "accuracy": 1.0
+    }
+  },
+  "mean_inference_latency_ms": 0.014981249999999998
+}

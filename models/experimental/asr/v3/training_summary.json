@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "status": "TRAINED_VALIDATION_SELECTED_NOT_TESTED",
+  "dataset_version": "asr-v3",
+  "method": "decoder-only LoRA on openai/whisper-small",
+  "test_split_accessed": false,
+  "base_model": {
+    "path": "models/cache/huggingface/openai-whisper-small",
+    "model_safetensors_sha256": "1d7734884874f1a1513ed9aa760a4f8e97aaa02fd6d93a3a85d27b2ae9ca596b"
+  },
+  "datasets": {
+    "train": {
+      "path": "data/processed/v3/metadata/asr_finetune_train.csv",
+      "row_count": 1465,
+      "canonical_csv_sha256": "c5a44563a8b0bb54b95f5da4609abd1052ffbbf907c52868bd0e8c8781e72ac0"
+    },
+    "validation": {
+      "path": "data/processed/v3/metadata/asr_finetune_validation.csv",
+      "row_count": 322,
+      "canonical_csv_sha256": "a0df3fff3130967c0e5b6306a1b8ba0313b7669ed872e4362f1f9e9512f36e7f"
+    }
+  },
+  "hyperparameters": {
+    "epochs": 2,
+    "batch_size": 4,
+    "gradient_accumulation": 2,
+    "learning_rate": 0.0001,
+    "warmup_ratio": 0.05,
+    "lora_rank": 8,
+    "lora_alpha": 16,
+    "lora_dropout": 0.05,
+    "maximum_training_window_seconds": 16,
+    "seed": 42,
+    "trainable_parameter_count": 589824,
+    "max_steps": null
+  },
+  "selection": {
+    "metric": "validation_loss",
+    "lower_is_better": true,
+    "best_epoch": 2,
+    "best_validation_loss": 0.6902654049434646,
+    "best_adapter_path": "models/experimental/asr/v3/best_adapter"
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "global_step": 184,
+      "train_loss": 2.930945410471846,
+      "validation_loss": 0.7732850294663655
+    },
+    {
+      "epoch": 2,
+      "global_step": 368,
+      "train_loss": 0.9574187594473524,
+      "validation_loss": 0.6902654049434646
+    }
+  ],
+  "elapsed_seconds": 4776.082973480225
+}

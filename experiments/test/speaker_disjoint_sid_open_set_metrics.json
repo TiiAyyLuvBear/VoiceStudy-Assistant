@@ -1,0 +1,30 @@
+{
+  "protocol": "WEEK3_SPEAKER_DISJOINT_OPEN_SET_SID_TEST",
+  "threshold": 0.51307271,
+  "threshold_source": "D:\\HCMUS\\HOCTAP\\Semesters\\25-26HK3\\HocThongKe\\Project\\VoiceStudy-Assistant\\models\\experimental\\cosine_unknown_threshold.json",
+  "threshold_tuning_on_test": false,
+  "known_query": {
+    "count": 10,
+    "correct_identification": 8,
+    "identification_accuracy": 0.8,
+    "acceptance_rate": 0.8,
+    "false_unknown_rate": 0.2
+  },
+  "unknown_query": {
+    "count": 116,
+    "rejected_as_unknown": 91,
+    "false_known": 25,
+    "unknown_rejection_rate": 0.7844827586206896,
+    "false_known_rate": 0.21551724137931033
+  },
+  "open_set": {
+    "total_queries": 126,
+    "correct": 99,
+    "overall_accuracy": 0.7857142857142857
+  },
+  "manifests": {
+    "known": "D:\\HCMUS\\HOCTAP\\Semesters\\25-26HK3\\HocThongKe\\Project\\VoiceStudy-Assistant\\data\\processed\\v1\\metadata\\cosine_test_query.csv",
+    "unknown": "D:\\HCMUS\\HOCTAP\\Semesters\\25-26HK3\\HocThongKe\\Project\\VoiceStudy-Assistant\\data\\processed\\v1\\metadata\\cosine_test_unknown.csv"
+  },
+  "centroid_dir": "D:\\HCMUS\\HOCTAP\\Semesters\\25-26HK3\\HocThongKe\\Project\\VoiceStudy-Assistant\\models\\experimental\\cosine_test_centroids"
+}

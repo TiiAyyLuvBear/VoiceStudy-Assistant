@@ -1,0 +1,144 @@
+{
+  "schema_version": 1,
+  "status": "TRAINED_VALIDATION_SELECTED_NOT_TESTED",
+  "dataset_version": "asr-v4",
+  "method": "decoder-only wider LoRA on openai/whisper-small",
+  "test_split_accessed": false,
+  "base_model": {
+    "path": "/content/models/openai-whisper-small",
+    "model_safetensors_sha256": "1d7734884874f1a1513ed9aa760a4f8e97aaa02fd6d93a3a85d27b2ae9ca596b"
+  },
+  "datasets": {
+    "train": {
+      "path": "data/processed/v4/metadata/asr_finetune_train.csv",
+      "row_count": 1465,
+      "canonical_csv_sha256": "c5a44563a8b0bb54b95f5da4609abd1052ffbbf907c52868bd0e8c8781e72ac0"
+    },
+    "validation": {
+      "path": "data/processed/v4/metadata/asr_finetune_validation.csv",
+      "row_count": 322,
+      "canonical_csv_sha256": "a0df3fff3130967c0e5b6306a1b8ba0313b7669ed872e4362f1f9e9512f36e7f"
+    }
+  },
+  "hyperparameters": {
+    "minimum_epochs": 4,
+    "maximum_epochs": 6,
+    "early_stopping_patience": 1,
+    "batch_size": 4,
+    "validation_batch_size": 8,
+    "gradient_accumulation": 4,
+    "learning_rate": 5e-05,
+    "warmup_ratio": 0.05,
+    "lora_rank": 32,
+    "lora_alpha": 64,
+    "lora_dropout": 0.05,
+    "target_modules": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "out_proj",
+      "fc1",
+      "fc2"
+    ],
+    "encoder_frozen": true,
+    "gradient_checkpointing": false,
+    "device": "cuda",
+    "mixed_precision": "fp16",
+    "maximum_training_window_seconds": 16,
+    "validation_decode": {
+      "num_beams": 1,
+      "max_new_tokens": 128,
+      "language": "vi",
+      "task": "transcribe"
+    },
+    "seed": 42,
+    "trainable_parameter_count": 7667712,
+    "max_steps": null
+  },
+  "selection": {
+    "metric_order": [
+      "validation_wer",
+      "validation_cer"
+    ],
+    "lower_is_better": true,
+    "best_epoch": 3,
+    "best_validation": {
+      "word_edits": 682,
+      "reference_words": 2849,
+      "char_edits": 1624,
+      "reference_chars": 9456,
+      "wer": 0.23938223938223938,
+      "cer": 0.17174280879864637
+    },
+    "best_adapter_path": "/content/drive/MyDrive/VoiceStudy-Assistant-Colab/whisper-small-lora-wide-v4-run1/models/experimental/asr/v4/best_adapter"
+  },
+  "stop_reason": "early_stopping_validation_wer_cer",
+  "epochs_completed": 4,
+  "history": [
+    {
+      "epoch": 1,
+      "global_step": 92,
+      "train_loss": 3.0167422271879234,
+      "validation_loss": 0.5912507183591517,
+      "validation": {
+        "word_edits": 696,
+        "reference_words": 2849,
+        "char_edits": 1641,
+        "reference_chars": 9456,
+        "wer": 0.2442962442962443,
+        "cer": 0.17354060913705585
+      },
+      "improved": true,
+      "non_improving_epochs": 0
+    },
+    {
+      "epoch": 2,
+      "global_step": 184,
+      "train_loss": 0.7108778338422568,
+      "validation_loss": 0.4732461921304173,
+      "validation": {
+        "word_edits": 690,
+        "reference_words": 2849,
+        "char_edits": 1633,
+        "reference_chars": 9456,
+        "wer": 0.24219024219024218,
+        "cer": 0.17269458544839256
+      },
+      "improved": true,
+      "non_improving_epochs": 0
+    },
+    {
+      "epoch": 3,
+      "global_step": 276,
+      "train_loss": 0.5622986897785592,
+      "validation_loss": 0.4332542139034325,
+      "validation": {
+        "word_edits": 682,
+        "reference_words": 2849,
+        "char_edits": 1624,
+        "reference_chars": 9456,
+        "wer": 0.23938223938223938,
+        "cer": 0.17174280879864637
+      },
+      "improved": true,
+      "non_improving_epochs": 0
+    },
+    {
+      "epoch": 4,
+      "global_step": 368,
+      "train_loss": 0.4837977456116709,
+      "validation_loss": 0.41787867295293374,
+      "validation": {
+        "word_edits": 698,
+        "reference_words": 2849,
+        "char_edits": 1696,
+        "reference_chars": 9456,
+        "wer": 0.244998244998245,
+        "cer": 0.1793570219966159
+      },
+      "improved": false,
+      "non_improving_epochs": 1
+    }
+  ],
+  "elapsed_seconds": 554.2654221057892
+}

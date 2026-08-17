@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "status": "FROZEN_BASELINE",
+  "dataset_version": "asr-v3",
+  "model": "whisper-small-original",
+  "inference_reused": true,
+  "reuse_reason": "v2 and v3 test contain exactly the same 249 audio IDs and paths",
+  "test_used_for_finetune_decisions": false,
+  "sample_count": 249,
+  "word_edits": 506,
+  "reference_words": 2180,
+  "char_edits": 1056,
+  "reference_chars": 7221,
+  "wer": 0.23211009174311928,
+  "cer": 0.14624013294557542,
+  "artifacts": {
+    "test": {
+      "path": "data/processed/v3/metadata/asr_finetune_test.csv",
+      "sha256": "0456d5713ed46a6190250ee54f90d73cd54b2c241eb7aab0ba0d305eda2b8e3e",
+      "canonical_csv_sha256": "64e63c301689d1e71ec4c7e792141a578fe9e6f92d8d3e700e9bc6b9b5a737df"
+    },
+    "source_predictions": {
+      "path": "reports/asr/v2/asr_test_predictions.csv",
+      "sha256": "d350263283d34e5857e61091b1c565d301051e9edf41d8e852dedf7ef53eac14"
+    },
+    "source_config": {
+      "path": "reports/asr/v2/asr_test_config.json",
+      "sha256": "149e5aaa241f98301d97be6e800090a42ec2860eb7fef58f189bda7f1eafc51d"
+    },
+    "ctranslate2_model": {
+      "path": "models/cache/whisper/models--Systran--faster-whisper-small/snapshots/536b0662742c02347bc0e980a01041f333bce120/model.bin",
+      "sha256": "3e305921506d8872816023e4c273e75d2419fb89b24da97b4fe7bce14170d671"
+    },
+    "predictions": {
+      "path": "reports/asr/v3/baseline_original/baseline_original_predictions.csv",
+      "sha256": "bff0631db427473a216e732fb6666d1e9b694a1067730c380f7f0842c42be483",
+      "canonical_csv_sha256": "724be9bf8e1420265c88bd065f4c2416acc16978dd6f7c307f8f87f1e7bc78e6"
+    }
+  }
+}

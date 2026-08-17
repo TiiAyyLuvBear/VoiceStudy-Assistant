@@ -1,0 +1,10 @@
+speaker_id,normalized_speaker_id,protocol,role,project_split,source_project_split,usable_audio_count,enrollment_count,train_count,validation_count,test_query_count,unknown_query_count,speaker_sex,speaker_age
+6552b16899091e4aaa587d1b,exp_svm_spk_0001,SVM_CLOSED_SET,SVM_EXPERIMENTAL,SVM,SVM,151,5,72,16,15,0,Male,33
+6537e43c008bb605430a302f,exp_svm_spk_0002,SVM_CLOSED_SET,SVM_EXPERIMENTAL,SVM,SVM,144,5,71,16,15,0,Female,29
+5c9d67af9e01ef000197cd15,exp_svm_spk_0003,SVM_CLOSED_SET,SVM_EXPERIMENTAL,SVM,SVM,100,5,67,14,14,0,Female,59
+5e133bbe6a5bff9911b73cfc,exp_svm_spk_0004,SVM_CLOSED_SET,SVM_EXPERIMENTAL,SVM,SVM,100,5,67,14,14,0,Female,31
+6557ebf8541bd32382739c1a,exp_svm_spk_0005,SVM_CLOSED_SET,SVM_EXPERIMENTAL,SVM,SVM,97,5,64,14,14,0,Female,30
+5ee49e71f8d19d00098aca3e,exp_svm_spk_0006,SVM_CLOSED_SET,SVM_EXPERIMENTAL,SVM,SVM,99,5,66,14,14,0,Male,27
+5e4247e718b8910d4a2b9a34,exp_svm_spk_0007,SVM_CLOSED_SET,SVM_EXPERIMENTAL,SVM,SVM,96,5,64,13,14,0,Female,32
+604b93f6432ad99bcb4798e8,exp_svm_spk_0009,SVM_CLOSED_SET,SVM_EXPERIMENTAL,SVM,SVM,98,5,65,14,14,0,Male,31
+63cfbea470ab1bba9db30082,exp_svm_spk_0010,SVM_CLOSED_SET,SVM_EXPERIMENTAL,SVM,SVM,97,5,64,14,14,0,Male,21

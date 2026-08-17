@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "dataset_version": "asr-v4",
+  "model_version": "whisper-small-lora-wide-v4",
+  "status": "LOCKED_BEFORE_TEST",
+  "locked_at": "2026-08-16T13:54:25+00:00",
+  "selection": {
+    "metric_order": [
+      "validation_wer",
+      "validation_cer"
+    ],
+    "lower_is_better": true,
+    "best_epoch": 3,
+    "best_validation": {
+      "word_edits": 682,
+      "reference_words": 2849,
+      "char_edits": 1624,
+      "reference_chars": 9456,
+      "wer": 0.23938223938223938,
+      "cer": 0.17174280879864637
+    },
+    "best_adapter_path": "/content/drive/MyDrive/VoiceStudy-Assistant-Colab/whisper-small-lora-wide-v4-run1/models/experimental/asr/v4/best_adapter"
+  },
+  "training_summary": {
+    "path": "/content/drive/MyDrive/VoiceStudy-Assistant-Colab/whisper-small-lora-wide-v4-run1/models/experimental/asr/v4/training_summary.json",
+    "sha256": "c9bc359e90c5ca638f6913031a5575ec688aa1264e60ac79e60be827a9bec9bb"
+  },
+  "export_summary": {
+    "path": "/content/drive/MyDrive/VoiceStudy-Assistant-Colab/whisper-small-lora-wide-v4-run1/models/experimental/asr/v4/export_summary.json",
+    "sha256": "5a8d9d693dac40983b9ee068c93ee661e423231922ed3d2193424987dae8cd37"
+  },
+  "datasets": {
+    "train": {
+      "path": "data/processed/v4/metadata/asr_finetune_train.csv",
+      "canonical_csv_sha256": "c5a44563a8b0bb54b95f5da4609abd1052ffbbf907c52868bd0e8c8781e72ac0"
+    },
+    "validation": {
+      "path": "data/processed/v4/metadata/asr_finetune_validation.csv",
+      "canonical_csv_sha256": "a0df3fff3130967c0e5b6306a1b8ba0313b7669ed872e4362f1f9e9512f36e7f"
+    },
+    "test": {
+      "path": "data/processed/v4/metadata/asr_finetune_test.csv",
+      "canonical_csv_sha256": "64e63c301689d1e71ec4c7e792141a578fe9e6f92d8d3e700e9bc6b9b5a737df"
+    }
+  },
+  "inference": {
+    "backend": "faster-whisper",
+    "device": "cuda",
+    "compute_type": "float16",
+    "language": "vi",
+    "task": "transcribe",
+    "beam_size": 10,
+    "vad_filter": true,
+    "condition_on_previous_text": false,
+    "word_timestamps": false
+  },
+  "model_directory": "/content/drive/MyDrive/VoiceStudy-Assistant-Colab/whisper-small-lora-wide-v4-run1/models/experimental/asr/v4/ctranslate2",
+  "model_files": {
+    "config.json": "707bcfea9f540464f702957e4c974a262cd378df563f25c96da0778e3b9f7b84",
+    "model.bin": "26fce813c3763620b4015a0c7726e829e26c0ab6758b4cffa13891ac8696b9c1",
+    "tokenizer.json": "f287cbbf9dc4ec909afcad08e9067ba90cfb5672c31e385f82f60b27b74e776a",
+    "vocabulary.json": "5ad28279db5e546349708b9a74736e2c018737ac5a600f1048f1f26c99b85b47"
+  },
+  "test_used_for_training_or_selection": false,
+  "test_is_fresh_holdout": false,
+  "test_history_note": "Same frozen split previously used by ASR v3 comparison."
+}

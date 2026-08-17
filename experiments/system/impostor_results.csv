@@ -1,0 +1,2 @@
+﻿test_case_id,category,scenario,intent,actual_policy,actual_error,sid_calls,sv_calls,database_integrity_pass,response_scope_pass,latency_ms,passed
+SYS020,SID_SV,impostor,VIEW_PRIVATE_NOTE,SID_AND_SV,VERIFICATION_FAILED,1,1,true,true,0.987200,true

@@ -1,0 +1,69 @@
+{
+  "manifest_schema_version": 1,
+  "dataset_version": "v4",
+  "component": "asr_finetune",
+  "freeze_status": "FROZEN",
+  "created_at": "2026-08-16T16:55:29+07:00",
+  "source": {
+    "dataset_version": "v3",
+    "manifest_path": "data/processed/v3/asr_finetune_manifest.json",
+    "manifest_sha256": "74e598a1e363f0e276ff7a775e4bb3a0a2adf7429facaadee5550e4c03592975",
+    "copy_policy": "exact train/validation/test reuse"
+  },
+  "datasets": {
+    "train": {
+      "path": "data/processed/v4/metadata/asr_finetune_train.csv",
+      "row_count": 1465,
+      "speaker_count": 26,
+      "sha256": "f76bc9e1de74b0bb03f685d5007fe50a3ce3bb6b7127351f083302d229936a40",
+      "canonical_csv_sha256": "c5a44563a8b0bb54b95f5da4609abd1052ffbbf907c52868bd0e8c8781e72ac0",
+      "identical_to_v3": true
+    },
+    "validation": {
+      "path": "data/processed/v4/metadata/asr_finetune_validation.csv",
+      "row_count": 322,
+      "speaker_count": 4,
+      "sha256": "2254bd84b283b1f29bab1d37dc07e5e664c32149040825c2848ab41fd0be72c5",
+      "canonical_csv_sha256": "a0df3fff3130967c0e5b6306a1b8ba0313b7669ed872e4362f1f9e9512f36e7f",
+      "identical_to_v3": true
+    },
+    "test": {
+      "path": "data/processed/v4/metadata/asr_finetune_test.csv",
+      "row_count": 249,
+      "speaker_count": 4,
+      "sha256": "0456d5713ed46a6190250ee54f90d73cd54b2c241eb7aab0ba0d305eda2b8e3e",
+      "canonical_csv_sha256": "64e63c301689d1e71ec4c7e792141a578fe9e6f92d8d3e700e9bc6b9b5a737df",
+      "identical_to_v3": true
+    }
+  },
+  "invariants": {
+    "canonical_rows_identical_to_v3": true,
+    "audio_overlap": {
+      "train_validation": 0,
+      "train_test": 0,
+      "validation_test": 0
+    },
+    "speaker_overlap": {
+      "train_validation": 0,
+      "train_test": 0,
+      "validation_test": 0
+    }
+  },
+  "experiment_protocol": {
+    "train_only_on": "train",
+    "checkpoint_selection_only_on": "validation",
+    "test_used_for_training_or_selection": false,
+    "test_is_fresh_holdout": false,
+    "test_history_note": "This exact test split was already evaluated in the ASR v3 experiment. It supports a controlled same-set comparison, not a new unbiased holdout estimate."
+  },
+  "frozen_at": "2026-08-16T13:58:03+00:00",
+  "final_evaluation": {
+    "locked_model": "/content/drive/MyDrive/VoiceStudy-Assistant-Colab/whisper-small-lora-wide-v4-run1/models/experimental/asr/v4/locked_model.json",
+    "locked_model_sha256": "19c730e0b566542f9e314d5f2697a23267561fcd6b4901f3a73ec875c5e55876",
+    "v4_test_metrics": "/content/drive/MyDrive/VoiceStudy-Assistant-Colab/whisper-small-lora-wide-v4-run1/reports/asr/v4/final_test/test_metrics.json",
+    "v4_test_metrics_sha256": "d77bd35a496b3f069e46030e981bef0283a3478adebbe7cba00748048c168deb",
+    "comparison": "/content/drive/MyDrive/VoiceStudy-Assistant-Colab/whisper-small-lora-wide-v4-run1/reports/asr/v4/comparison.json",
+    "comparison_sha256": "cb76d1addfc009846081210f7d54c00133fa2b15970a985f5218cf6093314cca",
+    "v4_model_test_runs": 1
+  }
+}

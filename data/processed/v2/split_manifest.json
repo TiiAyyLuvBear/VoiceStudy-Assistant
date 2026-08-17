@@ -1,0 +1,230 @@
+{
+  "manifest_schema_version": 1,
+  "dataset_version": "v2",
+  "created_at": "2026-08-11T10:22:02+07:00",
+  "random_seed": 42,
+  "components": {
+    "asr": {
+      "source_inventory": {
+        "path": "data/metadata/data_inventory.csv",
+        "sha256": "9139f1ec543b9135a98771ec358a60a51a3718c84bd0971a92269340aa67573f"
+      },
+      "selection": {
+        "validation_project_split": "VALIDATION",
+        "test_project_split": "TEST",
+        "use_all_usable_rows": true,
+        "requested_validation_size": null,
+        "requested_test_size": null,
+        "unused_rows_included": false,
+        "require_nonempty_transcript": true,
+        "require_valid_flag": true,
+        "require_existing_audio": true,
+        "deduplicate_audio_path": true,
+        "random_seed": 42,
+        "validation_test_overlap": 0
+      },
+      "datasets": {
+        "asr_validation": {
+          "path": "data/processed/v2/metadata/asr_validation.csv",
+          "row_count": 322,
+          "sha256": "534a4a78a8b6868dec5f5f669ea015fd339c04bf8cd593bd16ab77748a6ea8de"
+        },
+        "asr_test": {
+          "path": "data/processed/v2/metadata/asr_test.csv",
+          "row_count": 249,
+          "sha256": "ac31031089b730f8c1ae2381956208522b5cdadf855245e61099771aaeeed3f0"
+        }
+      }
+    },
+    "speaker": {
+      "dataset_version": "speaker-v2",
+      "freeze_status": "FROZEN",
+      "checksum_algorithm": "sha256-canonical-csv-v1",
+      "source_inventory": {
+        "path": "data/metadata/data_inventory.csv",
+        "checksum": "6c347e3222f78b42fb74aaa464f5168bc4f47b57c389f0ae4b38ee30884f175d"
+      },
+      "selection_policy": {
+        "asr_v2_audio_excluded": true,
+        "svm_v1_roles_preserved": true,
+        "svm_global_target": {
+          "enrollment": 45,
+          "train": 600,
+          "validation": 129,
+          "test": 128,
+          "train_validation_test_ratio": {
+            "train": 0.70011669,
+            "validation": 0.15052509,
+            "test": 0.14935823
+          }
+        },
+        "speaker_disjoint_test": {
+          "enrolled_speakers": 8,
+          "enrollment_per_speaker": 5,
+          "query_per_speaker": 25,
+          "unknown_speakers": 8,
+          "unknown_policy": "all usable audio from each selected unknown speaker"
+        },
+        "dropped_svm_speakers_below_75_usable_audio": [
+          "5fb84feecf0626000b30cbd3"
+        ]
+      },
+      "asr_v2_exclusions": {
+        "asr_validation.csv": {
+          "path": "data/processed/v2/metadata/asr_validation.csv",
+          "num_audio": 322,
+          "checksum": "fe8fd85a9bb4ccb353990f2dd9387c947be72ef0b4488e3d8d296eb3fa46dcfa"
+        },
+        "asr_test.csv": {
+          "path": "data/processed/v2/metadata/asr_test.csv",
+          "num_audio": 249,
+          "checksum": "de0b9ce04ad206ad6092b7587e0f6662e14783075409d36cbd8964cb349ac458"
+        }
+      },
+      "speaker_groups": {
+        "svm": 9,
+        "test_enrolled": 8,
+        "test_unknown": 8
+      },
+      "invariants": {
+        "audio_overlap_across_speaker_splits": 0,
+        "audio_overlap_with_asr_v2": 0,
+        "svm_and_cosine_speaker_overlap": 0,
+        "cosine_enrolled_unknown_speaker_overlap": 0
+      },
+      "selection_files": {
+        "svm": {
+          "path": "data/processed/v2/metadata/selected_svm_experimental_speakers.csv",
+          "checksum": "0afdc6b8e739f5d62a57bf86574ecd3bcffc140d67b36687bb12f442790cfe33"
+        },
+        "test_enrolled": {
+          "path": "data/processed/v2/metadata/selected_test_enrolled_speakers.csv",
+          "checksum": "cd5e3a2095bd864af720255efd4a71c314a71c10577e48b1cd613799346e06e2"
+        },
+        "test_unknown": {
+          "path": "data/processed/v2/metadata/selected_test_unknown_speakers.csv",
+          "checksum": "326597675c77ab0275d298bb181a56db3ca791c124a09a05f8bd35b4a3d42c8f"
+        }
+      },
+      "splits": {
+        "svm_closed_set_enrollment.csv": {
+          "path": "data/processed/v2/metadata/svm_closed_set_enrollment.csv",
+          "num_audio": 45,
+          "num_speaker": 9,
+          "per_speaker": {
+            "exp_svm_spk_0001": 5,
+            "exp_svm_spk_0002": 5,
+            "exp_svm_spk_0003": 5,
+            "exp_svm_spk_0004": 5,
+            "exp_svm_spk_0005": 5,
+            "exp_svm_spk_0006": 5,
+            "exp_svm_spk_0007": 5,
+            "exp_svm_spk_0009": 5,
+            "exp_svm_spk_0010": 5
+          },
+          "checksum": "e8aff5dc5612aac744d7c3291ee514d96f9f79717309064bc5670cea1b68db1a"
+        },
+        "svm_closed_set_train.csv": {
+          "path": "data/processed/v2/metadata/svm_closed_set_train.csv",
+          "num_audio": 600,
+          "num_speaker": 9,
+          "per_speaker": {
+            "exp_svm_spk_0001": 72,
+            "exp_svm_spk_0002": 71,
+            "exp_svm_spk_0003": 67,
+            "exp_svm_spk_0004": 67,
+            "exp_svm_spk_0005": 64,
+            "exp_svm_spk_0006": 66,
+            "exp_svm_spk_0007": 64,
+            "exp_svm_spk_0009": 65,
+            "exp_svm_spk_0010": 64
+          },
+          "checksum": "78b19e63dbf75e9b966ebdb79f83ebcc73b65f4a3a5b283e2496a203012793e3"
+        },
+        "svm_closed_set_validation.csv": {
+          "path": "data/processed/v2/metadata/svm_closed_set_validation.csv",
+          "num_audio": 129,
+          "num_speaker": 9,
+          "per_speaker": {
+            "exp_svm_spk_0001": 16,
+            "exp_svm_spk_0002": 16,
+            "exp_svm_spk_0003": 14,
+            "exp_svm_spk_0004": 14,
+            "exp_svm_spk_0005": 14,
+            "exp_svm_spk_0006": 14,
+            "exp_svm_spk_0007": 13,
+            "exp_svm_spk_0009": 14,
+            "exp_svm_spk_0010": 14
+          },
+          "checksum": "383ab6ba9fb1d88446b2b72ce98e841c70416f6e988caee18728389dd2652703"
+        },
+        "svm_closed_set_test.csv": {
+          "path": "data/processed/v2/metadata/svm_closed_set_test.csv",
+          "num_audio": 128,
+          "num_speaker": 9,
+          "per_speaker": {
+            "exp_svm_spk_0001": 15,
+            "exp_svm_spk_0002": 15,
+            "exp_svm_spk_0003": 14,
+            "exp_svm_spk_0004": 14,
+            "exp_svm_spk_0005": 14,
+            "exp_svm_spk_0006": 14,
+            "exp_svm_spk_0007": 14,
+            "exp_svm_spk_0009": 14,
+            "exp_svm_spk_0010": 14
+          },
+          "checksum": "415bce75ee8306de820868e39b9fe63ff50bf9978cafeb59bd24b2b2c1b44eee"
+        },
+        "cosine_test_enrollment.csv": {
+          "path": "data/processed/v2/metadata/cosine_test_enrollment.csv",
+          "num_audio": 40,
+          "num_speaker": 8,
+          "per_speaker": {
+            "v2_test_enrolled_spk_0001": 5,
+            "v2_test_enrolled_spk_0002": 5,
+            "v2_test_enrolled_spk_0003": 5,
+            "v2_test_enrolled_spk_0004": 5,
+            "v2_test_enrolled_spk_0005": 5,
+            "v2_test_enrolled_spk_0006": 5,
+            "v2_test_enrolled_spk_0007": 5,
+            "v2_test_enrolled_spk_0008": 5
+          },
+          "checksum": "9e425e3c4d349b3c2b93e7245b5d1b5e0f68a623f6cb6b2f2c39d2bee0dcf554"
+        },
+        "cosine_test_query.csv": {
+          "path": "data/processed/v2/metadata/cosine_test_query.csv",
+          "num_audio": 200,
+          "num_speaker": 8,
+          "per_speaker": {
+            "v2_test_enrolled_spk_0001": 25,
+            "v2_test_enrolled_spk_0002": 25,
+            "v2_test_enrolled_spk_0003": 25,
+            "v2_test_enrolled_spk_0004": 25,
+            "v2_test_enrolled_spk_0005": 25,
+            "v2_test_enrolled_spk_0006": 25,
+            "v2_test_enrolled_spk_0007": 25,
+            "v2_test_enrolled_spk_0008": 25
+          },
+          "checksum": "fb25222f84162406dc49955659cf2966f68bcac5a7140bdd0f2dff768a4c377d"
+        },
+        "cosine_test_unknown.csv": {
+          "path": "data/processed/v2/metadata/cosine_test_unknown.csv",
+          "num_audio": 109,
+          "num_speaker": 8,
+          "per_speaker": {
+            "v2_test_unknown_spk_0001": 20,
+            "v2_test_unknown_spk_0002": 20,
+            "v2_test_unknown_spk_0003": 20,
+            "v2_test_unknown_spk_0004": 18,
+            "v2_test_unknown_spk_0005": 18,
+            "v2_test_unknown_spk_0006": 9,
+            "v2_test_unknown_spk_0007": 3,
+            "v2_test_unknown_spk_0008": 1
+          },
+          "checksum": "512489aa57d65bbafd7c89459a503a78fdeca6308bd4eeb369f266619f62664f"
+        }
+      }
+    }
+  },
+  "freeze_status": "FROZEN"
+}

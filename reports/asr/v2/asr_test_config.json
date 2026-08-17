@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "dataset_version": "asr-v2",
+  "status": "FROZEN_FOR_EVALUATION",
+  "policy": {
+    "validation_uses_all_usable_rows": true,
+    "test_uses_all_usable_rows": true,
+    "unused_split_included": false,
+    "test_used_for_model_or_rule_tuning": false,
+    "reported_metrics_status": "pending_full_v2_inference"
+  },
+  "asr": {
+    "backend": "faster-whisper",
+    "model_size": "small",
+    "model_name": "whisper-small",
+    "model_cache_revision": "536b0662742c02347bc0e980a01041f333bce120",
+    "language": "vi",
+    "task": "transcribe",
+    "device": "cpu",
+    "compute_type": "int8",
+    "cpu_threads": 0,
+    "num_workers": 1,
+    "beam_size": 10,
+    "vad_filter": true,
+    "condition_on_previous_text": false,
+    "word_timestamps": false
+  },
+  "datasets": {
+    "split_manifest": {
+      "path": "data/processed/v2/split_manifest.json",
+      "sha256": "e5265368c90ee35f8c7836f0065367405ae89ff99a884145fd1c488d68729c41"
+    },
+    "validation": {
+      "path": "data/processed/v2/metadata/asr_validation.csv",
+      "row_count": 322,
+      "sha256": "534a4a78a8b6868dec5f5f669ea015fd339c04bf8cd593bd16ab77748a6ea8de"
+    },
+    "test": {
+      "path": "data/processed/v2/metadata/asr_test.csv",
+      "row_count": 249,
+      "sha256": "ac31031089b730f8c1ae2381956208522b5cdadf855245e61099771aaeeed3f0"
+    }
+  },
+  "locked_files": {
+    "config.yaml": "9267e9f2ca8db12202d19f3c45e5fcf6124a9e4abefa12a2130f7a416070ba48",
+    "src/asr/metrics.py": "4e5139e65beacb0768fb6fe0df36bd16a600b6bb1472482c704d29fb684bab57",
+    "src/asr/text_normalizer.py": "986941d7b216bf6e6427daf8c4bdf9b4389603d2a824d7cf911dcc31dad260d6",
+    "src/asr/whisper_model.py": "1f3d1a600f76c77954ec91875f6e5cf8c57fc1d25ae3b639a2508f48a2d99fbb",
+    "scripts/evaluate_asr.py": "8f81f09dfed7f3f0d3fcdeb5a3c45d26b0d4c9cc9c5a4a3d0627e64154059f12",
+    "scripts/build_asr_splits.py": "019feb818e3ed3d675c5a58fb8b1432554c7311b3961f0abe5b9125760e4557a"
+  }
+}

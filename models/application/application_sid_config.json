@@ -1,0 +1,48 @@
+{
+  "protocol": "APPLICATION_SID",
+  "model": {
+    "embedding_model": "ECAPA-TDNN",
+    "source": "speechbrain/spkrec-ecapa-voxceleb",
+    "checkpoint": "models/cache/ecapa/embedding_model.ckpt",
+    "checkpoint_sha256": "0575cb64845e6b9a10db9bcb74d5ac32b326b8dc90352671d345e2ee3d0126a2",
+    "hyperparameters": "models/cache/ecapa/hyperparams.yaml",
+    "hyperparameters_sha256": "6f78854fa04ba59e761437b76a2575d3aba5e5016de3e9b69f0c9a5077fb1a41",
+    "embedding_dim": 192
+  },
+  "preprocessing": {
+    "version": "v1"
+  },
+  "decision": {
+    "method": "cosine_centroid",
+    "threshold": 0.51307271,
+    "comparison": "cosine_similarity >= threshold means KNOWN"
+  },
+  "threshold_source": {
+    "type": "frozen_from_validation",
+    "source": "models/application/application_sid_threshold.json",
+    "selection_criterion": "maximize overall detection accuracy; tie-break by unknown rejection, known acceptance, then smaller threshold"
+  },
+  "speaker_verification": {
+    "method": "cosine_centroid",
+    "threshold": 0.46882655,
+    "comparison": "cosine_similarity >= threshold means VERIFIED",
+    "threshold_source": {
+      "type": "application_validation",
+      "source": "models/application/application_verification_threshold.json",
+      "selection_criterion": "minimize absolute FAR-FRR gap; tie-break by mean error, F1, accuracy, then smaller threshold"
+    }
+  },
+  "application_enrollment": {
+    "directory": "models/application/user_embeddings",
+    "embedding_count": 3,
+    "embedding_files": [
+      "models/application/user_embeddings/user_001.npy",
+      "models/application/user_embeddings/user_002.npy",
+      "models/application/user_embeddings/user_003.npy"
+    ],
+    "required_audio_per_user": 5,
+    "speaker_model_training": false
+  },
+  "random_seed": 42,
+  "status": "FROZEN"
+}

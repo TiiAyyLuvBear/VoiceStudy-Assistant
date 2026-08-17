@@ -5,13 +5,20 @@ from __future__ import annotations
 import json
 import re
 import sqlite3
+import time
 from pathlib import Path
 from typing import Callable, Sequence
 
 import numpy as np
 
 from src.audio.preprocessing import preprocess_audio
-from src.database.user_repository import create_user, get_user, list_users, update_embedding_path
+from src.database.user_repository import (
+    create_user,
+    delete_user,
+    get_user,
+    list_users,
+    update_embedding_path,
+)
 from src.speaker.embedding import EmbeddingError, extract_embedding
 from src.utils.config import (
     load_yaml_mapping,
@@ -35,10 +42,17 @@ def _result(**values: object) -> dict:
         "user_id": None,
         "candidate_user_id": None,
         "embedding_count": None,
+        "audio_count": None,
+        "embedding_path": None,
         "centroid_path": None,
+        "embedding_dim": None,
+        "l2_norm": None,
+        "cosine_similarity": None,
         "similarity": None,
         "identified": None,
         "verified": None,
+        "latency_ms": 0.0,
+        "file_results": [],
         "error": None,
     }
     result.update(values)
@@ -163,8 +177,13 @@ def enroll_user(
     audio_loader: AudioLoader = preprocess_audio,
 ) -> dict:
     """Create/update enrollment from exactly five audio recordings."""
+    started_at = time.perf_counter()
     if not isinstance(user_id, str) or not _USER_ID_PATTERN.fullmatch(user_id):
-        return _result(protocol="APPLICATION_ENROLLMENT", error="INVALID_USER_ID")
+        return _result(
+            protocol="APPLICATION_ENROLLMENT",
+            latency_ms=(time.perf_counter() - started_at) * 1000.0,
+            error="INVALID_USER_ID",
+        )
     if not isinstance(name, str) or not name.strip():
         return _result(protocol="APPLICATION_ENROLLMENT", user_id=user_id, error="INVALID_NAME")
     try:
@@ -186,8 +205,23 @@ def enroll_user(
             for path in audio_paths
         ]
         centroid = _normalise(np.mean(embeddings, axis=0))
-    except (OSError, ValueError, EmbeddingError):
-        return _result(protocol="APPLICATION_ENROLLMENT", user_id=user_id, error="INVALID_AUDIO")
+    except (OSError, ValueError, EmbeddingError) as exc:
+        failed_index = min(len(embeddings), len(paths) - 1)
+        file_results.append(
+            {
+                "audio_path": str(paths[failed_index]),
+                "valid": False,
+                "error": str(exc),
+            }
+        )
+        return _result(
+            protocol="APPLICATION_ENROLLMENT",
+            user_id=user_id,
+            audio_count=len(paths),
+            file_results=file_results,
+            latency_ms=(time.perf_counter() - started_at) * 1000.0,
+            error="INVALID_AUDIO",
+        )
 
     try:
         centroid_dir = _centroid_dir(config_path)
@@ -201,18 +235,32 @@ def enroll_user(
             enrollment_audio_count=len(embeddings),
         )
         if get_user(user_id, database_path):
-            update_embedding_path(user_id, str(centroid_path), database_path)
+            update_embedding_path(user_id, stored_centroid_path, database_path)
         else:
-            create_user(user_id, name.strip(), str(centroid_path), database_path)
+            create_user(user_id, name.strip(), stored_centroid_path, database_path)
     except (OSError, sqlite3.Error):
-        return _result(protocol="APPLICATION_ENROLLMENT", user_id=user_id, error="CENTROID_WRITE_FAILED")
+        return _result(
+            protocol="APPLICATION_ENROLLMENT",
+            user_id=user_id,
+            audio_count=len(paths),
+            file_results=file_results,
+            latency_ms=(time.perf_counter() - started_at) * 1000.0,
+            error="CENTROID_WRITE_FAILED",
+        )
 
     return _result(
         protocol="APPLICATION_ENROLLMENT",
         success=True,
+        status="ENROLLED",
         user_id=user_id,
         embedding_count=len(embeddings),
-        centroid_path=str(centroid_path),
+        audio_count=len(paths),
+        embedding_path=stored_centroid_path,
+        centroid_path=stored_centroid_path,
+        embedding_dim=int(centroid.size),
+        l2_norm=float(np.linalg.norm(centroid)),
+        latency_ms=(time.perf_counter() - started_at) * 1000.0,
+        file_results=file_results,
         error=None,
     )
 
@@ -227,7 +275,15 @@ def identify_application_user(
     identification_threshold: float | None = None,
 ) -> dict:
     """Identify highest-scoring enrolled application user from audio."""
-    users = list_users(database_path)
+    started_at = time.perf_counter()
+    try:
+        users = list_users(database_path)
+    except sqlite3.Error:
+        return _result(
+            protocol="APPLICATION_SID",
+            latency_ms=(time.perf_counter() - started_at) * 1000.0,
+            error="DATABASE_ERROR",
+        )
     if not users:
         return _result(protocol="APPLICATION_SID", identified=False, error="NO_ENROLLMENT")
     try:
@@ -250,7 +306,7 @@ def identify_application_user(
         if not path_value:
             missing_centroid = True
             continue
-        path = Path(path_value)
+        path = _resolve_centroid_path(path_value, config_path)
         try:
             centroid = _load_centroid(path, model_version)
             scores.append((user_id, float(np.dot(query, centroid)), path))
@@ -272,10 +328,18 @@ def identify_application_user(
     return _result(
         protocol="APPLICATION_SID",
         success=True,
+        status="KNOWN" if identified else "UNKNOWN",
         candidate_user_id=user_id if identified else None,
-        centroid_path=str(centroid_path),
+        centroid_path=(
+            _portable_centroid_path(centroid_path, config_path)
+            if identified
+            else None
+        ),
+        cosine_similarity=similarity,
         similarity=similarity,
+        unknown_threshold=threshold,
         identified=identified,
+        latency_ms=(time.perf_counter() - started_at) * 1000.0,
         error=None,
     )
 
@@ -291,18 +355,39 @@ def verify_speaker(
     verification_threshold: float | None = None,
 ) -> dict:
     """Verify audio against enrolled centroid for one application user."""
+    started_at = time.perf_counter()
     if not isinstance(candidate_user_id, str) or not _USER_ID_PATTERN.fullmatch(candidate_user_id):
-        return _result(protocol="APPLICATION_SV", candidate_user_id=candidate_user_id, error="INVALID_USER_ID")
+        return _result(
+            protocol="APPLICATION_SV",
+            candidate_user_id=candidate_user_id,
+            latency_ms=(time.perf_counter() - started_at) * 1000.0,
+            error="INVALID_USER_ID",
+        )
     user = get_user(candidate_user_id, database_path)
     if not user:
-        return _result(protocol="APPLICATION_SV", candidate_user_id=candidate_user_id, error="NO_ENROLLMENT")
+        return _result(
+            protocol="APPLICATION_SV",
+            candidate_user_id=candidate_user_id,
+            latency_ms=(time.perf_counter() - started_at) * 1000.0,
+            error="NO_ENROLLMENT",
+        )
     path_value = user.get("embedding_path")
     if not path_value:
-        return _result(protocol="APPLICATION_SV", candidate_user_id=candidate_user_id, error="CENTROID_NOT_FOUND")
+        return _result(
+            protocol="APPLICATION_SV",
+            candidate_user_id=candidate_user_id,
+            latency_ms=(time.perf_counter() - started_at) * 1000.0,
+            error="CENTROID_NOT_FOUND",
+        )
     try:
         query = _embedding_for_audio(audio_path, extractor=extractor, audio_loader=audio_loader)
     except (OSError, ValueError, EmbeddingError):
-        return _result(protocol="APPLICATION_SV", candidate_user_id=candidate_user_id, error="INVALID_AUDIO")
+        return _result(
+            protocol="APPLICATION_SV",
+            candidate_user_id=candidate_user_id,
+            latency_ms=(time.perf_counter() - started_at) * 1000.0,
+            error="INVALID_AUDIO",
+        )
     try:
         centroid_path = Path(path_value)
         model_version = _model_version(config_path)
@@ -310,16 +395,80 @@ def verify_speaker(
     except CentroidModelMismatchError:
         return _result(protocol="APPLICATION_SV", candidate_user_id=candidate_user_id, error="CENTROID_MODEL_MISMATCH")
     except (OSError, ValueError, EmbeddingError):
-        return _result(protocol="APPLICATION_SV", candidate_user_id=candidate_user_id, error="CENTROID_NOT_FOUND")
+        return _result(
+            protocol="APPLICATION_SV",
+            candidate_user_id=candidate_user_id,
+            latency_ms=(time.perf_counter() - started_at) * 1000.0,
+            error="CENTROID_NOT_FOUND",
+        )
     threshold = _threshold(config_path, "application_verification_threshold_path", verification_threshold)
     if threshold is None:
-        return _result(protocol="APPLICATION_SV", candidate_user_id=candidate_user_id, error="THRESHOLD_NOT_CONFIGURED")
+        return _result(
+            protocol="APPLICATION_SV",
+            candidate_user_id=candidate_user_id,
+            latency_ms=(time.perf_counter() - started_at) * 1000.0,
+            error="THRESHOLD_NOT_CONFIGURED",
+        )
+    verified = similarity >= threshold
     return _result(
         protocol="APPLICATION_SV",
         success=True,
+        status="VERIFIED" if verified else "REJECTED",
         candidate_user_id=candidate_user_id,
-        centroid_path=str(centroid_path),
+        centroid_path=_portable_centroid_path(centroid_path, config_path),
+        cosine_similarity=similarity,
         similarity=similarity,
-        verified=similarity >= threshold,
+        verification_threshold=threshold,
+        verified=verified,
+        latency_ms=(time.perf_counter() - started_at) * 1000.0,
+        error=None,
+    )
+
+
+def delete_application_user(
+    user_id: str,
+    *,
+    database_path: str | Path | None = None,
+    config_path: str | Path = "config.yaml",
+) -> dict:
+    """Delete an application user and only that user's managed centroid."""
+
+    started_at = time.perf_counter()
+    if not isinstance(user_id, str) or not _USER_ID_PATTERN.fullmatch(user_id):
+        return _result(
+            protocol="APPLICATION_DELETE",
+            user_id=user_id,
+            latency_ms=(time.perf_counter() - started_at) * 1000.0,
+            error="INVALID_USER_ID",
+        )
+    user = get_user(user_id, database_path)
+    if not user:
+        return _result(
+            protocol="APPLICATION_DELETE",
+            user_id=user_id,
+            latency_ms=(time.perf_counter() - started_at) * 1000.0,
+            error="USER_NOT_FOUND",
+        )
+
+    centroid_dir = _centroid_dir(config_path).resolve()
+    managed_centroid = (centroid_dir / f"{user_id}.npy").resolve()
+    try:
+        if managed_centroid.is_file():
+            managed_centroid.unlink()
+        if not delete_user(user_id, database_path):
+            raise sqlite3.DatabaseError("User deletion did not affect one row")
+    except (OSError, sqlite3.Error):
+        return _result(
+            protocol="APPLICATION_DELETE",
+            user_id=user_id,
+            latency_ms=(time.perf_counter() - started_at) * 1000.0,
+            error="DELETE_FAILED",
+        )
+    return _result(
+        protocol="APPLICATION_DELETE",
+        success=True,
+        status="DELETED",
+        user_id=user_id,
+        latency_ms=(time.perf_counter() - started_at) * 1000.0,
         error=None,
     )

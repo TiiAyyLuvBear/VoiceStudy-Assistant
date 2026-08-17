@@ -1,0 +1,11 @@
+audio_id,true_speaker_id,candidate_speaker_id,max_similarity,threshold,decision,predicted_speaker_id,correct
+8282,test_enrolled_spk_0001,test_enrolled_spk_0001,0.66417229,0.51307271,KNOWN,test_enrolled_spk_0001,true
+11014,test_enrolled_spk_0001,test_enrolled_spk_0001,0.69055903,0.51307271,KNOWN,test_enrolled_spk_0001,true
+13617,test_enrolled_spk_0001,test_enrolled_spk_0001,0.69834840,0.51307271,KNOWN,test_enrolled_spk_0001,true
+13281,test_enrolled_spk_0001,test_enrolled_spk_0001,0.70570558,0.51307271,KNOWN,test_enrolled_spk_0001,true
+11899,test_enrolled_spk_0001,test_enrolled_spk_0001,0.66202182,0.51307271,KNOWN,test_enrolled_spk_0001,true
+15427,test_enrolled_spk_0002,test_enrolled_spk_0002,0.68898690,0.51307271,KNOWN,test_enrolled_spk_0002,true
+10901,test_enrolled_spk_0002,test_enrolled_spk_0002,0.64469135,0.51307271,KNOWN,test_enrolled_spk_0002,true
+5034,test_enrolled_spk_0002,test_enrolled_spk_0002,0.65705210,0.51307271,KNOWN,test_enrolled_spk_0002,true
+7164,test_enrolled_spk_0002,test_enrolled_spk_0002,0.51262319,0.51307271,UNKNOWN,UNKNOWN,false
+2643,test_enrolled_spk_0002,test_enrolled_spk_0002,0.50417167,0.51307271,UNKNOWN,UNKNOWN,false

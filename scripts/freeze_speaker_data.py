@@ -4,12 +4,13 @@ from __future__ import annotations
 
 import argparse
 import csv
-import hashlib
 import json
 from collections import Counter
 from datetime import datetime
 from pathlib import Path
 from typing import Any
+
+from src.utils import canonical_csv_sha256
 
 
 DATASET_VERSION = 'v1'
@@ -34,22 +35,6 @@ SPLIT_FILES = (
 
 class FreezeVerificationError(RuntimeError):
     '''Raised when frozen speaker data no longer matches its manifest.'''
-
-
-def canonical_csv_sha256(path: Path) -> str:
-    '''Hash logical CSV rows independent of BOM, quoting, and line endings.'''
-
-    digest = hashlib.sha256()
-    with path.open('r', encoding='utf-8-sig', newline='') as stream:
-        for row in csv.reader(stream):
-            canonical_row = json.dumps(
-                row,
-                ensure_ascii=False,
-                separators=(',', ':'),
-            )
-            digest.update(canonical_row.encode('utf-8'))
-            digest.update(b'\n')
-    return digest.hexdigest()
 
 
 def _read_csv(path: Path) -> list[dict[str, str]]:

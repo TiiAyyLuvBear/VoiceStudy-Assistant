@@ -4,7 +4,9 @@ from __future__ import annotations
 
 from datetime import datetime
 from pathlib import Path
+import time
 
+from src.audio.source import resolve_audio_path
 from src.database.user_repository import get_user
 from src.pipeline.asr_nlu import run_asr_nlu_pipeline
 from src.security.access_policy import PUBLIC, REJECT, SID, SID_AND_SV, get_access_policy
@@ -19,7 +21,10 @@ def _end_to_end_result(**values: object) -> dict:
         "success": True, "transcript": "", "normalized_transcript": "",
         "intent": "OUT_OF_SCOPE", "entities": {}, "missing_fields": [],
         "policy": REJECT, "speaker": {"candidate_user_id": None, "similarity": None,
-        "identified": None, "verified": None, "centroid_path": None},
+        "cosine_similarity": None, "unknown_threshold": None, "status": None,
+        "identified": None, "verified": None, "verification_threshold": None,
+        "centroid_path": None, "sid_latency_ms": None, "sv_latency_ms": None},
+        "latency_ms": 0.0, "stage_latency_ms": {},
         "response": "", "error": None,
     }
     result.update(values)
@@ -114,11 +119,21 @@ def process_audio_request(
         audio_path, reference_date=reference_date, config_path=config_path,
     )
     if not pipeline["success"]:
-        return _end_to_end_result(
+        return _finish(
+            started_at,
             success=False, transcript=pipeline["transcript"],
             intent=pipeline["intent"], error=pipeline["error"],
             speaker=speaker,
             response="Không thể xử lý audio. Vui lòng thử lại.",
+        )
+
+    if not str(pipeline.get("transcript", "")).strip():
+        return _finish(
+            started_at,
+            success=False,
+            transcript="",
+            error="EMPTY_TRANSCRIPT",
+            response="Không nhận được nội dung giọng nói. Vui lòng thử lại.",
         )
 
     intent = pipeline["intent"]
@@ -132,12 +147,19 @@ def process_audio_request(
         "speaker": speaker,
     }
     if policy == PUBLIC:
-        return _end_to_end_result(
+        return _finish(
+            started_at,
             **common, response=f"Bây giờ là {datetime.now().strftime('%H:%M')}."
         )
     if policy == REJECT:
-        return _end_to_end_result(
-            **common, response="Câu lệnh ngoài phạm vi hỗ trợ.", error="OUT_OF_SCOPE"
+        return _finish(
+            started_at,
+            **common,
+            response=(
+                "Câu lệnh ngoài phạm vi. Hệ thống hỗ trợ xem giờ, xem hoặc "
+                "thêm lịch và xem ghi chú riêng tư."
+            ),
+            error="OUT_OF_SCOPE",
         )
 
     candidate_user_id = speaker["candidate_user_id"]

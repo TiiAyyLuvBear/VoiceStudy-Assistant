@@ -1,0 +1,11 @@
+{
+  "protocol": "SPEAKER_V2_VERIFICATION_CURVE",
+  "test_trial_count": 2472,
+  "roc_auc": 0.9984242957746479,
+  "eer": 0.028345070422535222,
+  "eer_threshold": 0.36408985,
+  "eer_far": 0.03169014084507042,
+  "eer_frr": 0.025000000000000022,
+  "eer_threshold_used_for_system": false,
+  "system_threshold": 0.37547598
+}

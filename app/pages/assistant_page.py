@@ -32,10 +32,14 @@ def render_assistant_page() -> None:
         st.json({
             key: result[key] for key in (
                 "transcript", "intent", "entities", "missing_fields", "speaker",
-                "policy", "response", "error",
+                "policy", "stage_latency_ms", "latency_ms", "response", "error",
             )
         })
-        tts_audio = synthesize_vietnamese(result["response"])
+        if result.get("error"):
+            st.warning(result["response"])
+        else:
+            st.success(result["response"])
+        tts_audio = synthesize_vietnamese(result["response"]) if result["response"] else None
         if tts_audio:
             st.audio(tts_audio, format="audio/mp3")
         else:

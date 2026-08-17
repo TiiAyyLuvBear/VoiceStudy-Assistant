@@ -1,0 +1,23 @@
+{
+  "protocol": "APPLICATION_SV",
+  "threshold_type": "cosine_similarity",
+  "threshold": 0.46882655,
+  "comparison": "cosine_similarity >= threshold means VERIFIED",
+  "source": "experiments/system/application_verification_threshold_results.csv",
+  "selection": "application_validation",
+  "selection_criterion": "minimize absolute FAR-FRR gap; tie-break by mean error, F1, accuracy, then smaller threshold",
+  "genuine_count": 15,
+  "impostor_count": 30,
+  "metrics": {
+    "FAR": 0.03333333,
+    "FRR": 0.0,
+    "accuracy": 0.97777778,
+    "F1": 0.96774194,
+    "eer_gap": 0.03333333,
+    "mean_error": 0.01666667
+  },
+  "application_audio_calibrated": true,
+  "calibration_data": "15 held-out validation command audios from user_001..003; not used in enrollment centroids",
+  "threshold_tuned_on_v2_test": false,
+  "speaker_v2_modified": false
+}

@@ -1,0 +1,20 @@
+{
+  "protocol": "WEEK3_SPEAKER_VERIFICATION_FIXED_THRESHOLD",
+  "threshold": 0.37547598,
+  "threshold_source": "D:\\HCMUS\\HOCTAP\\Semesters\\25-26HK3\\HocThongKe\\Project\\VoiceStudy-Assistant\\models\\experimental\\verification_threshold.json",
+  "threshold_tuned_on_test": false,
+  "test_trial_count": 252,
+  "genuine_count": 10,
+  "non_genuine_count": 242,
+  "true_accept": 10,
+  "false_reject": 0,
+  "false_accept": 52,
+  "true_reject": 190,
+  "metrics": {
+    "FAR": 0.21487603305785125,
+    "FRR": 0.0,
+    "verification_accuracy": 0.7936507936507936,
+    "F1": 0.2777777777777778
+  },
+  "note": "EER threshold is not used to modify the system."
+}

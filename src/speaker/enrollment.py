@@ -60,12 +60,9 @@ def enroll_user(user_id: str, audio_paths: list[str]) -> EnrollmentResult:
         if any(not isinstance(value, str) or not value.strip() for value in audio_paths):
             raise ValueError("Every audio path must be a non-empty string")
 
-        paths = [Path(value) for value in audio_paths]
+        paths = [resolve_audio_path(value) for value in audio_paths]
         if len({str(path.resolve()) for path in paths}) != REQUIRED_AUDIO_COUNT:
             raise ValueError("The five enrollment audio files must be distinct")
-        missing = [str(path) for path in paths if not path.is_file()]
-        if missing:
-            raise FileNotFoundError(f"Enrollment audio does not exist: {missing[0]}")
 
         embeddings: list[np.ndarray] = []
         expected_dimension: int | None = None

@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "dataset_version": "asr-v3",
+  "baseline_model": "whisper-small-original",
+  "fine_tuned_model": "whisper-small-lora-v3",
+  "sample_count": 249,
+  "wer": {
+    "baseline": 0.23211009174311928,
+    "fine_tuned": 0.2,
+    "absolute_change": -0.03211009174311927,
+    "absolute_percentage_point_change": -3.211009174311927,
+    "relative_change": -0.1383399209486166,
+    "relative_improvement": 0.1383399209486166
+  },
+  "cer": {
+    "baseline": 0.14624013294557542,
+    "fine_tuned": 0.12006647278770254,
+    "absolute_change": -0.026173660157872883,
+    "absolute_percentage_point_change": -2.6173660157872884,
+    "relative_change": -0.1789772727272728,
+    "relative_improvement": 0.1789772727272728
+  },
+  "word_edits": {
+    "baseline": 506,
+    "fine_tuned": 436,
+    "reduction": 70
+  },
+  "char_edits": {
+    "baseline": 1056,
+    "fine_tuned": 867,
+    "reduction": 189
+  },
+  "protocol": {
+    "same_test_audio": true,
+    "same_reference_count": true,
+    "same_faster_whisper_decode_settings": true,
+    "test_used_for_training_or_checkpoint_selection": false,
+    "final_test_runs": 1
+  }
+}

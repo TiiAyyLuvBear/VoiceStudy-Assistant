@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "dataset_version": "asr-v3",
+  "model_version": "whisper-small-lora-v3",
+  "status": "FROZEN_FINAL_TEST_COMPLETED",
+  "frozen_at": "2026-08-16T10:16:00+07:00",
+  "best_epoch": 2,
+  "best_validation_loss": 0.6902654049434646,
+  "artifacts": {
+    "dataset_manifest": {
+      "path": "data/processed/v3/asr_finetune_manifest.json",
+      "sha256": "74e598a1e363f0e276ff7a775e4bb3a0a2adf7429facaadee5550e4c03592975"
+    },
+    "training_summary": {
+      "path": "models/experimental/asr/v3/training_summary.json",
+      "sha256": "dcfb567f55b5b205e41227af2edc2b80e4dbb4222288848a570b2650c6edadad"
+    },
+    "locked_model": {
+      "path": "models/experimental/asr/v3/locked_model.json",
+      "sha256": "31a45773b25a096172b37638e2ce68ce738a847ca13e7cbb59178dbade90f2fb"
+    },
+    "baseline_metrics": {
+      "path": "reports/asr/v3/baseline_original/baseline_original_metrics.json",
+      "sha256": "3556c5cb0f0c87d78fd7fc8d6d7da753d9e31f1297660f8825dc6f1eea014146"
+    },
+    "final_test_metrics": {
+      "path": "reports/asr/v3/final_test/test_metrics.json",
+      "sha256": "2152b7e16475ac2bf3fe8a9fa8a9f9df74e8ad3fed1bb1aaa281432efab6e340"
+    },
+    "comparison": {
+      "path": "reports/asr/v3/comparison.json",
+      "sha256": "03a35e25c53a91612cf11da2051a18caf32f6b619706cd11dc410a36a990fd56"
+    }
+  },
+  "test_protocol": {
+    "same_test_audio": true,
+    "same_reference_count": true,
+    "same_faster_whisper_decode_settings": true,
+    "test_used_for_training_or_checkpoint_selection": false,
+    "final_test_runs": 1
+  }
+}

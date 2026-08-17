@@ -6,6 +6,8 @@ import csv
 import json
 from pathlib import Path
 
+from src.utils.files import sha256_file
+
 
 def _rows(path: str) -> list[dict[str, str]]:
     with Path(path).open("r", encoding="utf-8-sig", newline="") as stream:
@@ -52,4 +54,55 @@ def test_sv_trials_use_cosine_validation_speakers_only() -> None:
     assert all(
         row["query_speaker_id"] != row["claimed_speaker_id"]
         for row in impostor + unknown
+    )
+
+
+def test_speaker_test_config_pins_model_and_frozen_manifest() -> None:
+    config = json.loads(
+        Path("experiments/test/speaker_test_config.json").read_text(
+            encoding="utf-8-sig"
+        )
+    )
+    ecapa = config["ecapa"]
+    manifest = config["split_manifest"]
+
+    assert ecapa["frozen"] is True
+    assert sha256_file(ecapa["checkpoint"]) == ecapa["checkpoint_sha256"]
+    assert (
+        sha256_file(ecapa["hyperparameters"])
+        == ecapa["hyperparameters_sha256"]
+    )
+    assert sha256_file(manifest["path"]) == manifest["sha256"]
+    assert manifest["dataset_version"] == "v1"
+    assert manifest["freeze_status"] == "FROZEN"
+
+
+def test_application_config_pins_verification_threshold_and_ecapa() -> None:
+    config = json.loads(
+        Path("models/application/application_sid_config.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    verification = json.loads(
+        Path("models/application/application_verification_threshold.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    model = config["model"]
+
+    assert (
+        config["speaker_verification"]["threshold"]
+        == verification["threshold"]
+    )
+    assert (
+        config["speaker_verification"]["threshold_source"]["source"]
+        == "models/application/application_verification_threshold.json"
+    )
+    assert verification["application_audio_calibrated"] is True
+    assert verification["threshold_tuned_on_v2_test"] is False
+    assert config["application_enrollment"]["embedding_count"] >= 3
+    assert sha256_file(model["checkpoint"]) == model["checkpoint_sha256"]
+    assert (
+        sha256_file(model["hyperparameters"])
+        == model["hyperparameters_sha256"]
     )

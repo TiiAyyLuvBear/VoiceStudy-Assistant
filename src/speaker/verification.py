@@ -122,9 +122,7 @@ def verify_speaker(audio_path: str, candidate_user_id: str) -> VerificationResul
     try:
         if not isinstance(candidate_user_id, str):
             raise TypeError("candidate_user_id must be a string")
-        path = Path(audio_path)
-        if not path.is_file():
-            raise FileNotFoundError(f"Audio file does not exist: {path}")
+        path = resolve_audio_path(audio_path)
 
         # Initialize Librosa before SpeechBrain optional lazy imports.
         audio, sample_rate = preprocess_audio(str(path))

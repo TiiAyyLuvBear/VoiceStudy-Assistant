@@ -1,0 +1,11 @@
+# Colab provides a matching CUDA torch build; do not replace it.
+# Notebook removes Colab's optional torchao 0.10 because PEFT rejects versions <=0.16.
+transformers>=4.57,<5
+accelerate>=1.13,<2
+peft>=0.19,<1
+soundfile>=0.13,<1
+librosa>=0.11,<1
+safetensors>=0.5,<1
+huggingface-hub>=0.36,<2
+faster-whisper>=1.2,<2
+ctranslate2>=4.6,<5

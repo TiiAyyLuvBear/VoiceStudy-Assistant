@@ -1,0 +1,86 @@
+{
+  "dataset_version": "speaker-v2",
+  "embedding_metadata": "data/processed/v2/embedding_metadata.csv",
+  "embedding_metadata_sha256": "bd153b0c804a63046b250242c2d15e8ba2b851a31e3f0e768f0b0d11015ffc58",
+  "embedding_count": 1251,
+  "embedding_dim": 192,
+  "quality_valid_count": 1251,
+  "svm_centroid_count": 9,
+  "svm_train_count": 600,
+  "svm_validation_split": "svm_closed_set_validation",
+  "svm_best_config": {
+    "protocol": "SVM_CLOSED_SET",
+    "model_type": "LinearSVC",
+    "candidate_C": [
+      0.1,
+      1.0,
+      10.0
+    ],
+    "selected_C": 0.1,
+    "selection_metrics": {
+      "validation_accuracy": 1.0,
+      "validation_macro_f1": 1.0
+    },
+    "selection_split": "svm_closed_set_validation",
+    "selection_sample_count": 129,
+    "training_split": "svm_closed_set_train",
+    "training_sample_count": 600,
+    "embedding_dim": 192,
+    "tie_breaker": "accuracy, macro_f1, then smaller C",
+    "forbidden_selection_data": [
+      "svm_closed_set_enrollment",
+      "svm_closed_set_test",
+      "cosine_validation_*",
+      "cosine_test_*"
+    ]
+  },
+  "cosine_test_centroid_count": 8,
+  "cosine_query_split": "cosine_test_query",
+  "sid_threshold": {
+    "protocol": "APPLICATION_SID",
+    "threshold_type": "cosine_unknown_threshold",
+    "threshold": 0.51307271,
+    "comparison": "cosine_similarity >= threshold means KNOWN",
+    "selection_criterion": "maximize overall detection accuracy; tie-break by unknown rejection, known acceptance, then smaller threshold",
+    "known_validation_source": "experiments\\validation\\cosine_validation_known_scores.csv",
+    "unknown_validation_source": "experiments\\validation\\cosine_validation_unknown_scores.csv",
+    "known_count": 10,
+    "unknown_count": 144,
+    "metrics": {
+      "known_acceptance_rate": 0.9,
+      "false_unknown_rate": 0.1,
+      "unknown_rejection_rate": 1.0,
+      "false_known_rate": 0.0,
+      "overall_detection_accuracy": 0.99350649
+    },
+    "evaluation_dataset": "speaker-v2",
+    "selection_dataset_version": "v1",
+    "selection_source": "models/experimental/cosine_unknown_threshold.json",
+    "selection_source_sha256": "12bbff4a01a40cc47b4c382815221b3407fced538dfa6ea730b207015bd86801",
+    "threshold_tuned_on_v2_test": false
+  },
+  "verification_threshold": {
+    "protocol": "APPLICATION_SV",
+    "threshold_type": "cosine_verification_threshold",
+    "threshold": 0.37547598,
+    "comparison": "cosine_similarity >= threshold means verified",
+    "selection_criterion": "minimize absolute FAR-FRR gap; tie-break by lower mean error, higher F1, higher accuracy, then smaller threshold",
+    "validation_scores_source": "experiments\\validation\\speaker_disjoint_verification_validation_scores.csv",
+    "genuine_count": 10,
+    "impostor_count": 298,
+    "metrics": {
+      "FAR": 0.02013423,
+      "FRR": 0.0,
+      "accuracy": 0.98051948,
+      "F1": 0.76923077,
+      "eer_gap": 0.02013423,
+      "approximate_EER": 0.010067115
+    },
+    "evaluation_dataset": "speaker-v2",
+    "selection_dataset_version": "v1",
+    "selection_source": "models/experimental/verification_threshold.json",
+    "selection_source_sha256": "61a7913add0488e65953d8cb3ea031d299ae758c719c36676eb3567d202d297c",
+    "threshold_tuned_on_v2_test": false
+  },
+  "v1_artifacts_overwritten": false
+}

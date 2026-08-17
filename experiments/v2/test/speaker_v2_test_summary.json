@@ -1,0 +1,282 @@
+{
+  "dataset_version": "speaker-v2",
+  "closed_set": {
+    "svm": {
+      "protocol": "SPEAKER_V2_SVM_CLOSED_SET_TEST",
+      "test_sample_count": 128,
+      "num_classes": 9,
+      "unknown_threshold_applied": false,
+      "metrics": {
+        "accuracy": 1.0,
+        "macro_precision": 1.0,
+        "macro_recall": 1.0,
+        "macro_f1": 1.0
+      },
+      "per_speaker_accuracy": {
+        "exp_svm_spk_0001": {
+          "count": 15,
+          "correct": 15,
+          "accuracy": 1.0
+        },
+        "exp_svm_spk_0002": {
+          "count": 15,
+          "correct": 15,
+          "accuracy": 1.0
+        },
+        "exp_svm_spk_0003": {
+          "count": 14,
+          "correct": 14,
+          "accuracy": 1.0
+        },
+        "exp_svm_spk_0004": {
+          "count": 14,
+          "correct": 14,
+          "accuracy": 1.0
+        },
+        "exp_svm_spk_0005": {
+          "count": 14,
+          "correct": 14,
+          "accuracy": 1.0
+        },
+        "exp_svm_spk_0006": {
+          "count": 14,
+          "correct": 14,
+          "accuracy": 1.0
+        },
+        "exp_svm_spk_0007": {
+          "count": 14,
+          "correct": 14,
+          "accuracy": 1.0
+        },
+        "exp_svm_spk_0009": {
+          "count": 14,
+          "correct": 14,
+          "accuracy": 1.0
+        },
+        "exp_svm_spk_0010": {
+          "count": 14,
+          "correct": 14,
+          "accuracy": 1.0
+        }
+      },
+      "confusion_matrix": [
+        [
+          15,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          15,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          14,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          14,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          14,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          14,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          14,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          14,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          14
+        ]
+      ],
+      "mean_inference_latency_ms": 0.010396875040896703
+    },
+    "cosine": {
+      "protocol": "SPEAKER_V2_COSINE_CLOSED_SET_TEST",
+      "test_sample_count": 128,
+      "num_classes": 9,
+      "unknown_threshold_applied": false,
+      "metrics": {
+        "accuracy": 0.9921875,
+        "macro_precision": 0.9925925925925926,
+        "macro_recall": 0.9920634920634921,
+        "macro_f1": 0.9920533560380304
+      },
+      "per_speaker_accuracy": {
+        "exp_svm_spk_0001": {
+          "count": 15,
+          "correct": 15,
+          "accuracy": 1.0
+        },
+        "exp_svm_spk_0002": {
+          "count": 15,
+          "correct": 15,
+          "accuracy": 1.0
+        },
+        "exp_svm_spk_0003": {
+          "count": 14,
+          "correct": 14,
+          "accuracy": 1.0
+        },
+        "exp_svm_spk_0004": {
+          "count": 14,
+          "correct": 14,
+          "accuracy": 1.0
+        },
+        "exp_svm_spk_0005": {
+          "count": 14,
+          "correct": 13,
+          "accuracy": 0.9285714285714286
+        },
+        "exp_svm_spk_0006": {
+          "count": 14,
+          "correct": 14,
+          "accuracy": 1.0
+        },
+        "exp_svm_spk_0007": {
+          "count": 14,
+          "correct": 14,
+          "accuracy": 1.0
+        },
+        "exp_svm_spk_0009": {
+          "count": 14,
+          "correct": 14,
+          "accuracy": 1.0
+        },
+        "exp_svm_spk_0010": {
+          "count": 14,
+          "correct": 14,
+          "accuracy": 1.0
+        }
+      },
+      "mean_inference_latency_ms": 0.014981249999999998
+    }
+  },
+  "sid": {
+    "protocol": "SPEAKER_V2_DISJOINT_OPEN_SET_SID_TEST",
+    "threshold": 0.51307271,
+    "threshold_source": "models/experimental/v2/cosine_unknown_threshold.json",
+    "threshold_selection_dataset_version": "v1",
+    "threshold_tuning_on_v2_test": false,
+    "known_query": {
+      "count": 200,
+      "candidate_identification_accuracy": 0.995,
+      "identification_accuracy": 0.91,
+      "acceptance_rate": 0.91,
+      "false_unknown_rate": 0.08999999999999997
+    },
+    "unknown_query": {
+      "count": 109,
+      "unknown_rejection_rate": 1.0,
+      "false_known_rate": 0.0
+    },
+    "open_set": {
+      "total_queries": 309,
+      "correct": 291,
+      "overall_accuracy": 0.941747572815534
+    },
+    "mean_cosine_sid_latency_ms": 0.014547896440129448
+  },
+  "verification_fixed": {
+    "protocol": "SPEAKER_V2_VERIFICATION_FIXED_THRESHOLD",
+    "threshold": 0.37547598,
+    "threshold_source": "models/experimental/v2/verification_threshold.json",
+    "threshold_selection_dataset_version": "v1",
+    "threshold_tuned_on_v2_test": false,
+    "test_trial_count": 2472,
+    "genuine_count": 200,
+    "non_genuine_count": 2272,
+    "true_accept": 195,
+    "false_reject": 5,
+    "false_accept": 59,
+    "true_reject": 2213,
+    "metrics": {
+      "FAR": 0.02596830985915493,
+      "FRR": 0.025,
+      "verification_accuracy": 0.9741100323624595,
+      "F1": 0.8590308370044053
+    }
+  },
+  "verification_curve": {
+    "protocol": "SPEAKER_V2_VERIFICATION_CURVE",
+    "test_trial_count": 2472,
+    "roc_auc": 0.9984242957746479,
+    "eer": 0.028345070422535222,
+    "eer_threshold": 0.36408985,
+    "eer_far": 0.03169014084507042,
+    "eer_frr": 0.025000000000000022,
+    "eer_threshold_used_for_system": false,
+    "system_threshold": 0.37547598
+  }
+}

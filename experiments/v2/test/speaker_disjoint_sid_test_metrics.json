@@ -1,0 +1,25 @@
+{
+  "protocol": "SPEAKER_V2_DISJOINT_OPEN_SET_SID_TEST",
+  "threshold": 0.51307271,
+  "threshold_source": "models/experimental/v2/cosine_unknown_threshold.json",
+  "threshold_selection_dataset_version": "v1",
+  "threshold_tuning_on_v2_test": false,
+  "known_query": {
+    "count": 200,
+    "candidate_identification_accuracy": 0.995,
+    "identification_accuracy": 0.91,
+    "acceptance_rate": 0.91,
+    "false_unknown_rate": 0.08999999999999997
+  },
+  "unknown_query": {
+    "count": 109,
+    "unknown_rejection_rate": 1.0,
+    "false_known_rate": 0.0
+  },
+  "open_set": {
+    "total_queries": 309,
+    "correct": 291,
+    "overall_accuracy": 0.941747572815534
+  },
+  "mean_cosine_sid_latency_ms": 0.014547896440129448
+}

@@ -16,6 +16,7 @@ from typing import Protocol
 import numpy as np
 
 from src.audio.preprocessing import preprocess_audio
+from src.audio.source import resolve_audio_path
 from src.speaker.embedding import ECAPAEmbeddingExtractor
 
 
@@ -210,9 +211,7 @@ def extract_all_embeddings(
             print(f"[{index}/{len(rows)}] resume {row['audio_id']}", flush=True)
             continue
 
-        source = audio_root / Path(row["audio_path"])
-        if not source.is_file():
-            raise FileNotFoundError(f"Audio does not exist: {source}")
+        source = resolve_audio_path(audio_root / Path(row["audio_path"]))
         audio, sample_rate = preprocessor(str(source))
         if engine is None:
             engine = ECAPAEmbeddingExtractor.from_config(config_path)
@@ -280,6 +279,15 @@ def main() -> int:
         default=Path("data/metadata/embedding_metadata.csv"),
     )
     parser.add_argument("--config", type=Path, default=Path("config.yaml"))
+    parser.add_argument(
+        "--protocol-file",
+        action="append",
+        dest="protocol_files",
+        help=(
+            "Protocol CSV filename relative to --metadata-dir; repeat this "
+            "option to select a v2 subset"
+        ),
+    )
     parser.add_argument("--limit", type=int)
     parser.add_argument(
         "--protocol-file",

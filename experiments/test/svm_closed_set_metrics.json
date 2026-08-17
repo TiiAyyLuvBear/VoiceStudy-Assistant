@@ -1,0 +1,81 @@
+{
+  "protocol": "WEEK3_SVM_CLOSED_SET_TEST",
+  "test_sample_count": 50,
+  "model_type": "LinearSVC",
+  "C": 0.1,
+  "embedding_dim": 192,
+  "num_classes": 10,
+  "unknown_threshold_applied": false,
+  "metrics": {
+    "accuracy": 1.0,
+    "macro_precision": 1.0,
+    "macro_recall": 1.0,
+    "macro_f1": 1.0
+  },
+  "per_speaker_accuracy": {
+    "exp_svm_spk_0001": {
+      "count": 5,
+      "correct": 5,
+      "accuracy": 1.0
+    },
+    "exp_svm_spk_0002": {
+      "count": 5,
+      "correct": 5,
+      "accuracy": 1.0
+    },
+    "exp_svm_spk_0003": {
+      "count": 5,
+      "correct": 5,
+      "accuracy": 1.0
+    },
+    "exp_svm_spk_0004": {
+      "count": 5,
+      "correct": 5,
+      "accuracy": 1.0
+    },
+    "exp_svm_spk_0005": {
+      "count": 5,
+      "correct": 5,
+      "accuracy": 1.0
+    },
+    "exp_svm_spk_0006": {
+      "count": 5,
+      "correct": 5,
+      "accuracy": 1.0
+    },
+    "exp_svm_spk_0007": {
+      "count": 5,
+      "correct": 5,
+      "accuracy": 1.0
+    },
+    "exp_svm_spk_0008": {
+      "count": 5,
+      "correct": 5,
+      "accuracy": 1.0
+    },
+    "exp_svm_spk_0009": {
+      "count": 5,
+      "correct": 5,
+      "accuracy": 1.0
+    },
+    "exp_svm_spk_0010": {
+      "count": 5,
+      "correct": 5,
+      "accuracy": 1.0
+    }
+  },
+  "labels": [
+    "exp_svm_spk_0001",
+    "exp_svm_spk_0002",
+    "exp_svm_spk_0003",
+    "exp_svm_spk_0004",
+    "exp_svm_spk_0005",
+    "exp_svm_spk_0006",
+    "exp_svm_spk_0007",
+    "exp_svm_spk_0008",
+    "exp_svm_spk_0009",
+    "exp_svm_spk_0010"
+  ],
+  "manifest": "D:\\HCMUS\\HOCTAP\\Semesters\\25-26HK3\\HocThongKe\\Project\\VoiceStudy-Assistant\\data\\processed\\v1\\metadata\\svm_closed_set_test.csv",
+  "model": "D:\\HCMUS\\HOCTAP\\Semesters\\25-26HK3\\HocThongKe\\Project\\VoiceStudy-Assistant\\models\\experimental\\speaker_svm_linear.pkl"
+}
