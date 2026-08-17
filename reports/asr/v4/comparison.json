@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "dataset_version": "asr-v4",
+  "sample_count": 249,
+  "test_canonical_csv_sha256": "64e63c301689d1e71ec4c7e792141a578fe9e6f92d8d3e700e9bc6b9b5a737df",
+  "models": [
+    {
+      "label": "Whisper Small original (model used by ASR v2; no fine-tune)",
+      "model_version": "whisper-small-original",
+      "wer": 0.23211009174311928,
+      "cer": 0.14624013294557542,
+      "word_edits": 506,
+      "char_edits": 1056
+    },
+    {
+      "label": "Whisper Small LoRA v3 (r8, q_proj/v_proj)",
+      "model_version": "whisper-small-lora-v3",
+      "wer": 0.2,
+      "cer": 0.12006647278770254,
+      "word_edits": 436,
+      "char_edits": 867
+    },
+    {
+      "label": "Whisper Small wider LoRA v4 (r32, attention + fc1/fc2)",
+      "model_version": "whisper-small-lora-wide-v4",
+      "wer": 0.18027522935779816,
+      "cer": 0.1175737432488575,
+      "word_edits": 393,
+      "char_edits": 849
+    }
+  ],
+  "v4_vs_original": {
+    "wer": {
+      "reference": 0.23211009174311928,
+      "candidate": 0.18027522935779816,
+      "absolute_change": -0.05183486238532112,
+      "percentage_point_change": -5.183486238532112,
+      "relative_improvement": 0.22332015810276687
+    },
+    "cer": {
+      "reference": 0.14624013294557542,
+      "candidate": 0.1175737432488575,
+      "absolute_change": -0.02866638969671792,
+      "percentage_point_change": -2.8666389696717918,
+      "relative_improvement": 0.19602272727272735
+    }
+  },
+  "v4_vs_lora_v3": {
+    "wer": {
+      "reference": 0.2,
+      "candidate": 0.18027522935779816,
+      "absolute_change": -0.01972477064220185,
+      "percentage_point_change": -1.972477064220185,
+      "relative_improvement": 0.09862385321100925
+    },
+    "cer": {
+      "reference": 0.12006647278770254,
+      "candidate": 0.1175737432488575,
+      "absolute_change": -0.002492729538845037,
+      "percentage_point_change": -0.2492729538845037,
+      "relative_improvement": 0.0207612456747405
+    }
+  },
+  "protocol": {
+    "same_test_audio": true,
+    "same_search_settings": true,
+    "same_runtime_precision": false,
+    "runtime_note": "Original and LoRA v3 reference metrics used CPU int8; the Colab v4 test uses CUDA float16. Beam/VAD/search settings remain the same.",
+    "v4_test_used_for_training_or_checkpoint_selection": false,
+    "v4_model_test_runs": 1,
+    "test_is_fresh_holdout": false,
+    "interpretation": "Controlled comparison on the frozen v3 test reused by v4. Since earlier v3 results were already known, this is not a new unbiased holdout estimate."
+  }
+}

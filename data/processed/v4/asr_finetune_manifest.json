@@ -2,7 +2,7 @@
   "manifest_schema_version": 1,
   "dataset_version": "v4",
   "component": "asr_finetune",
-  "freeze_status": "DEVELOPMENT",
+  "freeze_status": "FROZEN",
   "created_at": "2026-08-16T16:55:29+07:00",
   "source": {
     "dataset_version": "v3",
@@ -55,5 +55,15 @@
     "test_used_for_training_or_selection": false,
     "test_is_fresh_holdout": false,
     "test_history_note": "This exact test split was already evaluated in the ASR v3 experiment. It supports a controlled same-set comparison, not a new unbiased holdout estimate."
+  },
+  "frozen_at": "2026-08-16T13:58:03+00:00",
+  "final_evaluation": {
+    "locked_model": "/content/drive/MyDrive/VoiceStudy-Assistant-Colab/whisper-small-lora-wide-v4-run1/models/experimental/asr/v4/locked_model.json",
+    "locked_model_sha256": "19c730e0b566542f9e314d5f2697a23267561fcd6b4901f3a73ec875c5e55876",
+    "v4_test_metrics": "/content/drive/MyDrive/VoiceStudy-Assistant-Colab/whisper-small-lora-wide-v4-run1/reports/asr/v4/final_test/test_metrics.json",
+    "v4_test_metrics_sha256": "d77bd35a496b3f069e46030e981bef0283a3478adebbe7cba00748048c168deb",
+    "comparison": "/content/drive/MyDrive/VoiceStudy-Assistant-Colab/whisper-small-lora-wide-v4-run1/reports/asr/v4/comparison.json",
+    "comparison_sha256": "cb76d1addfc009846081210f7d54c00133fa2b15970a985f5218cf6093314cca",
+    "v4_model_test_runs": 1
   }
 }
