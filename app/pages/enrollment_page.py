@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import hashlib
+from pathlib import Path
+
 import streamlit as st
 
 from app.backend_client import BackendRequestError, get_backend_client
@@ -24,6 +27,19 @@ def render_file_status(result: dict) -> None:
         )
     else:
         st.error(f"Đăng ký thất bại: {result.get('error', 'UNKNOWN_ERROR')}")
+
+
+def build_enrollment_files(uploaded_files, recordings: list[dict]) -> list[tuple[str, bytes]]:
+    """Combine uploaded WAV files and recorded samples for backend enrollment."""
+    files = [
+        (audio_file.name or f"{index}.wav", audio_file.getvalue())
+        for index, audio_file in enumerate(uploaded_files, start=1)
+    ]
+    files.extend(
+        (f"recording_{index}.wav", item["bytes"])
+        for index, item in enumerate(recordings, start=len(files) + 1)
+    )
+    return files
 
 
 def render_enrollment_page() -> None:
@@ -74,10 +90,7 @@ def render_enrollment_page() -> None:
         elif total_audio != 5:
             st.error("Cần đúng 5 audio WAV, tính cả upload và bản thu.")
         else:
-            files = [
-                (audio_file.name or f"{index}.wav", audio_file.getvalue())
-                for index, audio_file in enumerate(audio_files, start=1)
-            ]
+            files = build_enrollment_files(uploaded_files, recordings)
             try:
                 with st.spinner("Đang tạo embedding và centroid..."):
                     result = get_backend_client().enroll(

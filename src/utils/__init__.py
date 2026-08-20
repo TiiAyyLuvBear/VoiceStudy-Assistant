@@ -5,11 +5,12 @@ from src.utils.config import (
     resolve_path,
     threshold_from_metrics_document,
 )
-from src.utils.files import sha256_file
+from src.utils.files import canonical_csv_sha256, sha256_file
 
 __all__ = [
     "load_yaml_mapping",
     "resolve_path",
     "threshold_from_metrics_document",
     "sha256_file",
+    "canonical_csv_sha256",
 ]

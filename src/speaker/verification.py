@@ -13,6 +13,7 @@ import numpy as np
 import yaml
 
 from src.audio.preprocessing import preprocess_audio
+from src.audio.source import resolve_audio_path
 from src.speaker.embedding import ECAPAEmbeddingExtractor, get_embedding_extractor
 from src.utils.config import threshold_from_metrics_document
 

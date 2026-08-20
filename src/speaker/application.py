@@ -69,12 +69,28 @@ def _centroid_dir(config_path: str | Path) -> Path:
     return resolve_path(speaker.get("application_centroid_dir", "models/user_embeddings"), root)
 
 
+def _resolve_centroid_path(path_value: str | Path, config_path: str | Path) -> Path:
+    """Resolve database-stored centroid paths against config directory."""
+    path = Path(path_value)
+    if path.is_absolute():
+        return path
+    _, root = _speaker_config(config_path)
+    return resolve_path(path, root)
+
+
+def _portable_centroid_path(path: str | Path, config_path: str | Path) -> str:
+    """Return centroid path relative to config directory when possible."""
+    centroid = Path(path).resolve()
+    _, root = _speaker_config(config_path)
+    try:
+        return centroid.relative_to(root.resolve()).as_posix()
+    except ValueError:
+        return str(centroid)
+
+
 def _model_version(config_path: str | Path) -> str:
     speaker, _ = _speaker_config(config_path)
-    value = str(speaker.get("model_version", "")).strip()
-    if not value:
-        raise ValueError("speaker.model_version is required")
-    return value
+    return str(speaker.get("model_version", "unknown")).strip() or "unknown"
 
 
 def _enrollment_audio_count(config_path: str | Path) -> int:
@@ -197,31 +213,34 @@ def enroll_user(
         return _result(protocol="APPLICATION_ENROLLMENT", user_id=user_id, error="INVALID_AUDIO")
     resolved_audio_paths = [Path(path).resolve() for path in audio_paths]
     if len(set(resolved_audio_paths)) != enrollment_audio_count:
-        return _result(protocol="APPLICATION_ENROLLMENT", user_id=user_id, error="INVALID_AUDIO")
-
-    try:
-        embeddings = [
-            _embedding_for_audio(path, extractor=extractor, audio_loader=audio_loader)
-            for path in audio_paths
-        ]
-        centroid = _normalise(np.mean(embeddings, axis=0))
-    except (OSError, ValueError, EmbeddingError) as exc:
-        failed_index = min(len(embeddings), len(paths) - 1)
-        file_results.append(
-            {
-                "audio_path": str(paths[failed_index]),
-                "valid": False,
-                "error": str(exc),
-            }
-        )
         return _result(
             protocol="APPLICATION_ENROLLMENT",
             user_id=user_id,
-            audio_count=len(paths),
-            file_results=file_results,
-            latency_ms=(time.perf_counter() - started_at) * 1000.0,
             error="INVALID_AUDIO",
         )
+
+    embeddings: list[np.ndarray] = []
+    file_results: list[dict] = []
+    for path in audio_paths:
+        try:
+            embedding = _embedding_for_audio(
+                path, extractor=extractor, audio_loader=audio_loader
+            )
+        except (OSError, ValueError, EmbeddingError) as exc:
+            file_results.append(
+                {"audio_path": str(path), "valid": False, "error": str(exc)}
+            )
+            return _result(
+                protocol="APPLICATION_ENROLLMENT",
+                user_id=user_id,
+                audio_count=len(audio_paths),
+                file_results=file_results,
+                latency_ms=(time.perf_counter() - started_at) * 1000.0,
+                error="INVALID_AUDIO",
+            )
+        embeddings.append(embedding)
+        file_results.append({"audio_path": str(path), "valid": True, "error": None})
+    centroid = _normalise(np.mean(embeddings, axis=0))
 
     try:
         centroid_dir = _centroid_dir(config_path)
@@ -234,6 +253,7 @@ def enroll_user(
             embedding_dimension=centroid.size,
             enrollment_audio_count=len(embeddings),
         )
+        stored_centroid_path = _portable_centroid_path(centroid_path, config_path)
         if get_user(user_id, database_path):
             update_embedding_path(user_id, stored_centroid_path, database_path)
         else:
@@ -242,7 +262,7 @@ def enroll_user(
         return _result(
             protocol="APPLICATION_ENROLLMENT",
             user_id=user_id,
-            audio_count=len(paths),
+            audio_count=len(audio_paths),
             file_results=file_results,
             latency_ms=(time.perf_counter() - started_at) * 1000.0,
             error="CENTROID_WRITE_FAILED",
@@ -254,9 +274,9 @@ def enroll_user(
         status="ENROLLED",
         user_id=user_id,
         embedding_count=len(embeddings),
-        audio_count=len(paths),
+        audio_count=len(audio_paths),
         embedding_path=stored_centroid_path,
-        centroid_path=stored_centroid_path,
+        centroid_path=str(centroid_path),
         embedding_dim=int(centroid.size),
         l2_norm=float(np.linalg.norm(centroid)),
         latency_ms=(time.perf_counter() - started_at) * 1000.0,
@@ -389,7 +409,7 @@ def verify_speaker(
             error="INVALID_AUDIO",
         )
     try:
-        centroid_path = Path(path_value)
+        centroid_path = _resolve_centroid_path(path_value, config_path)
         model_version = _model_version(config_path)
         similarity = float(np.dot(query, _load_centroid(centroid_path, model_version)))
     except CentroidModelMismatchError:

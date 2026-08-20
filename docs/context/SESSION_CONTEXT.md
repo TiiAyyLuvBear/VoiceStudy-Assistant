@@ -1560,3 +1560,138 @@ Review/rebase onto `origin/master` in a separate conflict-resolution step before
 Local DB and centroids still exist despite staged Git deletions. Do not remove
 them from disk. Expect conflicts in app, config, speaker, pipeline, and tests
 when reconciling 11 upstream commits.
+
+---
+
+# Session Update: 2026-08-17
+
+## User Goal
+
+Add tests checking functions required by `Secure-Virtual-Assistant-with-Speaker-Recognition.pdf`.
+
+## Actions Taken
+
+Added `tests/test_pdf_requirements.py` covering voice WAV API interaction, public command without SV, private command with genuine/impostor SV, SID-based personalization, and five-file enrollment plus user management.
+
+## Commands / Experiments Run
+
+```powershell
+$env:PYTHONPATH=(Get-Location).Path
+.\.venv\Scripts\pytest.exe -q --ignore=lib64 tests/test_pdf_requirements.py tests/test_integration.py tests/test_application_api.py tests/test_backend_api.py
+```
+
+## Results
+
+25 passed, 1 warning. Full suite collection remains blocked by pre-existing `canonical_csv_sha256` import errors from `src.utils` in five ASR/speaker tests.
+
+## Current State
+
+New acceptance tests are untracked. Existing user changes were preserved.
+
+## Next Best Steps
+
+Run the full suite after restoring/exporting `canonical_csv_sha256` from `src.utils` if that issue is in scope.
+
+---
+
+# Session Update: 2026-08-17 13:42
+
+## User Goal
+
+Fix low ASR accuracy by making application runtime use the trained Whisper Small
+LoRA v4 artifact and permit later CUDA deployment.
+
+## Actions Taken
+
+- Added resolved local `model_path` support to ASR configuration.
+- Changed faster-whisper construction to use the local CTranslate2 directory
+  instead of always loading base `small`.
+- Validated local CTranslate2 directory and required files before startup.
+- Allowed `cpu`, `cuda`, and `auto` devices while retaining CPU int8 default.
+- Corrected deployed v4 artifact path from `models/experiments` to
+  `models/experimental`.
+- Added regression tests for local model loading, CUDA configuration, missing
+  artifacts, and invalid devices.
+
+## Files Changed
+
+| File | Change | Reason |
+|---|---|---|
+| `config.yaml` | Corrected ASR v4 `model_path` | Point runtime to existing trained artifact |
+| `src/asr/whisper_model.py` | Added model path resolution, validation, and CPU/CUDA support | Load actual v4 weights instead of base Small |
+| `tests/test_whisper_model.py` | Added deployment regression tests | Prevent mislabeled base-model fallback |
+
+## Commands / Experiments Run
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest --rootdir=tests tests\test_whisper_model.py -q
+.\.venv\Scripts\python.exe -m pytest --rootdir=tests tests\test_whisper_model.py tests\test_backend_api.py tests\test_asr_nlu_pipeline.py -q
+.\.venv\Scripts\python.exe -m src.asr.whisper_model data\samples\asr_smoke\vi_01.wav --config config.yaml
+.\.venv\Scripts\python.exe -m compileall -q src\asr\whisper_model.py tests\test_whisper_model.py
+```
+
+## Results
+
+- Focused integration tests: `16 passed, 1 warning`.
+- Real v4 CPU int8 smoke inference succeeded in `5311.575 ms` and returned a
+  non-empty Vietnamese transcript with model label `whisper-small-lora-wide-v4`.
+- Compile check and `git diff --check` passed.
+
+## Bugs / Errors Found
+
+- Runtime ignored configured `model_path` and always passed `small` to
+  `WhisperModel`, despite reporting the v4 model name.
+- Configured path used nonexistent `models/experiments`; artifact is under
+  `models/experimental`.
+- Full test suite remains blocked during collection by pre-existing missing
+  `canonical_csv_sha256` export from `src.utils` in five unrelated tests.
+- Direct `pytest` root collection touches inaccessible `lib64`; use
+  `--rootdir=tests` in this environment.
+
+## Decisions Made
+
+Use locked local Whisper Small LoRA v4 for current runtime. Keep CPU int8 as
+default; expose CUDA configuration without claiming GPU improves accuracy by
+itself. Fail startup when configured local artifact is incomplete.
+
+## Current State
+
+Application ASR now loads existing CTranslate2 v4 artifact and passes real CPU
+smoke inference. Existing unrelated working-tree changes were preserved.
+
+## Next Best Steps
+
+Restart backend, verify startup reports v4, then evaluate all command audio with
+runtime v4 before comparing larger GPU models.
+
+## Context for Next Agent
+
+Do not remove local artifact validation. `model_name` is presentation metadata;
+`model_source` is actual faster-whisper input.
+
+---
+
+# Session Update: 2026-08-18 12:00
+
+## User Goal
+
+Clean system structure with test-first architecture guards while preserving dirty user work and frozen artifacts.
+
+## Actions Taken
+
+- Added structure plan and architecture tests.
+- Restored and exported `canonical_csv_sha256`.
+- Added pytest root configuration excluding broken venv links and generated/frozen trees.
+- Centralized shared time formatting in `src.utils.text_time` with ASR/NLU aliases.
+- Ignored frontend generated state; moved reference PDF, debug script, and frontend spec into documented folders.
+- Made ASR v4 protocol module importable without optional training packages.
+
+## Results
+
+- Targeted architecture/data/speaker tests: `23 passed`.
+- Root pytest: collection fixed; `235 passed, 10 failed, 1 skipped`. Remaining failures are integration, frozen-checksum, and system-artifact regressions; no collection errors.
+- Compileall passed. `git diff --check` passed.
+
+## Risks / Next Steps
+
+Frontend `npm run test:run` passed (`2 tests`); `npm run build` passed. Legacy speaker modules still contain compatibility-era implementation and monkeypatch seams; adapter migration deferred. Full suite not green.

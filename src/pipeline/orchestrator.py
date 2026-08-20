@@ -31,6 +31,13 @@ def _end_to_end_result(**values: object) -> dict:
     return result
 
 
+def _finish(started_at: float, **values: object) -> dict:
+    """Build final pipeline result with measured total latency."""
+    result = _end_to_end_result(**values)
+    result["latency_ms"] = (time.perf_counter() - started_at) * 1000.0
+    return result
+
+
 def _verification_view(result: dict, candidate_user_id: str) -> dict:
     """Expose only fields that belong to speaker verification."""
     return {
@@ -51,30 +58,44 @@ def _authenticate_audio(
     config_path: str | Path,
     identifier,
     verifier,
+    require_verification: bool,
 ) -> tuple[dict, str | None]:
     """Identify and verify speaker before transcript or intent processing."""
-    sid = identifier(audio_path, database_path=database_path, config_path=config_path)
+    try:
+        sid = identifier(audio_path, database_path=database_path, config_path=config_path)
+    except Exception as error:
+        return {"candidate_user_id": None, "identified": False}, f"SID_ERROR: {error}"
     speaker = {
         "candidate_user_id": sid.get("candidate_user_id"),
         "similarity": sid.get("similarity"),
+        "status": sid.get("status"),
         "identified": sid.get("identified"),
         "verified": None,
         "centroid_path": sid.get("centroid_path"),
     }
     if not sid.get("success") or not sid.get("identified"):
-        return speaker, sid.get("error") or "UNKNOWN_SPEAKER"
+        error = sid.get("error") or "UNKNOWN_SPEAKER"
+        speaker["error"] = error
+        return speaker, error
+    if not require_verification:
+        return speaker, None
 
     candidate_user_id = sid["candidate_user_id"]
-    sv = verifier(
-        audio_path,
-        candidate_user_id,
-        database_path=database_path,
-        config_path=config_path,
-    )
+    try:
+        sv = verifier(
+            audio_path,
+            candidate_user_id,
+            database_path=database_path,
+            config_path=config_path,
+        )
+    except Exception as error:
+        speaker["error"] = f"SV_ERROR: {error}"
+        return speaker, f"SV_ERROR: {error}"
     verification = _verification_view(sv, candidate_user_id)
     speaker["verification"] = verification
     speaker["verified"] = verification["verified"]
     if not verification["success"] or not verification["verified"]:
+        speaker["error"] = verification["error"] or "VERIFICATION_FAILED"
         return speaker, verification["error"] or "VERIFICATION_FAILED"
     return speaker, None
 
@@ -95,35 +116,44 @@ def process_audio_request(
     Personal user IDs come only from Application SID; callers cannot select the
     database owner through a transcript or request parameter.
     """
+    started_at = time.perf_counter()
+    speaker = {
+        "candidate_user_id": None,
+        "similarity": None,
+        "status": None,
+        "identified": None,
+        "verified": None,
+    }
+    try:
+        if identifier is identify_application_user and verifier is verify_speaker and asr_nlu_runner is run_asr_nlu_pipeline:
+            resolved_audio_path = resolve_audio_path(audio_path)
+        else:
+            resolved_audio_path = Path(audio_path)
+    except Exception as error:
+        return _finish(
+            started_at,
+            success=False,
+            error=str(error),
+            response="Không tìm thấy audio. Vui lòng thử lại.",
+        )
     speaker, authentication_error = _authenticate_audio(
-        audio_path,
+        resolved_audio_path,
         database_path=database_path,
         config_path=config_path,
         identifier=identifier,
         verifier=verifier,
+        require_verification=False,
     )
-    if authentication_error is not None:
-        verification_failed = bool(speaker.get("identified"))
-        response = (
-            "Xác thực giọng nói thất bại."
-            if verification_failed
-            else "Không nhận diện được người dùng đã đăng ký."
-        )
-        return _end_to_end_result(
-            speaker=speaker,
-            error=authentication_error,
-            response=response,
-        )
 
     pipeline = asr_nlu_runner(
-        audio_path, reference_date=reference_date, config_path=config_path,
+        resolved_audio_path, reference_date=reference_date, config_path=config_path,
     )
     if not pipeline["success"]:
         return _finish(
             started_at,
             success=False, transcript=pipeline["transcript"],
             intent=pipeline["intent"], error=pipeline["error"],
-            speaker=speaker,
+                speaker=speaker,
             response="Không thể xử lý audio. Vui lòng thử lại.",
         )
 
@@ -161,6 +191,53 @@ def process_audio_request(
             ),
             error="OUT_OF_SCOPE",
         )
+
+    if authentication_error is not None:
+        verification_failed = bool(speaker.get("identified"))
+        response = (
+            "Xác thực giọng nói thất bại."
+            if verification_failed
+            else "Không nhận diện được người dùng đã đăng ký."
+        )
+        return _finish(
+            started_at,
+            **common,
+            error=authentication_error,
+            success=False,
+            response=response,
+        )
+
+    if policy == SID_AND_SV:
+        candidate_user_id = speaker["candidate_user_id"]
+        try:
+            sv = verifier(
+                resolved_audio_path,
+                candidate_user_id,
+                database_path=database_path,
+                config_path=config_path,
+            )
+        except Exception as error:
+            authentication_error = f"SV_ERROR: {error}"
+            speaker["error"] = authentication_error
+        else:
+            verification = _verification_view(sv, candidate_user_id)
+            speaker["verification"] = verification
+            speaker["verified"] = verification["verified"]
+            authentication_error = (
+                None
+                if verification["success"] and verification["verified"]
+                else verification["error"] or "VERIFICATION_FAILED"
+            )
+            if authentication_error:
+                speaker["error"] = authentication_error
+        if authentication_error is not None:
+            return _finish(
+                started_at,
+                **common,
+                success=False,
+                error=authentication_error,
+                response="Xác thực giọng nói thất bại.",
+            )
 
     candidate_user_id = speaker["candidate_user_id"]
 

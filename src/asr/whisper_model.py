@@ -1,4 +1,4 @@
-"""Whisper Small ASR backend tối ưu cho inference trên CPU."""
+"""Whisper ASR backend hỗ trợ model CTranslate2 cục bộ và CPU/CUDA."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any, Mapping, Protocol, TypedDict
 
-from src.utils.config import load_yaml_mapping
+from src.utils.config import load_yaml_mapping, resolve_path
 
 
 class ASRResult(TypedDict):
@@ -40,6 +40,7 @@ class WhisperConfig:
 
     model_size: str = "small"
     model_name: str = "whisper-small"
+    model_path: Path | None = None
     language: str = "vi"
     task: str = "transcribe"
     device: str = "cpu"
@@ -64,16 +65,20 @@ class WhisperConfig:
         if backend != "faster-whisper":
             raise ValueError(f"Unsupported ASR backend: {backend}")
 
+        model_value = values.get("model_path")
+        model_path = None
+        if model_value:
+            model_path = resolve_path(str(model_value), base_dir).resolve()
+
         download_value = values.get("download_root")
         download_root = None
         if download_value:
-            download_root = Path(str(download_value))
-            if not download_root.is_absolute():
-                download_root = (base_dir / download_root).resolve()
+            download_root = resolve_path(str(download_value), base_dir).resolve()
 
         config = cls(
             model_size=str(values.get("model_size", "small")),
             model_name=str(values.get("model_name", "whisper-small")),
+            model_path=model_path,
             language=str(values.get("language", "vi")),
             task=str(values.get("task", "transcribe")),
             device=str(values.get("device", "cpu")),
@@ -95,14 +100,38 @@ class WhisperConfig:
     def validate(self) -> None:
         if self.model_size != "small":
             raise ValueError("Week 1 ASR must use the multilingual Whisper Small model")
-        if self.device != "cpu":
-            raise ValueError("Week 1 ASR is configured for CPU only")
+        if self.device not in {"cpu", "cuda", "auto"}:
+            raise ValueError("ASR device must be one of: cpu, cuda, auto")
         if self.language != "vi":
             raise ValueError("ASR language must be Vietnamese ('vi')")
         if self.task != "transcribe":
             raise ValueError("ASR task must be 'transcribe', not translation")
         if self.beam_size < 1:
             raise ValueError("beam_size must be at least 1")
+        if self.model_path is not None:
+            if not self.model_path.is_dir():
+                raise ValueError(
+                    f"ASR model_path must be an existing directory: {self.model_path}"
+                )
+            required_files = ("config.json", "model.bin", "tokenizer.json")
+            missing = [
+                filename
+                for filename in required_files
+                if not (self.model_path / filename).is_file()
+            ]
+            if missing:
+                raise ValueError(
+                    "ASR model_path is missing required CTranslate2 files: "
+                    + ", ".join(missing)
+                )
+
+    @property
+    def model_source(self) -> str:
+        """Nguồn model thật truyền cho faster-whisper."""
+
+        if self.model_path is not None:
+            return str(self.model_path)
+        return self.model_size
 
 
 def load_whisper_config(config_path: str | Path = "config.yaml") -> WhisperConfig:
@@ -149,7 +178,7 @@ class WhisperASR:
             self.config.download_root.mkdir(parents=True, exist_ok=True)
             kwargs["download_root"] = str(self.config.download_root)
 
-        return WhisperModel(self.config.model_size, **kwargs)
+        return WhisperModel(self.config.model_source, **kwargs)
 
     def load_model(self) -> _WhisperBackend:
         """Nạp model đúng một lần và tái sử dụng cho các request tiếp theo."""

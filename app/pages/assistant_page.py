@@ -30,16 +30,17 @@ def render_assistant_page() -> None:
             st.error(str(error))
             return
         st.json({
-            key: result[key] for key in (
+            key: result.get(key) for key in (
                 "transcript", "intent", "entities", "missing_fields", "speaker",
                 "policy", "stage_latency_ms", "latency_ms", "response", "error",
             )
         })
+        response = result.get("response") or ""
         if result.get("error"):
-            st.warning(result["response"])
+            st.warning(response or "Backend returned an error without a response.")
         else:
-            st.success(result["response"])
-        tts_audio = synthesize_vietnamese(result["response"]) if result["response"] else None
+            st.success(response)
+        tts_audio = synthesize_vietnamese(response) if response else None
         if tts_audio:
             st.audio(tts_audio, format="audio/mp3")
         else:

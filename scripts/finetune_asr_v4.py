@@ -14,12 +14,16 @@ os.environ.setdefault("TRANSFORMERS_NO_TF", "1")
 
 import numpy as np
 import torch
-from peft import LoraConfig, get_peft_model
-from torch.optim import AdamW
-from transformers import WhisperForConditionalGeneration, WhisperProcessor
-from transformers.optimization import get_linear_schedule_with_warmup
 
-from src.asr.finetuning import WhisperBatchBuilder, batched, epoch_rows, load_finetune_rows
+try:
+    from torch.optim import AdamW
+    from transformers import WhisperForConditionalGeneration, WhisperProcessor
+    from transformers.optimization import get_linear_schedule_with_warmup
+except ImportError:  # Optional training stack; protocol helpers remain importable.
+    AdamW = None
+    WhisperForConditionalGeneration = None
+    WhisperProcessor = None
+    get_linear_schedule_with_warmup = None
 from src.asr.metrics import calculate_corpus_error_rates
 from src.utils import canonical_csv_sha256, sha256_file
 
@@ -99,6 +103,8 @@ def _is_better(metrics: dict[str, float | int], best: dict[str, float | int] | N
 
 
 def main() -> int:
+    from src.asr.finetuning import WhisperBatchBuilder, batched, epoch_rows, load_finetune_rows
+
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--base-model",
@@ -199,6 +205,8 @@ def main() -> int:
     base_model.generation_config.task = "transcribe"
     base_model.generation_config.forced_decoder_ids = None
     base_model.freeze_encoder()
+
+    from peft import LoraConfig, get_peft_model
 
     lora_config = LoraConfig(
         r=args.lora_rank,

@@ -1,5 +1,8 @@
 # Python environments and caches.
 .venv/
+tests/
+docs/
+scripts/
 .python-version
 pyvenv.cfg
 bin/
@@ -30,3 +33,12 @@ logs/
 
 # Packaged result archive; source result files remain versioned.
 reports/results.zip
+frontend/node_modules/
+frontend/dist/
+frontend/*.tsbuildinfo
+frontend/vite.config.js
+frontend/vite.config.d.ts
+
+*.bin
+*.safetensors
+pyproject.toml

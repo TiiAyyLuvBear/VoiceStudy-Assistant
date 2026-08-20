@@ -11,6 +11,7 @@ import joblib
 import numpy as np
 
 from src.audio.preprocessing import preprocess_audio
+from src.audio.source import resolve_audio_path
 from src.speaker.embedding import ECAPAEmbeddingExtractor, get_embedding_extractor
 
 

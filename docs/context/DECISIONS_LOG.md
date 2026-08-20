@@ -162,3 +162,12 @@
 - Version deployable ECAPA `.pt` checkpoints with Git LFS.
 - Keep source tests, docs, scripts, evaluation metrics, and reproducible notebook
   builders under normal version control.
+
+## 2026-08-17 — Deploy local ASR v4 artifact explicitly
+
+- Treat `asr.model_path` as actual faster-whisper model source when configured;
+  `model_name` remains reporting metadata only.
+- Resolve relative model paths from `config.yaml` and fail startup when required
+  CTranslate2 files are missing.
+- Deploy Whisper Small LoRA v4 from `models/experimental/asr/v4/ctranslate2`.
+- Keep CPU int8 default; allow `cuda` and `auto` for later hardware deployment.

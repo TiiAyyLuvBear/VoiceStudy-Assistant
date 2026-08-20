@@ -41,7 +41,8 @@ audio:
 asr:
   backend: faster-whisper
   model_size: small
-  model_name: whisper-small
+  model_name: whisper-small-lora-wide-v4
+  model_path: models/experimental/asr/v4/ctranslate2
   language: vi
   task: transcribe
   device: cpu
@@ -53,7 +54,7 @@ asr:
   condition_on_previous_text: false
   word_timestamps: false
   download_root: models/cache/whisper
-  local_files_only: false
+  local_files_only: true
 
 speaker:
   backend: speechbrain

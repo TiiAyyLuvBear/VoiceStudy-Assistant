@@ -5,6 +5,8 @@ from __future__ import annotations
 import re
 import unicodedata
 
+from src.utils.text_time import format_hour_minute, replace_am_pm
+
 
 _WHITESPACE_RE = re.compile(r"\s+")
 _AM_PM_RE = re.compile(
@@ -26,17 +28,21 @@ _HOUR_MINUTE_WORD_RE = re.compile(
 )
 
 
-def _format_hour_minute(hour: str, minute: str | None = None) -> str:
+def _format_hour_minute_legacy(hour: str, minute: str | None = None) -> str:
     normalized_hour = str(int(hour))
     if minute is None or int(minute) == 0:
         return f"{normalized_hour} giờ"
     return f"{normalized_hour} giờ {int(minute):02d}"
 
 
-def _replace_am_pm(match: re.Match[str]) -> str:
+def _replace_am_pm_legacy(match: re.Match[str]) -> str:
     period = re.sub(r"[.\s]", "", match.group(3)).lower()
     vietnamese_period = "sáng" if period == "am" else "chiều"
     return f"{_format_hour_minute(match.group(1), match.group(2))} {vietnamese_period}"
+
+
+_format_hour_minute = format_hour_minute
+_replace_am_pm = replace_am_pm
 
 
 def _replace_clock(match: re.Match[str]) -> str:

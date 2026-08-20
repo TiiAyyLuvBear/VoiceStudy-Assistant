@@ -4,10 +4,12 @@ from __future__ import annotations
 
 from contextlib import asynccontextmanager
 from pathlib import Path
+import re
 from tempfile import TemporaryDirectory
 from typing import Any, Callable
 
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 
 from src.database.user_repository import delete_user, list_users
 from src.asr.whisper_model import get_asr_model
@@ -147,6 +149,17 @@ def create_app(
         redoc_url="/redoc",
         lifespan=lifespan,
     )
+    application.add_middleware(
+        CORSMiddleware,
+        allow_origins=[
+            "http://localhost:5173",
+            "http://127.0.0.1:5173",
+        ],
+        allow_origin_regex=r"https?://(localhost|127\.0\.0\.1)(:\d+)?",
+        allow_credentials=False,
+        allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
+        allow_headers=["*"],
+    )
 
     @application.get("/health")
     def health() -> dict[str, str]:
@@ -173,10 +186,16 @@ def create_app(
 
     @application.post("/api/v1/enroll")
     def enroll_application_user(
-        user_id: str = Form(...),
+        username: str | None = Form(default=None),
+        user_id: str | None = Form(default=None),
         name: str = Form(...),
         audio_files: list[UploadFile] = File(...),
     ) -> dict[str, Any]:
+        raw_username = (username or user_id or "").strip()
+        if not raw_username:
+            raise HTTPException(status_code=422, detail="Username is required")
+        normalized_username = re.sub(r"[^A-Za-z0-9_-]", "_", raw_username.removeprefix("user_"))
+        resolved_user_id = f"user_{normalized_username}"
         if len(audio_files) != 5:
             raise HTTPException(status_code=400, detail="Exactly 5 WAV files are required")
         for upload in audio_files:
@@ -188,7 +207,7 @@ def create_app(
                 _write_upload(upload, path, upload_limit)
                 paths.append(path)
             return enroller(
-                user_id.strip(),
+                resolved_user_id,
                 name.strip(),
                 paths,
                 config_path=config_path,
