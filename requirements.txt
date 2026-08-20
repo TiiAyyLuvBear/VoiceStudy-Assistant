@@ -4,6 +4,9 @@ PyYAML>=6,<7
 numpy>=1.26,<3
 sounddevice>=0.4.6,<1
 
+# NLU fuzzy matching
+rapidfuzz>=3.0,<4
+
 # Test
 pytest>=8,<10
 
