@@ -1,0 +1,9 @@
+{
+  "name": "secure-voice-assistant",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {"dev":"vite","build":"tsc -b && vite build","test:run":"vitest run","test":"vitest","lint":"tsc --noEmit"},
+  "dependencies": {"@vitejs/plugin-react":"latest","@tanstack/react-query":"latest","axios":"latest","react":"latest","react-dom":"latest","react-hook-form":"latest","react-router-dom":"latest","zod":"latest","@hookform/resolvers":"latest","lucide-react":"latest","sonner":"latest","clsx":"latest","tailwind-merge":"latest"},
+  "devDependencies": {"@testing-library/jest-dom":"latest","@testing-library/react":"latest","@testing-library/user-event":"latest","@types/react":"latest","@types/react-dom":"latest","@vitejs/plugin-react":"latest","jsdom":"latest","typescript":"latest","vite":"latest","vitest":"latest"}
+}
