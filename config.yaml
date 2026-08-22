@@ -39,22 +39,22 @@ audio:
 # Theo yêu cầu tuần 1: Whisper Small chạy trên CPU.
 # int8 giảm bộ nhớ và tăng tốc inference CPU.
 asr:
-  backend: faster-whisper
+  backend: transformers
   model_size: small
-  model_name: whisper-small-lora-wide-v4
-  model_path: models/experimental/asr/v4/ctranslate2
+  model_name: vinai/PhoWhisper-small
+  model_path:
   language: vi
   task: transcribe
   device: cpu
-  compute_type: int8
+  compute_type: float32
   cpu_threads: 0
   num_workers: 1
   beam_size: 10
   vad_filter: true
   condition_on_previous_text: false
   word_timestamps: false
-  download_root: models/cache/whisper
-  local_files_only: true
+  download_root: models/cache/phowhisper
+  local_files_only: false
 
 speaker:
   backend: speechbrain
@@ -80,6 +80,23 @@ speaker:
   application_sid_threshold_path: reports/results/evaluation/finetuned/open_set_metrics.json
   application_verification_threshold_path: reports/results/evaluation/finetuned/verification_metrics.json
   enrollment_audio_count: 5
+  min_enrollment_audio_count: 3
+  max_enrollment_audio_count: 10
+  enrollment_quality:
+    enabled: true
+    min_duration_seconds: 2.0
+    min_speech_duration_seconds: 2.0
+    min_speech_ratio: 0.25
+    max_duration_seconds: 8.0
+    min_rms: 0.01
+    max_clipping_ratio: 0.02
+    max_silence_ratio: 0.65
+    min_mean_pairwise_cosine: 0.70
+    min_pairwise_cosine: 0.45
+    min_mean_centroid_similarity: 0.70
+    min_samples_for_outlier_detection: 3
+    min_centroid_similarity: 0.45
+    min_accepted_enrollment_samples: 3
   quality_gate:
     trial_scores_path: reports/results/evaluation/finetuned/verification_trial_scores.csv
     metrics_path: reports/results/evaluation/finetuned/verification_metrics.json

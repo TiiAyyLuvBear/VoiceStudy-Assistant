@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 import sqlite3
@@ -11,24 +12,33 @@ from typing import Callable, Sequence
 
 import numpy as np
 
-from src.audio.preprocessing import preprocess_audio
+from src.audio.preprocessing import SpeakerPreprocessResult, preprocess_audio, preprocess_audio_with_metrics
 from src.database.user_repository import (
     create_user,
     delete_user,
     get_user,
     list_users,
-    update_embedding_path,
+    update_user_enrollment,
 )
+from src.security.secret_phrase import hash_secret_phrase, validate_secret_phrase
 from src.speaker.embedding import EmbeddingError, extract_embedding
+from src.speaker.enrollment_quality import (
+    analyze_audio_quality,
+    centroid_similarities,
+    embedding_consistency,
+    validate_enrollment_prompts,
+)
 from src.utils.config import (
     load_yaml_mapping,
     resolve_path,
     threshold_from_metrics_document,
 )
 
-AudioLoader = Callable[[str | Path], tuple[np.ndarray, int]]
+AudioLoader = Callable[[str | Path], object]
 _USER_ID_PATTERN = re.compile(r"^user_[A-Za-z0-9][A-Za-z0-9_-]{0,58}$")
 _ENROLLMENT_AUDIO_COUNT = 5
+_MIN_ENROLLMENT_AUDIO_COUNT = 3
+_MAX_ENROLLMENT_AUDIO_COUNT = 10
 
 
 class CentroidModelMismatchError(ValueError):
@@ -53,6 +63,9 @@ def _result(**values: object) -> dict:
         "verified": None,
         "latency_ms": 0.0,
         "file_results": [],
+        "quality": None,
+        "embedding_consistency": None,
+        "secret_phrase_configured": None,
         "error": None,
     }
     result.update(values)
@@ -101,6 +114,22 @@ def _enrollment_audio_count(config_path: str | Path) -> int:
     return value
 
 
+def _enrollment_audio_limits(config_path: str | Path) -> tuple[int, int]:
+    speaker, _ = _speaker_config(config_path)
+    default_count = int(speaker.get("enrollment_audio_count", _ENROLLMENT_AUDIO_COUNT))
+    minimum = int(speaker.get("min_enrollment_audio_count", min(_MIN_ENROLLMENT_AUDIO_COUNT, default_count)))
+    maximum = int(speaker.get("max_enrollment_audio_count", max(_MAX_ENROLLMENT_AUDIO_COUNT, default_count)))
+    if minimum <= 0 or maximum < minimum:
+        raise ValueError("Invalid enrollment audio count limits")
+    return minimum, maximum
+
+
+def _enrollment_quality_settings(config_path: str | Path) -> dict:
+    speaker, _ = _speaker_config(config_path)
+    settings = speaker.get("enrollment_quality", {})
+    return dict(settings) if isinstance(settings, dict) else {}
+
+
 def _threshold(
     config_path: str | Path,
     setting: str,
@@ -133,9 +162,47 @@ def _embedding_for_audio(
     extractor: object | None,
     audio_loader: AudioLoader,
 ) -> np.ndarray:
-    audio, sample_rate = audio_loader(audio_path)
+    loaded = audio_loader(audio_path)
+    audio, sample_rate, _ = _coerce_loaded_audio(loaded)
     embedding, _, _ = extract_embedding(audio, sample_rate=sample_rate, extractor=extractor)
     return _normalise(embedding)
+
+
+def _coerce_loaded_audio(loaded: object) -> tuple[np.ndarray, int, dict]:
+    if isinstance(loaded, SpeakerPreprocessResult):
+        return loaded.audio, loaded.sample_rate, dict(loaded.metrics)
+    if not isinstance(loaded, tuple):
+        raise ValueError("audio_loader must return (audio, sample_rate)")
+    if len(loaded) == 3:
+        audio, sample_rate, metrics = loaded
+        return np.asarray(audio, dtype=np.float32), int(sample_rate), dict(metrics or {})
+    if len(loaded) == 2:
+        audio, sample_rate = loaded
+        values = np.asarray(audio, dtype=np.float32).reshape(-1)
+        duration = float(values.size / int(sample_rate)) if int(sample_rate) > 0 else 0.0
+        return values, int(sample_rate), {
+            "duration_seconds": duration,
+            "speech_duration_seconds": duration,
+            "speech_ratio": 1.0 if duration > 0.0 else 0.0,
+            "sample_rate": int(sample_rate),
+            "num_channels": 1,
+        }
+    raise ValueError("audio_loader must return (audio, sample_rate)")
+
+
+def _load_enrollment_audio(
+    path: str | Path,
+    *,
+    audio_loader: AudioLoader,
+    quality_settings: dict,
+) -> tuple[np.ndarray, int, dict]:
+    if audio_loader is preprocess_audio:
+        result = preprocess_audio_with_metrics(
+            path,
+            vad_peak_ratio=float(quality_settings.get("silence_peak_ratio", 0.03)),
+        )
+        return result.audio, result.sample_rate, dict(result.metrics)
+    return _coerce_loaded_audio(audio_loader(path))
 
 
 def _normalise(vector: np.ndarray) -> np.ndarray:
@@ -187,12 +254,14 @@ def enroll_user(
     name: str,
     audio_paths: Sequence[str | Path],
     *,
+    secret_phrase: str | None = None,
+    enrollment_prompts: Sequence[str] | None = None,
     database_path: str | Path | None = None,
     config_path: str | Path = "config.yaml",
     extractor: object | None = None,
     audio_loader: AudioLoader = preprocess_audio,
 ) -> dict:
-    """Create/update enrollment from exactly five audio recordings."""
+    """Create/update enrollment from guided audio recordings and a secret phrase."""
     started_at = time.perf_counter()
     if not isinstance(user_id, str) or not _USER_ID_PATTERN.fullmatch(user_id):
         return _result(
@@ -202,46 +271,199 @@ def enroll_user(
         )
     if not isinstance(name, str) or not name.strip():
         return _result(protocol="APPLICATION_ENROLLMENT", user_id=user_id, error="INVALID_NAME")
+    valid_secret, secret_error = validate_secret_phrase(secret_phrase or "")
+    if not valid_secret:
+        return _result(
+            protocol="APPLICATION_ENROLLMENT",
+            user_id=user_id,
+            error=secret_error or "INVALID_SECRET_PHRASE",
+        )
+    prompts_valid, prompts_error = validate_enrollment_prompts(enrollment_prompts)
+    if not prompts_valid:
+        return _result(
+            protocol="APPLICATION_ENROLLMENT",
+            user_id=user_id,
+            error=prompts_error,
+        )
     try:
-        enrollment_audio_count = _enrollment_audio_count(config_path)
+        min_audio_count, max_audio_count = _enrollment_audio_limits(config_path)
         model_version = _model_version(config_path)
+        quality_settings = _enrollment_quality_settings(config_path)
     except (OSError, TypeError, ValueError):
         return _result(protocol="APPLICATION_ENROLLMENT", user_id=user_id, error="INVALID_SPEAKER_CONFIG")
-    if isinstance(audio_paths, (str, bytes)) or len(audio_paths) != enrollment_audio_count:
+    if isinstance(audio_paths, (str, bytes)) or not (min_audio_count <= len(audio_paths) <= max_audio_count):
         return _result(protocol="APPLICATION_ENROLLMENT", user_id=user_id, error="INVALID_ENROLLMENT_AUDIO_COUNT")
     if any(not isinstance(path, (str, Path)) for path in audio_paths):
         return _result(protocol="APPLICATION_ENROLLMENT", user_id=user_id, error="INVALID_AUDIO")
     resolved_audio_paths = [Path(path).resolve() for path in audio_paths]
-    if len(set(resolved_audio_paths)) != enrollment_audio_count:
+    if len(set(resolved_audio_paths)) != len(resolved_audio_paths):
         return _result(
             protocol="APPLICATION_ENROLLMENT",
             user_id=user_id,
-            error="INVALID_AUDIO",
+            error="DUPLICATE_ENROLLMENT_AUDIO",
+        )
+    content_hashes: list[str] = []
+    try:
+        for path in resolved_audio_paths:
+            content_hashes.append(hashlib.sha256(path.read_bytes()).hexdigest())
+    except OSError as exc:
+        return _result(
+            protocol="APPLICATION_ENROLLMENT",
+            user_id=user_id,
+            audio_count=len(audio_paths),
+            latency_ms=(time.perf_counter() - started_at) * 1000.0,
+            error=f"INVALID_AUDIO: {exc}",
+        )
+    if len(set(content_hashes)) != len(content_hashes):
+        return _result(
+            protocol="APPLICATION_ENROLLMENT",
+            user_id=user_id,
+            audio_count=len(audio_paths),
+            latency_ms=(time.perf_counter() - started_at) * 1000.0,
+            error="DUPLICATE_ENROLLMENT_AUDIO",
         )
 
     embeddings: list[np.ndarray] = []
+    embedding_file_indexes: list[int] = []
     file_results: list[dict] = []
-    for path in audio_paths:
+    quality_results: list[dict] = []
+    total_speech_duration = 0.0
+    min_accepted_samples = int(quality_settings.get("min_accepted_enrollment_samples", 3))
+    min_samples_for_outlier = int(quality_settings.get("min_samples_for_outlier_detection", 3))
+    min_centroid_similarity = float(quality_settings.get("min_centroid_similarity", 0.45))
+    for index, path in enumerate(audio_paths, start=1):
         try:
-            embedding = _embedding_for_audio(
-                path, extractor=extractor, audio_loader=audio_loader
+            audio, sample_rate, preprocess_metrics = _load_enrollment_audio(
+                path,
+                audio_loader=audio_loader,
+                quality_settings=quality_settings,
             )
+            quality = analyze_audio_quality(
+                audio,
+                sample_rate,
+                quality_settings,
+                metrics=preprocess_metrics,
+            )
+            quality_results.append(quality)
+            total_speech_duration += float(quality.get("metrics", {}).get("speech_duration_seconds") or 0.0)
+            if not quality["valid"]:
+                file_results.append(
+                    {
+                        "sample_id": f"sample_{index:02d}",
+                        "audio_path": str(path),
+                        "valid": False,
+                        "accepted": False,
+                        "error": "AUDIO_QUALITY_FAILED",
+                        "message_vi": quality.get("message_vi"),
+                        "rejection_reasons": quality.get("issues", []),
+                        "quality": quality,
+                    }
+                )
+                continue
+            embedding, _, _ = extract_embedding(
+                audio,
+                sample_rate=sample_rate,
+                extractor=extractor,
+            )
+            embedding = _normalise(embedding)
         except (OSError, ValueError, EmbeddingError) as exc:
             file_results.append(
-                {"audio_path": str(path), "valid": False, "error": str(exc)}
+                {
+                    "sample_id": f"sample_{index:02d}",
+                    "audio_path": str(path),
+                    "valid": False,
+                    "accepted": False,
+                    "error": "INVALID_EMBEDDING",
+                    "message_vi": "Không tạo được speaker embedding từ mẫu này. Hãy thu lại mẫu rõ hơn.",
+                    "rejection_reasons": ["invalid_embedding"],
+                    "details": str(exc),
+                }
             )
-            return _result(
-                protocol="APPLICATION_ENROLLMENT",
-                user_id=user_id,
-                audio_count=len(audio_paths),
-                file_results=file_results,
-                latency_ms=(time.perf_counter() - started_at) * 1000.0,
-                error="INVALID_AUDIO",
-            )
+            continue
         embeddings.append(embedding)
-        file_results.append({"audio_path": str(path), "valid": True, "error": None})
-    centroid = _normalise(np.mean(embeddings, axis=0))
+        embedding_file_indexes.append(len(file_results))
+        file_results.append(
+            {
+                "sample_id": f"sample_{index:02d}",
+                "audio_path": str(path),
+                "valid": True,
+                "accepted": True,
+                "error": None,
+                "rejection_reasons": [],
+                "quality": quality,
+            }
+        )
+    if len(embeddings) < min_accepted_samples:
+        return _result(
+            protocol="APPLICATION_ENROLLMENT",
+            user_id=user_id,
+            audio_count=len(audio_paths),
+            accepted_samples=len(embeddings),
+            rejected_samples=len(audio_paths) - len(embeddings),
+            requires_more_samples=True,
+            total_speech_duration_sec=total_speech_duration,
+            file_results=file_results,
+            quality=quality_results,
+            latency_ms=(time.perf_counter() - started_at) * 1000.0,
+            error="INSUFFICIENT_ACCEPTED_SAMPLES",
+        )
+    consistency = embedding_consistency(embeddings, quality_settings)
+    accepted_embedding_flags = [True] * len(embeddings)
+    if len(embeddings) >= min_samples_for_outlier:
+        _, sample_centroid_similarities = centroid_similarities(embeddings)
+        consistency["centroid_similarities"] = sample_centroid_similarities
+        for local_index, score in enumerate(sample_centroid_similarities):
+            file_index = embedding_file_indexes[local_index]
+            file_results[file_index]["centroid_similarity"] = score
+            if score < min_centroid_similarity:
+                accepted_embedding_flags[local_index] = False
+                file_results[file_index]["valid"] = False
+                file_results[file_index]["accepted"] = False
+                file_results[file_index]["error"] = "VOICE_INCONSISTENT_WITH_OTHER_SAMPLES"
+                file_results[file_index]["message_vi"] = (
+                    "Mẫu voice lệch nhiều so với các mẫu còn lại. Hãy nghe lại và thu lại mẫu này."
+                )
+                file_results[file_index]["rejection_reasons"].append("embedding_outlier")
+    accepted_embeddings = [
+        embedding
+        for embedding, accepted in zip(embeddings, accepted_embedding_flags)
+        if accepted
+    ]
+    if len(accepted_embeddings) < min_accepted_samples:
+        return _result(
+            protocol="APPLICATION_ENROLLMENT",
+            user_id=user_id,
+            audio_count=len(audio_paths),
+            accepted_samples=len(accepted_embeddings),
+            rejected_samples=len(audio_paths) - len(accepted_embeddings),
+            requires_more_samples=True,
+            total_speech_duration_sec=total_speech_duration,
+            file_results=file_results,
+            quality=quality_results,
+            embedding_consistency=consistency,
+            latency_ms=(time.perf_counter() - started_at) * 1000.0,
+            error="INSUFFICIENT_ACCEPTED_SAMPLES",
+        )
+    accepted_consistency = embedding_consistency(accepted_embeddings, quality_settings)
+    consistency["accepted"] = accepted_consistency
+    if not accepted_consistency["valid"]:
+        return _result(
+            protocol="APPLICATION_ENROLLMENT",
+            user_id=user_id,
+            audio_count=len(audio_paths),
+            accepted_samples=len(accepted_embeddings),
+            rejected_samples=len(audio_paths) - len(accepted_embeddings),
+            requires_more_samples=False,
+            total_speech_duration_sec=total_speech_duration,
+            file_results=file_results,
+            quality=quality_results,
+            embedding_consistency=consistency,
+            latency_ms=(time.perf_counter() - started_at) * 1000.0,
+            error="EMBEDDING_CONSISTENCY_FAILED",
+        )
+    centroid = _normalise(np.mean(accepted_embeddings, axis=0))
 
+    centroid_path: Path | None = None
     try:
         centroid_dir = _centroid_dir(config_path)
         centroid_dir.mkdir(parents=True, exist_ok=True)
@@ -251,14 +473,37 @@ def enroll_user(
             centroid_path,
             model_version=model_version,
             embedding_dimension=centroid.size,
-            enrollment_audio_count=len(embeddings),
+            enrollment_audio_count=len(accepted_embeddings),
         )
         stored_centroid_path = _portable_centroid_path(centroid_path, config_path)
+        secret_digest, secret_salt = hash_secret_phrase(secret_phrase or "")
         if get_user(user_id, database_path):
-            update_embedding_path(user_id, stored_centroid_path, database_path)
+            update_user_enrollment(
+                user_id,
+                name=name.strip(),
+                embedding_path=stored_centroid_path,
+                secret_phrase_hash=secret_digest,
+                secret_phrase_salt=secret_salt,
+                database_path=database_path,
+            )
         else:
-            create_user(user_id, name.strip(), stored_centroid_path, database_path)
+            create_user(
+                user_id,
+                name.strip(),
+                stored_centroid_path,
+                database_path,
+                secret_phrase_hash=secret_digest,
+                secret_phrase_salt=secret_salt,
+            )
     except (OSError, sqlite3.Error):
+        if centroid_path is not None and centroid_path.is_file():
+            try:
+                centroid_path.unlink()
+                metadata_path = _centroid_metadata_path(centroid_path)
+                if metadata_path.is_file():
+                    metadata_path.unlink()
+            except OSError:
+                pass
         return _result(
             protocol="APPLICATION_ENROLLMENT",
             user_id=user_id,
@@ -273,14 +518,28 @@ def enroll_user(
         success=True,
         status="ENROLLED",
         user_id=user_id,
-        embedding_count=len(embeddings),
+        embedding_count=len(accepted_embeddings),
         audio_count=len(audio_paths),
+        accepted_samples=len(accepted_embeddings),
+        rejected_samples=len(audio_paths) - len(accepted_embeddings),
+        requires_more_samples=False,
+        total_speech_duration_sec=total_speech_duration,
+        enrollment_quality_score=float(len(accepted_embeddings) / len(audio_paths)),
         embedding_path=stored_centroid_path,
         centroid_path=str(centroid_path),
         embedding_dim=int(centroid.size),
         l2_norm=float(np.linalg.norm(centroid)),
         latency_ms=(time.perf_counter() - started_at) * 1000.0,
         file_results=file_results,
+        quality=quality_results,
+        embedding_consistency=consistency,
+        metadata={
+            "model_version": model_version,
+            "min_accepted_enrollment_samples": min_accepted_samples,
+            "min_samples_for_outlier_detection": min_samples_for_outlier,
+            "min_centroid_similarity": min_centroid_similarity,
+        },
+        secret_phrase_configured=True,
         error=None,
     )
 
@@ -475,6 +734,9 @@ def delete_application_user(
     try:
         if managed_centroid.is_file():
             managed_centroid.unlink()
+        metadata_path = _centroid_metadata_path(managed_centroid)
+        if metadata_path.is_file():
+            metadata_path.unlink()
         if not delete_user(user_id, database_path):
             raise sqlite3.DatabaseError("User deletion did not affect one row")
     except (OSError, sqlite3.Error):

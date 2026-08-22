@@ -62,6 +62,9 @@ class BackendClient:
     def health(self) -> dict[str, Any]:
         return self._request("GET", "/health")
 
+    def _audio_media_type(self, filename: str) -> str:
+        return "audio/flac" if Path(filename).suffix.lower() == ".flac" else "audio/wav"
+
     def process_audio(
         self,
         filename: str,
@@ -74,23 +77,34 @@ class BackendClient:
             "POST",
             "/api/v1/process",
             data=data,
-            files={"audio": (filename, content, "audio/wav")},
+            files={"audio": (filename, content, self._audio_media_type(filename))},
         )
 
     def enroll(
         self,
         user_id: str,
         name: str,
+        secret_phrase: str,
+        secret_audio: tuple[str, bytes],
         audio_files: Iterable[tuple[str, bytes]],
+        enrollment_prompts: Iterable[str] = (),
     ) -> dict[str, Any]:
         files = [
-            ("audio_files", (filename, content, "audio/wav"))
+            ("audio_files", (filename, content, self._audio_media_type(filename)))
             for filename, content in audio_files
         ]
+        files.append(("secret_audio", (secret_audio[0], secret_audio[1], self._audio_media_type(secret_audio[0]))))
+        data: list[tuple[str, str]] = [
+            ("user_id", user_id),
+            ("name", name),
+            ("secret_phrase", secret_phrase),
+            ("secret_phrase_transcript", secret_phrase),
+        ]
+        data.extend(("enrollment_prompts", prompt) for prompt in enrollment_prompts)
         return self._request(
             "POST",
             "/api/v1/enroll",
-            data={"user_id": user_id, "name": name},
+            data=data,
             files=files,
         )
 
@@ -99,6 +113,57 @@ class BackendClient:
 
     def delete_user(self, user_id: str) -> dict[str, Any]:
         return self._request("DELETE", f"/api/v1/users/{quote(user_id, safe='')}")
+
+    def list_schedules(self, user_id: str) -> list[dict[str, Any]]:
+        return self._request("GET", f"/api/v1/users/{quote(user_id, safe='')}/schedules")
+
+    def add_schedule(
+        self,
+        user_id: str,
+        *,
+        title: str,
+        date: str,
+        time: str,
+        description: str | None = None,
+    ) -> dict[str, Any]:
+        return self._request(
+            "POST",
+            f"/api/v1/users/{quote(user_id, safe='')}/schedules",
+            json={
+                "title": title,
+                "date": date,
+                "time": time,
+                "description": description,
+            },
+        )
+
+    def delete_schedule(self, user_id: str, schedule_id: int) -> dict[str, Any]:
+        return self._request(
+            "DELETE",
+            f"/api/v1/users/{quote(user_id, safe='')}/schedules/{int(schedule_id)}",
+        )
+
+    def list_notes(self, user_id: str) -> list[dict[str, Any]]:
+        return self._request("GET", f"/api/v1/users/{quote(user_id, safe='')}/notes")
+
+    def add_note(
+        self,
+        user_id: str,
+        *,
+        content: str,
+        is_private: bool = True,
+    ) -> dict[str, Any]:
+        return self._request(
+            "POST",
+            f"/api/v1/users/{quote(user_id, safe='')}/notes",
+            json={"content": content, "is_private": is_private},
+        )
+
+    def delete_note(self, user_id: str, note_id: int) -> dict[str, Any]:
+        return self._request(
+            "DELETE",
+            f"/api/v1/users/{quote(user_id, safe='')}/notes/{int(note_id)}",
+        )
 
 
 @lru_cache(maxsize=1)

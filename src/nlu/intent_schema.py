@@ -12,6 +12,8 @@ class Intent(str, Enum):
     GET_TIME = "GET_TIME"
     VIEW_SCHEDULE = "VIEW_SCHEDULE"
     ADD_SCHEDULE = "ADD_SCHEDULE"
+    ADD_NOTE = "ADD_NOTE"
+    ADD_PRIVATE_NOTE = "ADD_PRIVATE_NOTE"
     VIEW_PRIVATE_NOTE = "VIEW_PRIVATE_NOTE"
     OUT_OF_SCOPE = "OUT_OF_SCOPE"
 
@@ -25,6 +27,7 @@ class Entities(TypedDict, total=False):
     title: str
     date: str
     time: str
+    content: str
 
 
 class NLUResult(TypedDict):
@@ -39,6 +42,8 @@ REQUIRED_ENTITIES: Final[dict[Intent, tuple[str, ...]]] = {
     Intent.GET_TIME: (),
     Intent.VIEW_SCHEDULE: (),
     Intent.ADD_SCHEDULE: ("title", "date", "time"),
+    Intent.ADD_NOTE: ("content",),
+    Intent.ADD_PRIVATE_NOTE: ("content",),
     Intent.VIEW_PRIVATE_NOTE: (),
     Intent.OUT_OF_SCOPE: (),
 }

@@ -56,14 +56,39 @@ def test_client_supports_enrollment_users_and_delete() -> None:
     session = _Session()
     client = BackendClient("http://localhost:8000", timeout_seconds=10, session=session)
 
-    client.enroll("user_001", "Student", [("1.wav", b"a")] * 5)
+    client.enroll(
+        "user_001",
+        "Student",
+        "hoa sen xanh",
+        ("secret.wav", b"secret"),
+        [("1.wav", b"a")] * 5,
+    )
     client.list_users()
     client.delete_user("user_001")
+    client.list_schedules("user_001")
+    client.add_schedule("user_001", title="Học", date="2026-08-20", time="08:00")
+    client.delete_schedule("user_001", 1)
+    client.list_notes("user_001")
+    client.add_note("user_001", content="Ghi chú")
+    client.delete_note("user_001", 1)
 
-    assert [call[0] for call in session.calls] == ["POST", "GET", "DELETE"]
+    assert [call[0] for call in session.calls] == [
+        "POST",
+        "GET",
+        "DELETE",
+        "GET",
+        "POST",
+        "DELETE",
+        "GET",
+        "POST",
+        "DELETE",
+    ]
     assert session.calls[0][1].endswith("/api/v1/enroll")
+    assert session.calls[0][2]["files"][-1][0] == "secret_audio"
     assert session.calls[1][1].endswith("/api/v1/users")
     assert session.calls[2][1].endswith("/api/v1/users/user_001")
+    assert session.calls[4][2]["json"]["title"] == "Học"
+    assert session.calls[7][2]["json"]["content"] == "Ghi chú"
 
 
 def test_streamlit_pages_do_not_import_pipeline_speaker_or_database_services() -> None:

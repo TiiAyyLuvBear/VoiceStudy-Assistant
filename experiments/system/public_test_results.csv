@@ -1,5 +1,5 @@
 ﻿test_case_id,category,scenario,intent,actual_policy,actual_error,sid_calls,sv_calls,database_integrity_pass,response_scope_pass,latency_ms,passed
-SYS001,PUBLIC,time_normal,GET_TIME,PUBLIC,,0,0,true,true,1.535400,true
-SYS002,PUBLIC,time_morning,GET_TIME,PUBLIC,,0,0,true,true,1.332500,true
-SYS003,PUBLIC,time_evening,GET_TIME,PUBLIC,,0,0,true,true,1.706700,true
-SYS004,PUBLIC,time_with_user_claim,GET_TIME,PUBLIC,,0,0,true,true,1.697300,true
+SYS001,PUBLIC,time_normal,GET_TIME,PUBLIC,,0,0,true,true,0.406600,true
+SYS002,PUBLIC,time_morning,GET_TIME,PUBLIC,,0,0,true,true,0.310500,true
+SYS003,PUBLIC,time_evening,GET_TIME,PUBLIC,,0,0,true,true,0.305900,true
+SYS004,PUBLIC,time_with_user_claim,GET_TIME,PUBLIC,,0,0,true,true,0.699100,true

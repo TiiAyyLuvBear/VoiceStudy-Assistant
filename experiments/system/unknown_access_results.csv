@@ -1,4 +1,4 @@
 ﻿test_case_id,category,scenario,intent,actual_policy,actual_error,sid_calls,sv_calls,database_integrity_pass,response_scope_pass,latency_ms,passed
-SYS008,SID,unknown_view,VIEW_SCHEDULE,SID,UNKNOWN_SPEAKER,1,0,true,true,0.826000,true
-SYS016,SID_WRITE,unknown_add,ADD_SCHEDULE,SID,UNKNOWN_SPEAKER,1,0,true,true,1.728400,true
-SYS021,SID_SV,unknown_private,VIEW_PRIVATE_NOTE,SID_AND_SV,UNKNOWN_SPEAKER,1,0,true,true,0.771300,true
+SYS008,SID,unknown_view,VIEW_SCHEDULE,SID,UNKNOWN_SPEAKER,1,0,true,true,0.255200,true
+SYS016,SID_WRITE,unknown_add,ADD_SCHEDULE,SID,UNKNOWN_SPEAKER,1,0,true,true,0.248100,true
+SYS021,SID_SV,unknown_private,VIEW_PRIVATE_NOTE,SID_AND_SV,UNKNOWN_SPEAKER,1,0,true,true,0.257900,true

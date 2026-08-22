@@ -5,7 +5,7 @@
   "passed_count": 30,
   "failed_count": 0,
   "task_success_rate": 1.0,
-  "mean_system_latency_ms": 4.09766,
-  "max_system_latency_ms": 25.0689,
+  "mean_system_latency_ms": 3.7413000000000003,
+  "max_system_latency_ms": 36.9959,
   "note": "Measures orchestration, access policy, database ownership and error contracts. ASR and speaker recognition accuracy are evaluated by their frozen component test artifacts."
 }

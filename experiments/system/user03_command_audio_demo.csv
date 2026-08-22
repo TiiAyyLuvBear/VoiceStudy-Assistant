@@ -1,0 +1,11 @@
+﻿user_id,source_speaker_id,role,recording_id,intent,expected_transcript,audio_path
+user_003,cmdspk03,COMMAND_TEST,REC_VAL0003,GET_TIME,Cho tôi biết hiện tại là mấy giờ.,data/commands/audio/validation/REC_VAL0003_cmdspk03.wav
+user_003,cmdspk03,COMMAND_TEST,REC_VAL0007,VIEW_SCHEDULE,Hãy mở lịch ngày mai.,data/commands/audio/validation/REC_VAL0007_cmdspk03.wav
+user_003,cmdspk03,COMMAND_TEST,REC_VAL0010,VIEW_SCHEDULE,Hiển thị lịch của mình thứ bảy.,data/commands/audio/validation/REC_VAL0010_cmdspk03.wav
+user_003,cmdspk03,COMMAND_TEST,REC_VAL0011,ADD_SCHEDULE,Thêm lịch học sâu lúc 7 giờ sáng ngày mai.,data/commands/audio/validation/REC_VAL0011_cmdspk03.wav
+user_003,cmdspk03,COMMAND_TEST,REC_VAL0014,ADD_SCHEDULE,Nhắc tôi nộp bài lúc 11 giờ tối nay.,data/commands/audio/validation/REC_VAL0014_cmdspk03.wav
+user_003,cmdspk03,COMMAND_TEST,REC_VAL0018,VIEW_PRIVATE_NOTE,Hiển thị ghi chú riêng tư mới nhất.,data/commands/audio/validation/REC_VAL0018_cmdspk03.wav
+user_003,cmdspk03,SECRET_AUDIO,REC_VAL0022,OUT_OF_SCOPE,Ngày mai có nắng không?,data/commands/audio/validation/REC_VAL0022_cmdspk03.wav
+user_003,cmdspk03,COMMAND_TEST,REC_VAL0025,OUT_OF_SCOPE,Đặt báo thức lúc 6 giờ sáng.,data/commands/audio/validation/REC_VAL0025_cmdspk03.wav
+user_003,cmdspk03,COMMAND_TEST,REC_VAL0028,OUT_OF_SCOPE,Đọc tin tức hôm nay.,data/commands/audio/validation/REC_VAL0028_cmdspk03.wav
+user_003,cmdspk03,COMMAND_TEST,REC_VAL0030,OUT_OF_SCOPE,Thêm một việc vào danh sách.,data/commands/audio/validation/REC_VAL0030_cmdspk03.wav

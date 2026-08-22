@@ -30,6 +30,26 @@ def create_database(database_path: str | Path | None = None) -> None:
     with closing(get_connection(database_path)) as connection:
         with connection:
             connection.executescript(SCHEMA_PATH.read_text(encoding="utf-8"))
+            _ensure_user_secret_columns(connection)
+
+
+def _ensure_user_secret_columns(connection: sqlite3.Connection) -> None:
+    """Add enrollment-secret columns to databases created by older versions."""
+
+    columns = {
+        row["name"]
+        for row in connection.execute("PRAGMA table_info(users)").fetchall()
+    }
+    migrations = {
+        "secret_phrase_hash": "ALTER TABLE users ADD COLUMN secret_phrase_hash TEXT",
+        "secret_phrase_salt": "ALTER TABLE users ADD COLUMN secret_phrase_salt TEXT",
+        "secret_phrase_updated_at": (
+            "ALTER TABLE users ADD COLUMN secret_phrase_updated_at TEXT"
+        ),
+    }
+    for column, statement in migrations.items():
+        if column not in columns:
+            connection.execute(statement)
 
 def test_database_connection(database_path: str | Path | None = None) -> bool:
     try:

@@ -22,16 +22,16 @@ Current blocker: local environment lacks attached Kaggle Parquet and Kaggle GPU;
 
 Current blocker: real Kaggle QC and materialization have not been run yet.
 
-## ASR v4 runtime follow-up
+## PhoWhisper-small runtime follow-up
 
-1. Restart backend and confirm startup reports `whisper-small-lora-wide-v4`.
-2. Run command-audio evaluation with deployed local v4 artifact; compare intent
-   and entity accuracy against prior base-Small results.
-3. Only after v4 baseline, compare GPU `large-v3-turbo` or PhoWhisper on same
-   frozen audio and decoding settings.
+1. Restart backend and confirm startup reports `vinai/PhoWhisper-small`.
+2. Run command-audio evaluation with PhoWhisper-small; compare intent and entity
+   accuracy against prior local LoRA v4 results.
+3. If PhoWhisper-small wins, cache the model and set `asr.local_files_only: true`
+   for offline demo runs.
 
-Current local state: v4 CPU int8 smoke inference passed. No NVIDIA CUDA runtime
-was detected through `nvidia-smi`.
+Current local state: runtime config and wrapper support are updated. Real
+PhoWhisper inference has not been run locally in this session.
 
 ## Three-task ECAPA evaluation
 

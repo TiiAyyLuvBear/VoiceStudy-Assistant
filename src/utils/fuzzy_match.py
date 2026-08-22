@@ -46,9 +46,9 @@ _ACCENT_STRIP_RE = re.compile(r"[\u0300-\u036f]")
 
 # Common ASR substitutions (whole word or substring)
 _ASR_SYNONYMS: dict[str, list[str]] = {
-    "ghi ch\u00fa": ["ghi ch\u1ee7", "g ch\u00fa", "v\u00ec ch\u1ee7"],
+    "ghi ch\u00fa": ["ghi ch\u1ee7", "ghi ch\u1ed7", "g ch\u00fa", "v\u00ec ch\u1ee7"],
     "note": ["n\u00f3t", "n\u00f4t", "not"],
-    "ri\u00eang t\u01b0": ["ring t\u01b0", "ri\u00eang tu", "luy\u1ec7n t\u1eeb", "tr\u00e0 tai"],
+    "ri\u00eang t\u01b0": ["ring t\u01b0", "ri\u00eang tu", "ri\u00eang t\u1eeb", "luy\u1ec7n t\u1eeb", "tr\u00e0 tai"],
     "c\u00e1 nh\u00e2n": ["c\u1ea3 nh\u00e2n", "ca nh\u00e2n"],
     "b\u1ea3o m\u1eadt": ["b\u00e1o m\u1eadt", "b\u1ea3o m\u00e2t"],
     "l\u1ecbch": ["l\u1ecbc", "l\u00edch"],

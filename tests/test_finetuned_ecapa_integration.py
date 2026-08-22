@@ -11,6 +11,8 @@ import torch
 import yaml
 
 from src.speaker import application
+from src.database.user_repository import create_user
+from src.security.secret_phrase import hash_secret_phrase
 from src.speaker.embedding import (
     CheckpointValidationError,
     ECAPAEmbeddingExtractor,
@@ -186,7 +188,7 @@ def test_application_enrollment_verification_and_stale_centroid_gate(
     audio_paths = []
     for index in range(5):
         path = tmp_path / f"enroll-{index}.wav"
-        path.write_bytes(b"audio")
+        path.write_bytes(f"audio-{index}".encode("ascii"))
         audio_paths.append(path)
     loader = lambda path: (np.ones(16, dtype=np.float32), 16000)
     extractor = _SequenceExtractor([np.array([1.0, 0.0])] * 6)
@@ -196,6 +198,7 @@ def test_application_enrollment_verification_and_stale_centroid_gate(
         "user_001",
         "Student",
         audio_paths,
+        secret_phrase="hoa sen xanh",
         database_path=database,
         config_path=config,
         extractor=extractor,
@@ -235,13 +238,14 @@ def test_application_enrollment_verification_and_stale_centroid_gate(
         "user_002",
         "Duplicate",
         [audio_paths[0]] * 5,
+        secret_phrase="hoa sen xanh",
         database_path=database,
         config_path=config,
         extractor=_SequenceExtractor([np.array([1.0, 0.0])] * 5),
         audio_loader=loader,
     )
     assert duplicate["success"] is False
-    assert duplicate["error"] == "INVALID_AUDIO"
+    assert duplicate["error"] == "DUPLICATE_ENROLLMENT_AUDIO"
 
 
 @pytest.mark.parametrize(
@@ -291,10 +295,19 @@ def test_verification_threshold_boundary(tmp_path: Path, score: float, expected:
 
 
 def test_orchestrator_blocks_private_note_when_verification_fails(tmp_path: Path) -> None:
+    database = tmp_path / "users.db"
+    secret_hash, secret_salt = hash_secret_phrase("hoa sen xanh")
+    create_user(
+        "user_001",
+        "Student",
+        database_path=database,
+        secret_phrase_hash=secret_hash,
+        secret_phrase_salt=secret_salt,
+    )
     pipeline_result = {
         "success": True,
-        "transcript": "đọc ghi chú riêng tư",
-        "normalized_transcript": "đọc ghi chú riêng tư",
+        "transcript": "đọc ghi chú riêng tư mật khẩu hoa sen xanh",
+        "normalized_transcript": "đọc ghi chú riêng tư mật khẩu hoa sen xanh",
         "intent": "VIEW_PRIVATE_NOTE",
         "entities": {},
         "missing_fields": [],
@@ -303,7 +316,7 @@ def test_orchestrator_blocks_private_note_when_verification_fails(tmp_path: Path
 
     result = process_audio_request(
         tmp_path / "query.wav",
-        database_path=tmp_path / "users.db",
+        database_path=database,
         asr_nlu_runner=lambda *args, **kwargs: pipeline_result,
         identifier=lambda *args, **kwargs: {
             "success": True,
@@ -321,13 +334,14 @@ def test_orchestrator_blocks_private_note_when_verification_fails(tmp_path: Path
         },
     )
 
-    assert result["success"] is True
+    assert result["success"] is False
+    assert result["speaker"]["secret_phrase_verified"] is True
     assert result["speaker"]["verified"] is False
     assert result["error"] == "VERIFICATION_FAILED"
     assert "thất bại" in result["response"]
 
 
-def test_orchestrator_verifies_before_asr_for_public_intent(tmp_path: Path) -> None:
+def test_orchestrator_skips_identification_for_public_intent(tmp_path: Path) -> None:
     calls: list[str] = []
 
     def identify(*args, **kwargs):
@@ -376,26 +390,13 @@ def test_orchestrator_verifies_before_asr_for_public_intent(tmp_path: Path) -> N
         verifier=verify,
     )
 
-    assert calls == ["sid", "sv", "asr"]
-    assert result["speaker"] == {
-        "candidate_user_id": "user_001",
-        "similarity": 0.81,
-        "identified": True,
-        "verified": True,
-        "centroid_path": "centroid.npy",
-        "verification": {
-            "protocol": "APPLICATION_SV",
-            "success": True,
-            "candidate_user_id": "user_001",
-            "centroid_path": "centroid.npy",
-            "similarity": 0.72,
-            "verified": True,
-            "error": None,
-        },
-    }
+    assert calls == ["asr"]
+    assert result["speaker"]["candidate_user_id"] is None
+    assert result["speaker"]["identified"] is None
+    assert result["speaker"]["verified"] is None
 
 
-def test_orchestrator_keeps_verified_speaker_when_asr_fails(tmp_path: Path) -> None:
+def test_orchestrator_skips_identification_when_asr_fails(tmp_path: Path) -> None:
     result = process_audio_request(
         tmp_path / "query.wav",
         database_path=tmp_path / "users.db",
@@ -422,7 +423,7 @@ def test_orchestrator_keeps_verified_speaker_when_asr_fails(tmp_path: Path) -> N
     )
 
     assert result["success"] is False
-    assert result["speaker"]["candidate_user_id"] == "user_001"
-    assert result["speaker"]["identified"] is True
-    assert result["speaker"]["verification"]["similarity"] == 0.72
-    assert result["speaker"]["verified"] is True
+    assert result["speaker"]["candidate_user_id"] is None
+    assert result["speaker"]["identified"] is None
+    assert "verification" not in result["speaker"]
+    assert result["speaker"]["verified"] is None

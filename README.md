@@ -1,8 +1,9 @@
 # VoiceStudy Assistant
 
-Vietnamese voice assistant with Whisper Small, rule-based NLU, frozen
+Vietnamese voice assistant with PhoWhisper-small ASR, rule-based NLU, frozen
 ECAPA-TDNN embeddings, cosine application speaker identification and
-verification, SQLite ownership controls, TTS fallback, and a Streamlit UI.
+verification, SQLite ownership controls, backend Vietnamese TTS, and Streamlit
+plus React UIs.
 
 The active speaker evaluation data is frozen at `data/processed/v2/`.
 Application enrollment is separate from the experimental Linear SVM:
@@ -12,45 +13,124 @@ Application enrollment is separate from the experimental Linear SVM:
 - Application SID: cosine gallery plus `application_sid_threshold`.
 - Private-note SV: cosine score against the SID candidate plus
   `application_verification_threshold`.
+- Private-note access also requires a spoken secret phrase marker, e.g.
+  `mật khẩu hoa sen xanh`, matching the hash captured at enrollment.
+- React frontend uses a two-step protected flow: command audio first, then
+  registered secret phrase audio when prompted. FastAPI accepts optional
+  `secret_audio` on `POST /api/v1/process`.
 
 No command audio is used to train the speaker model.
 
 ## Requirements
 
-- Python 3.11 or 3.12
+- Python 3.10, 3.11, or 3.12
+- Node.js 20 or newer for the React frontend
 - Windows, Linux, or macOS
-- CPU inference is supported; the first ASR/ECAPA run can be slow
+- CPU inference is supported; first ASR/ECAPA load can be slow
 
-Install:
+## Install
+
+From the repository root:
 
 ```powershell
 cd Final\VoiceStudy-Assistant
+```
+
+Create a Python virtual environment if `.venv` does not exist:
+
+```powershell
+python -m venv .venv
+```
+
+Install Python packages and seed local data:
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install --upgrade pip
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 .\.venv\Scripts\python.exe scripts\seed_database.py
 ```
+
+Install React frontend packages:
+
+```powershell
+cd frontend
+npm install
+cd ..
+```
+
+## Start the System
 
 Run backend and frontend in separate terminals.
 
 Backend terminal:
 
 ```powershell
+cd Final\VoiceStudy-Assistant
 .\.venv\Scripts\python.exe -m backend.main
 ```
 
-Frontend terminal:
+Backend URL: `http://127.0.0.1:8000`
+
+FastAPI documentation: `http://127.0.0.1:8000/docs`
+
+React frontend terminal:
 
 ```powershell
+cd Final\VoiceStudy-Assistant\frontend
+npm run dev -- --host 127.0.0.1
+```
+
+Open the Vite URL printed in the terminal, usually `http://localhost:5173/`.
+If port `5173` is busy, Vite prints the next available port.
+
+Optional Streamlit UI:
+
+```powershell
+cd Final\VoiceStudy-Assistant
 .\.venv\Scripts\python.exe -m streamlit run app\main.py
 ```
 
-FastAPI documentation: `http://127.0.0.1:8000/docs`.
+Backend startup eagerly loads ECAPA and PhoWhisper by default. Terminal prints
+one field per line, including model name, epoch, device, and load status.
+Disable or make startup non-strict through `backend.preload_models` and
+`backend.strict_model_startup` in `config.yaml`. First PhoWhisper run downloads
+`vinai/PhoWhisper-small` into `models/cache/phowhisper` unless the model already
+exists there or `asr.local_files_only` is enabled.
 
-Backend startup eagerly loads ECAPA and Whisper by default. Terminal prints one
-field per line, including model name, epoch, device, and load status. Disable or
-make startup non-strict through `backend.preload_models` and
-`backend.strict_model_startup` in `config.yaml`.
+## Test Commands
 
-`Voice Assistant` accepts WAV recording/upload. Until ASR, NLU, and Speaker modules arrive, enter a mock transcript to test flows. Use phrases such as `Bây giờ là mấy giờ?`, `Xem lịch của tôi`, and `Mở ghi chú riêng tư`.
+Run deterministic backend/system contract tests:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\run_system_tests.py
+```
+
+This runner uses isolated SQLite files and deterministic ASR/speaker adapters
+to measure orchestration, authorization, ownership, and error contracts. It
+also verifies that dynamic enrollment does not change the SHA-256 checksum of
+the frozen v2 Linear SVM. Component accuracy remains in the real ASR/speaker
+evaluation artifacts.
+
+Run Python unit tests:
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest
+```
+
+Run React tests and production build:
+
+```powershell
+cd frontend
+npm run test:run
+npm run build
+```
+
+`Voice Assistant` accepts WAV recording/upload. Use the command catalog from
+`GET /api/v1/commands`: time, view schedule, add schedule with free
+`<tiêu đề>/<ngày>/<giờ>` slots, add note/private note with free `<nội dung>`,
+and view latest private note. Protected private-note intents require the
+registered secret phrase as a second audio sample in the React flow.
+ASR post-processing details live in `docs/asr_postprocessing.md`.
 
 Every real audio request performs speaker identification and verification
 before ASR/NLU. Request logs therefore contain SID/SV decisions regardless of
@@ -73,19 +153,18 @@ Terminal records print one field per line; rotating file records remain JSONL.
 
 ## Database
 
-SQLite file defaults to `data/database/voicestudy.db`. Schema has users, schedules, and notes; all schedule/note reads are filtered by owner. Seed script is idempotent and does not erase records.
+SQLite file defaults to `data/database/voicestudy.db`. Schema has users, schedules, and notes; all schedule/note reads are filtered by owner. User secret phrases are stored as salted hashes, never plaintext. Seed script is idempotent and does not erase records.
 
-## Verify
+User data management endpoints:
 
-```bash
-python scripts/run_system_tests.py
-```
-
-This runner uses isolated SQLite files and deterministic ASR/speaker adapters
-to measure orchestration, authorization, ownership, and error contracts. It
-also verifies that dynamic enrollment does not change the SHA-256 checksum of
-the frozen v2 Linear SVM. Component accuracy remains in the real ASR/speaker
-evaluation artifacts.
+- `GET /api/v1/commands`
+- `POST /api/v1/process` with required `audio` and optional `secret_audio`
+- `GET /api/v1/users/{user_id}/schedules`
+- `POST /api/v1/users/{user_id}/schedules`
+- `DELETE /api/v1/users/{user_id}/schedules/{schedule_id}`
+- `GET /api/v1/users/{user_id}/notes`
+- `POST /api/v1/users/{user_id}/notes`
+- `DELETE /api/v1/users/{user_id}/notes/{note_id}`
 
 ## Main outputs
 

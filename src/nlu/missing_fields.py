@@ -32,10 +32,9 @@ def can_write_database(
     intent: str | Intent,
     entities: Mapping[str, str],
 ) -> bool:
-    """Allow an ADD_SCHEDULE database write only when all fields are present."""
+    """Allow write intents only when all required fields are present."""
 
     intent_value = intent if isinstance(intent, Intent) else Intent(intent)
-    return (
-        intent_value is Intent.ADD_SCHEDULE
-        and not get_missing_fields(intent_value, entities)
+    return intent_value in {Intent.ADD_SCHEDULE, Intent.ADD_NOTE, Intent.ADD_PRIVATE_NOTE} and not get_missing_fields(
+        intent_value, entities
     )

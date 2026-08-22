@@ -33,10 +33,12 @@ def _write_silent_wav(path: Path) -> None:
 
 def test_project_config_selects_whisper_small_cpu() -> None:
     config = load_whisper_config("config.yaml")
+    assert config.backend == "transformers"
     assert config.model_size == "small"
-    assert config.model_name == "whisper-small"
+    assert config.model_name == "vinai/PhoWhisper-small"
+    assert config.model_path is None
     assert config.device == "cpu"
-    assert config.compute_type == "int8"
+    assert config.compute_type == "float32"
     assert config.language == "vi"
 
 
@@ -57,6 +59,30 @@ def test_transcribe_returns_contract_and_vietnamese_options(tmp_path: Path) -> N
     assert fake_model.calls[0][1]["language"] == "vi"
     assert fake_model.calls[0][1]["task"] == "transcribe"
     assert fake_model.calls[0][1]["beam_size"] == 5
+
+
+def test_transformers_backend_config_uses_model_name_as_source() -> None:
+    config = WhisperConfig(
+        backend="transformers",
+        model_name="vinai/PhoWhisper-small",
+        model_path=None,
+        compute_type="float32",
+        local_files_only=False,
+    )
+
+    assert config.model_source == "vinai/PhoWhisper-small"
+    config.validate()
+
+
+def test_unknown_backend_is_rejected() -> None:
+    config = WhisperConfig(backend="unknown")
+
+    try:
+        config.validate()
+    except ValueError as exc:
+        assert "Unsupported ASR backend" in str(exc)
+    else:
+        raise AssertionError("Expected unsupported backend to be rejected")
 
 
 def test_missing_audio_is_reported_without_loading_model(tmp_path: Path) -> None:

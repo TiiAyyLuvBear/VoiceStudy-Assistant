@@ -4,6 +4,9 @@ CREATE TABLE IF NOT EXISTS users (
     user_id TEXT PRIMARY KEY,
     name TEXT NOT NULL UNIQUE,
     embedding_path TEXT,
+    secret_phrase_hash TEXT,
+    secret_phrase_salt TEXT,
+    secret_phrase_updated_at TEXT,
     created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 

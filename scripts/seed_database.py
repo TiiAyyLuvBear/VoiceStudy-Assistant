@@ -11,16 +11,28 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from src.database.database import create_database
 from src.database.user_repository import create_user, get_user
+from src.security.secret_phrase import hash_secret_phrase
 from src.tasks.note_tasks import add_note
 from src.tasks.schedule_tasks import add_schedule, get_schedules
 
 
 def seed_database(database_path: str | Path | None = None) -> None:
     create_database(database_path)
-    demo_users = (("user_001", "Anh"), ("user_002", "Lộc"))
-    for user_id, name in demo_users:
+    demo_users = (
+        ("user_001", "Anh", "hoa sen xanh"),
+        ("user_002", "Lộc", "mat trang bac"),
+    )
+    for user_id, name, secret_phrase in demo_users:
         if not get_user(user_id, database_path):
-            create_user(user_id, name, f"models/application/user_embeddings/{user_id}.npy", database_path)
+            secret_hash, secret_salt = hash_secret_phrase(secret_phrase)
+            create_user(
+                user_id,
+                name,
+                f"models/application/user_embeddings/{user_id}.npy",
+                database_path,
+                secret_phrase_hash=secret_hash,
+                secret_phrase_salt=secret_salt,
+            )
 
     if not get_schedules("user_001", database_path=database_path):
         add_schedule("user_001", "Học Thống kê", "2026-08-04", "08:00", "Phòng B201", database_path)

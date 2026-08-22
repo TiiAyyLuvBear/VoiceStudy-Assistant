@@ -24,6 +24,20 @@ def test_complete_add_schedule_can_write_database() -> None:
     assert can_write_database("ADD_SCHEDULE", entities)
 
 
+def test_add_private_note_requires_content() -> None:
+    assert get_missing_fields("ADD_PRIVATE_NOTE", {}) == ["content"]
+    assert not can_write_database("ADD_PRIVATE_NOTE", {})
+    assert get_missing_fields("ADD_PRIVATE_NOTE", {"content": "secret"}) == []
+    assert can_write_database("ADD_PRIVATE_NOTE", {"content": "secret"})
+
+
+def test_add_note_requires_content() -> None:
+    assert get_missing_fields("ADD_NOTE", {}) == ["content"]
+    assert not can_write_database("ADD_NOTE", {})
+    assert get_missing_fields("ADD_NOTE", {"content": "milk"}) == []
+    assert can_write_database("ADD_NOTE", {"content": "milk"})
+
+
 def test_out_of_scope_never_executes() -> None:
     assert not can_execute_command("OUT_OF_SCOPE", [])
     assert not can_write_database("OUT_OF_SCOPE", {})

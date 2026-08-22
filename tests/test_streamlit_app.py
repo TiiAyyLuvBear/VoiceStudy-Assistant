@@ -5,7 +5,7 @@ from pathlib import Path
 from streamlit.testing.v1 import AppTest
 
 
-APP = Path("app/main.py")
+APP = Path(__file__).resolve().parents[1] / "app/main.py"
 
 
 def _app() -> AppTest:
@@ -27,7 +27,7 @@ def test_enrollment_page_smoke() -> None:
     app.sidebar.radio[0].set_value("Speaker Enrollment").run()
     assert not app.exception
     assert app.title[0].value == "Speaker Enrollment"
-    assert len(app.text_input) == 2
+    assert len(app.text_input) == 3
 
 
 def test_user_management_page_smoke() -> None:

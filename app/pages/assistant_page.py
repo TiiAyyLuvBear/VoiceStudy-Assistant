@@ -10,15 +10,15 @@ from src.tts.text_to_speech import synthesize_vietnamese
 
 def render_assistant_page() -> None:
     st.title("Voice Assistant")
-    st.caption("WAV → ASR → NLU → Application SID/SV → database → TTS")
+    st.caption("WAV/FLAC → ASR → NLU → Application SID/SV → database → TTS")
     recorded = st.audio_input("Thu âm WAV")
-    uploaded = st.file_uploader("Hoặc tải WAV", type=["wav"])
+    uploaded = st.file_uploader("Hoặc tải WAV/FLAC", type=["wav", "flac"])
     audio = recorded or uploaded
     if audio:
         st.audio(audio)
     if st.button("Xử lý", type="primary"):
         if audio is None:
-            st.error("Hãy thu âm hoặc tải file WAV.")
+            st.error("Hãy thu âm hoặc tải file WAV/FLAC.")
             return
         try:
             with st.spinner("Đang xử lý audio..."):

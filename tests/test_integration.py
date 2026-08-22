@@ -6,7 +6,13 @@ import pytest
 
 from src.database.user_repository import create_user
 from src.pipeline.orchestrator import process_audio_request
-from src.tasks.note_tasks import add_note
+from src.security.secret_phrase import (
+    extract_secret_phrase,
+    hash_secret_phrase,
+    verify_secret_phrase,
+    verify_transcript_secret_phrase,
+)
+from src.tasks.note_tasks import add_note, get_private_notes
 from src.tasks.schedule_tasks import add_schedule, get_schedules
 
 
@@ -28,7 +34,7 @@ def _pipeline(
             "entities": entities or {},
             "missing_fields": missing_fields or [],
             "can_execute": not missing_fields,
-            "can_write_database": intent == "ADD_SCHEDULE" and not missing_fields,
+            "can_write_database": intent in {"ADD_SCHEDULE", "ADD_PRIVATE_NOTE"} and not missing_fields,
             "error": None,
         }
     return run
@@ -72,8 +78,22 @@ def system(tmp_path: Path):
     database = tmp_path / "system.db"
     audio = tmp_path / "command.wav"
     audio.write_bytes(b"audio")
-    create_user("user_001", "User One", database_path=database)
-    create_user("user_002", "User Two", database_path=database)
+    secret_hash, secret_salt = hash_secret_phrase("hoa sen xanh")
+    create_user(
+        "user_001",
+        "User One",
+        database_path=database,
+        secret_phrase_hash=secret_hash,
+        secret_phrase_salt=secret_salt,
+    )
+    secret_hash, secret_salt = hash_secret_phrase("mat trang bac")
+    create_user(
+        "user_002",
+        "User Two",
+        database_path=database,
+        secret_phrase_hash=secret_hash,
+        secret_phrase_salt=secret_salt,
+    )
     add_schedule("user_001", "Lịch user 1", "2026-08-13", "08:00", database_path=database)
     add_schedule("user_002", "Lịch user 2", "2026-08-13", "09:00", database_path=database)
     add_note("user_001", "Ghi chú bí mật user 1", database_path=database)
@@ -182,13 +202,62 @@ def test_private_note_requires_successful_sid_and_sv(system) -> None:
     result = process_audio_request(
         audio,
         database_path=database,
-        asr_nlu_runner=_pipeline("VIEW_PRIVATE_NOTE"),
+        asr_nlu_runner=_pipeline("VIEW_PRIVATE_NOTE", transcript="mở ghi chú riêng tư mật khẩu hoa sen xanh"),
         identifier=_sid("user_001"),
         verifier=_sv(True),
     )
     assert result["speaker"]["verified"] is True
+    assert result["speaker"]["secret_phrase_verified"] is True
     assert "Ghi chú bí mật user 1" in result["response"]
     assert "Ghi chú bí mật user 2" not in result["response"]
+
+
+def test_private_note_accepts_separate_secret_audio(system, tmp_path: Path) -> None:
+    audio, database = system
+    secret_audio = tmp_path / "secret.wav"
+    secret_audio.write_bytes(b"secret-audio")
+    result = process_audio_request(
+        audio,
+        secret_audio_path=secret_audio,
+        database_path=database,
+        asr_nlu_runner=_pipeline("VIEW_PRIVATE_NOTE", transcript="mở ghi chú riêng tư"),
+        secret_transcriber=lambda path, config_path: {
+            "success": True,
+            "transcript": "hoa sen xanh",
+            "model": "test-asr",
+            "language": "vi",
+            "latency_ms": 1.0,
+            "error": None,
+        },
+        identifier=_sid("user_001"),
+        verifier=_sv(True),
+    )
+    assert result["speaker"]["secret_phrase_verified"] is True
+    assert result["speaker"]["verified"] is True
+    assert "Ghi chú bí mật user 1" in result["response"]
+
+
+def test_add_private_note_writes_after_secret_and_sv(system) -> None:
+    audio, database = system
+    result = process_audio_request(
+        audio,
+        database_path=database,
+        asr_nlu_runner=_pipeline(
+            "ADD_PRIVATE_NOTE",
+            {"content": "mã wifi ở trong tủ"},
+            transcript="thêm ghi chú riêng tư mã wifi ở trong tủ mật khẩu hoa sen xanh",
+        ),
+        identifier=_sid("user_001"),
+        verifier=_sv(True),
+    )
+
+    assert result["error"] is None
+    assert result["speaker"]["secret_phrase_verified"] is True
+    assert "Đã thêm ghi chú riêng tư" in result["response"]
+    user_one_notes = get_private_notes("user_001", database_path=database)
+    user_two_notes = get_private_notes("user_002", database_path=database)
+    assert any(row["content"] == "mã wifi ở trong tủ" for row in user_one_notes)
+    assert not any(row["content"] == "mã wifi ở trong tủ" for row in user_two_notes)
 
 
 def test_private_note_impostor_is_rejected_before_database(system) -> None:
@@ -196,13 +265,13 @@ def test_private_note_impostor_is_rejected_before_database(system) -> None:
     result = process_audio_request(
         audio,
         database_path=database,
-        asr_nlu_runner=_pipeline("VIEW_PRIVATE_NOTE"),
+        asr_nlu_runner=_pipeline("VIEW_PRIVATE_NOTE", transcript="mở ghi chú riêng tư mật khẩu sai hoàn toàn"),
         identifier=_sid("user_002"),
         verifier=_sv(False),
     )
-    assert result["error"] == "VERIFICATION_FAILED"
-    assert result["speaker"]["verified"] is False
-    assert "bí mật" not in result["response"]
+    assert result["error"] == "SECRET_PHRASE_FAILED"
+    assert result["speaker"]["secret_phrase_verified"] is False
+    assert "Ghi chú" not in result["response"]
     assert "database" not in result["stage_latency_ms"]
 
 
@@ -233,7 +302,7 @@ def test_sid_and_sv_exceptions_are_stable(system) -> None:
     sv_error = process_audio_request(
         audio,
         database_path=database,
-        asr_nlu_runner=_pipeline("VIEW_PRIVATE_NOTE"),
+        asr_nlu_runner=_pipeline("VIEW_PRIVATE_NOTE", transcript="mở ghi chú riêng tư mật khẩu hoa sen xanh"),
         identifier=_sid(),
         verifier=broken,
     )
@@ -241,4 +310,36 @@ def test_sid_and_sv_exceptions_are_stable(system) -> None:
     assert sid_error["error"].startswith("SID_ERROR")
     assert sv_error["success"] is False
     assert sv_error["error"].startswith("SV_ERROR")
+
+
+def test_secret_phrase_hash_and_transcript_verification(tmp_path: Path) -> None:
+    digest, salt = hash_secret_phrase("Hoa Sen Xanh")
+    assert verify_secret_phrase("hoa sen xanh", digest, salt) is True
+    assert verify_secret_phrase("hoa sen đỏ", digest, salt) is False
+    assert extract_secret_phrase("mở ghi chú riêng tư mật khẩu hoa sen xanh") == "hoa sen xanh"
+
+    database = tmp_path / "users.db"
+    create_user(
+        "user_003",
+        "Secret User",
+        database_path=database,
+        secret_phrase_hash=digest,
+        secret_phrase_salt=salt,
+    )
+
+    ok, error = verify_transcript_secret_phrase(
+        "user_003",
+        "mở ghi chú riêng tư mật khẩu hoa sen xanh",
+        database_path=database,
+    )
+    assert ok is True
+    assert error is None
+
+    ok, error = verify_transcript_secret_phrase(
+        "user_003",
+        "mở ghi chú riêng tư mật khẩu sai hoàn toàn",
+        database_path=database,
+    )
+    assert ok is False
+    assert error == "SECRET_PHRASE_FAILED"
 

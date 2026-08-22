@@ -17,9 +17,9 @@ from src.speaker.application import enroll_user
 MANIFEST = PROJECT_ROOT / "data/commands/command_audio_manifest.csv"
 OUTPUT = PROJECT_ROOT / "experiments/system/demo_enrollment_data.csv"
 SPEAKER_TO_USER = {
-    "cmdspk01": ("user_001", "Application User 001"),
-    "cmdspk02": ("user_002", "Application User 002"),
-    "cmdspk03": ("user_003", "Application User 003"),
+    "cmdspk01": ("user_001", "Application User 001", "hoa sen xanh"),
+    "cmdspk02": ("user_002", "Application User 002", "mat trang bac"),
+    "cmdspk03": ("user_003", "Application User 003", "sao vang moi"),
 }
 
 
@@ -47,7 +47,7 @@ def _load_validation_audio() -> dict[str, list[dict[str, str]]]:
 def prepare_demo_enrollments() -> list[dict]:
     audio_by_speaker = _load_validation_audio()
     output_rows: list[dict] = []
-    for speaker_id, (user_id, name) in SPEAKER_TO_USER.items():
+    for speaker_id, (user_id, name, secret_phrase) in SPEAKER_TO_USER.items():
         rows = audio_by_speaker[speaker_id]
         enrollment_rows = rows[:5]
         heldout_rows = rows[5:10]
@@ -55,6 +55,7 @@ def prepare_demo_enrollments() -> list[dict]:
             user_id,
             name,
             [str(PROJECT_ROOT / row["audio_path"]) for row in enrollment_rows],
+            secret_phrase=secret_phrase,
         )
         if not result["success"]:
             raise RuntimeError(f"Enrollment failed for {user_id}: {result['error']}")

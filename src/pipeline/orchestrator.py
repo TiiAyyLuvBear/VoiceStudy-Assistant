@@ -8,10 +8,15 @@ import time
 
 from src.audio.source import resolve_audio_path
 from src.database.user_repository import get_user
+from src.asr.whisper_model import transcribe_audio
+from src.security.secret_phrase import (
+    verify_spoken_secret_phrase,
+    verify_transcript_secret_phrase,
+)
 from src.pipeline.asr_nlu import run_asr_nlu_pipeline
 from src.security.access_policy import PUBLIC, REJECT, SID, SID_AND_SV, get_access_policy
 from src.speaker.application import identify_application_user, verify_speaker
-from src.tasks.note_tasks import get_private_notes
+from src.tasks.note_tasks import add_note, get_private_notes
 from src.tasks.schedule_tasks import add_schedule, get_schedules
 from src.utils.request_logging import log_audio_request
 
@@ -19,10 +24,15 @@ from src.utils.request_logging import log_audio_request
 def _end_to_end_result(**values: object) -> dict:
     result = {
         "success": True, "transcript": "", "normalized_transcript": "",
+        "command_text": "", "asr_postprocessed": False,
+        "detected_command_text": None, "normalized_command_text": None,
+        "raw_content": None, "normalized_content": None, "final_content": None,
+        "command_match_score": None, "requires_user_confirmation": False,
         "intent": "OUT_OF_SCOPE", "entities": {}, "missing_fields": [],
         "policy": REJECT, "speaker": {"candidate_user_id": None, "similarity": None,
         "cosine_similarity": None, "unknown_threshold": None, "status": None,
-        "identified": None, "verified": None, "verification_threshold": None,
+        "identified": None, "verified": None, "secret_phrase_verified": None,
+        "verification_threshold": None,
         "centroid_path": None, "sid_latency_ms": None, "sv_latency_ms": None},
         "latency_ms": 0.0, "stage_latency_ms": {},
         "response": "", "error": None,
@@ -104,10 +114,12 @@ def _authenticate_audio(
 def process_audio_request(
     audio_path: str | Path,
     *,
+    secret_audio_path: str | Path | None = None,
     database_path: str | Path | None = None,
     config_path: str | Path = "config.yaml",
     reference_date: str | None = None,
     asr_nlu_runner=run_asr_nlu_pipeline,
+    secret_transcriber=transcribe_audio,
     identifier=identify_application_user,
     verifier=verify_speaker,
 ) -> dict:
@@ -123,28 +135,20 @@ def process_audio_request(
         "status": None,
         "identified": None,
         "verified": None,
+        "secret_phrase_verified": None,
     }
     try:
-        if identifier is identify_application_user and verifier is verify_speaker and asr_nlu_runner is run_asr_nlu_pipeline:
-            resolved_audio_path = resolve_audio_path(audio_path)
-        else:
-            resolved_audio_path = Path(audio_path)
+        resolved_audio_path = resolve_audio_path(audio_path)
     except Exception as error:
-        return _finish(
-            started_at,
-            success=False,
-            error=str(error),
-            response="Không tìm thấy audio. Vui lòng thử lại.",
-        )
-    speaker, authentication_error = _authenticate_audio(
-        resolved_audio_path,
-        database_path=database_path,
-        config_path=config_path,
-        identifier=identifier,
-        verifier=verifier,
-        require_verification=False,
-    )
-
+        if identifier is not identify_application_user or verifier is not verify_speaker or asr_nlu_runner is not run_asr_nlu_pipeline:
+            resolved_audio_path = Path(audio_path)
+        else:
+            return _finish(
+                started_at,
+                success=False,
+                error=str(error),
+                response="Không tìm thấy audio. Vui lòng thử lại.",
+            )
     pipeline = asr_nlu_runner(
         resolved_audio_path, reference_date=reference_date, config_path=config_path,
     )
@@ -169,28 +173,48 @@ def process_audio_request(
     intent = pipeline["intent"]
     entities = pipeline["entities"]
     policy = get_access_policy(intent)
-    common = {
-        "transcript": pipeline["transcript"],
-        "normalized_transcript": pipeline["normalized_transcript"],
-        "intent": intent, "entities": entities,
-        "missing_fields": pipeline["missing_fields"], "policy": policy,
-        "speaker": speaker,
-    }
+    def common_fields(current_speaker: dict) -> dict:
+        return {
+            "transcript": pipeline["transcript"],
+            "normalized_transcript": pipeline["normalized_transcript"],
+            "command_text": pipeline.get("command_text", pipeline["transcript"]),
+            "asr_postprocessed": bool(pipeline.get("asr_postprocessed", False)),
+            "detected_command_text": pipeline.get("detected_command_text"),
+            "normalized_command_text": pipeline.get("normalized_command_text"),
+            "raw_content": pipeline.get("raw_content"),
+            "normalized_content": pipeline.get("normalized_content"),
+            "final_content": pipeline.get("final_content"),
+            "command_match_score": pipeline.get("command_match_score"),
+            "requires_user_confirmation": bool(pipeline.get("requires_user_confirmation", False)),
+            "intent": intent, "entities": entities,
+            "missing_fields": pipeline["missing_fields"], "policy": policy,
+            "speaker": current_speaker,
+        }
     if policy == PUBLIC:
         return _finish(
             started_at,
-            **common, response=f"Bây giờ là {datetime.now().strftime('%H:%M')}."
+            **common_fields(speaker), response=f"Bây giờ là {datetime.now().strftime('%H:%M')}."
         )
     if policy == REJECT:
         return _finish(
             started_at,
-            **common,
+            **common_fields(speaker),
             response=(
                 "Câu lệnh ngoài phạm vi. Hệ thống hỗ trợ xem giờ, xem hoặc "
-                "thêm lịch và xem ghi chú riêng tư."
+                "thêm lịch, thêm ghi chú và xem ghi chú riêng tư."
             ),
             error="OUT_OF_SCOPE",
         )
+
+    speaker, authentication_error = _authenticate_audio(
+        resolved_audio_path,
+        database_path=database_path,
+        config_path=config_path,
+        identifier=identifier,
+        verifier=verifier,
+        require_verification=False,
+    )
+    common = common_fields(speaker)
 
     if authentication_error is not None:
         verification_failed = bool(speaker.get("identified"))
@@ -209,6 +233,33 @@ def process_audio_request(
 
     if policy == SID_AND_SV:
         candidate_user_id = speaker["candidate_user_id"]
+        if secret_audio_path is not None:
+            secret_asr = secret_transcriber(secret_audio_path, config_path)
+            if not secret_asr["success"]:
+                secret_ok, secret_error = False, "SECRET_PHRASE_ASR_FAILED"
+            else:
+                speaker["secret_phrase_transcript"] = secret_asr["transcript"]
+                secret_ok, secret_error = verify_spoken_secret_phrase(
+                    candidate_user_id,
+                    secret_asr["transcript"],
+                    database_path=database_path,
+                )
+        else:
+            secret_ok, secret_error = verify_transcript_secret_phrase(
+                candidate_user_id,
+                pipeline["transcript"],
+                database_path=database_path,
+            )
+        speaker["secret_phrase_verified"] = secret_ok
+        if not secret_ok:
+            speaker["error"] = secret_error
+            return _finish(
+                started_at,
+                **common,
+                success=False,
+                error=secret_error,
+                response="Xác minh câu lệnh bí mật thất bại.",
+            )
         try:
             sv = verifier(
                 resolved_audio_path,
@@ -258,6 +309,24 @@ def process_audio_request(
             database_path=database_path,
         )
         response = f"Đã thêm lịch {schedule['title']} lúc {schedule['time']}, {schedule['date']}."
+    elif intent == "ADD_PRIVATE_NOTE":
+        if pipeline["missing_fields"] or not entities.get("content"):
+            return _end_to_end_result(
+                **common,
+                error="MISSING_FIELDS",
+                response="Thiếu nội dung để thêm ghi chú riêng tư.",
+            )
+        note = add_note(candidate_user_id, entities["content"], True, database_path)
+        response = f"Đã thêm ghi chú riêng tư: {note['content']}"
+    elif intent == "ADD_NOTE":
+        if pipeline["missing_fields"] or not entities.get("content"):
+            return _end_to_end_result(
+                **common,
+                error="MISSING_FIELDS",
+                response="Thiếu nội dung để thêm ghi chú.",
+            )
+        note = add_note(candidate_user_id, entities["content"], False, database_path)
+        response = f"Đã thêm ghi chú: {note['content']}"
     else:  # VIEW_PRIVATE_NOTE after successful SV
         notes = get_private_notes(candidate_user_id, database_path)
         response = "Chưa có ghi chú riêng tư." if not notes else f"Ghi chú gần nhất: {notes[0]['content']}"
@@ -268,6 +337,10 @@ def _mock_parse(transcript: str) -> tuple[str, dict]:
     text = transcript.lower().strip()
     if any(word in text for word in ("mấy giờ", "giờ hiện tại", "bây giờ")):
         return "GET_TIME", {}
+    if any(word in text for word in ("thêm ghi chú riêng tư", "tạo ghi chú riêng tư", "lưu ghi chú riêng tư", "ghi note riêng tư")):
+        return "ADD_PRIVATE_NOTE", {"content": "ghi chú mẫu"}
+    if any(word in text for word in ("thêm ghi chú", "tạo ghi chú", "lưu ghi chú", "ghi note")):
+        return "ADD_NOTE", {"content": "ghi chú mẫu"}
     if any(word in text for word in ("ghi chú", "bảo mật")):
         return "VIEW_PRIVATE_NOTE", {}
     if any(word in text for word in ("thêm lịch", "tạo lịch")):
@@ -321,6 +394,18 @@ def process_request(
     elif intent == "VIEW_PRIVATE_NOTE":
         notes = get_private_notes(candidate_user_id, database_path)
         response = "Chưa có ghi chú riêng tư." if not notes else f"Ghi chú gần nhất: {notes[0]['content']}"
+    elif intent == "ADD_PRIVATE_NOTE":
+        if missing_fields or not entities.get("content"):
+            response = "Thiếu nội dung để thêm ghi chú riêng tư."
+        else:
+            note = add_note(candidate_user_id, entities["content"], True, database_path)
+            response = f"Đã thêm ghi chú riêng tư: {note['content']}"
+    elif intent == "ADD_NOTE":
+        if missing_fields or not entities.get("content"):
+            response = "Thiếu nội dung để thêm ghi chú."
+        else:
+            note = add_note(candidate_user_id, entities["content"], False, database_path)
+            response = f"Đã thêm ghi chú: {note['content']}"
     elif intent == "ADD_SCHEDULE":
         if missing_fields or not all(entities.get(key) for key in ("title", "date", "time")):
             response = "Thiếu thông tin để thêm lịch: tiêu đề, ngày và giờ."

@@ -30,3 +30,14 @@ def get_schedules(user_id: str, date: str | None = None, database_path: str | Pa
     query += " ORDER BY date, time, schedule_id"
     with closing(get_connection(database_path)) as connection:
         return [dict(row) for row in connection.execute(query, values)]
+
+
+def delete_schedule(user_id: str, schedule_id: int, database_path: str | Path | None = None) -> bool:
+    create_database(database_path)
+    with closing(get_connection(database_path)) as connection:
+        with connection:
+            result = connection.execute(
+                "DELETE FROM schedules WHERE user_id = ? AND schedule_id = ?",
+                (user_id, int(schedule_id)),
+            )
+    return result.rowcount == 1

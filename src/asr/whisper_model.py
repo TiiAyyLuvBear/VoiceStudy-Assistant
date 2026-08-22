@@ -1,4 +1,4 @@
-"""Whisper ASR backend hỗ trợ model CTranslate2 cục bộ và CPU/CUDA."""
+"""Whisper ASR backend hỗ trợ faster-whisper và Transformers/PhoWhisper."""
 
 from __future__ import annotations
 
@@ -10,9 +10,11 @@ import time
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
+from types import SimpleNamespace
 from typing import Any, Mapping, Protocol, TypedDict
 
 from src.utils.config import load_yaml_mapping, resolve_path
+from src.utils.speechbrain_lazy import remove_speechbrain_lazy_modules, restore_modules
 
 
 class ASRResult(TypedDict):
@@ -38,6 +40,7 @@ class _WhisperBackend(Protocol):
 class WhisperConfig:
     """Cấu hình inference cần thiết, được đọc từ ``config.yaml``."""
 
+    backend: str = "faster-whisper"
     model_size: str = "small"
     model_name: str = "whisper-small"
     model_path: Path | None = None
@@ -62,7 +65,7 @@ class WhisperConfig:
         base_dir: Path,
     ) -> "WhisperConfig":
         backend = str(values.get("backend", "faster-whisper"))
-        if backend != "faster-whisper":
+        if backend not in {"faster-whisper", "transformers"}:
             raise ValueError(f"Unsupported ASR backend: {backend}")
 
         model_value = values.get("model_path")
@@ -76,6 +79,7 @@ class WhisperConfig:
             download_root = resolve_path(str(download_value), base_dir).resolve()
 
         config = cls(
+            backend=backend,
             model_size=str(values.get("model_size", "small")),
             model_name=str(values.get("model_name", "whisper-small")),
             model_path=model_path,
@@ -98,8 +102,10 @@ class WhisperConfig:
         return config
 
     def validate(self) -> None:
+        if self.backend not in {"faster-whisper", "transformers"}:
+            raise ValueError(f"Unsupported ASR backend: {self.backend}")
         if self.model_size != "small":
-            raise ValueError("Week 1 ASR must use the multilingual Whisper Small model")
+            raise ValueError("ASR must use the small model class in this profile")
         if self.device not in {"cpu", "cuda", "auto"}:
             raise ValueError("ASR device must be one of: cpu, cuda, auto")
         if self.language != "vi":
@@ -108,7 +114,7 @@ class WhisperConfig:
             raise ValueError("ASR task must be 'transcribe', not translation")
         if self.beam_size < 1:
             raise ValueError("beam_size must be at least 1")
-        if self.model_path is not None:
+        if self.model_path is not None and self.backend == "faster-whisper":
             if not self.model_path.is_dir():
                 raise ValueError(
                     f"ASR model_path must be an existing directory: {self.model_path}"
@@ -127,11 +133,116 @@ class WhisperConfig:
 
     @property
     def model_source(self) -> str:
-        """Nguồn model thật truyền cho faster-whisper."""
+        """Nguồn model thật truyền cho backend ASR."""
 
         if self.model_path is not None:
             return str(self.model_path)
+        if self.backend == "transformers":
+            return self.model_name
         return self.model_size
+
+
+class TransformersWhisperBackend:
+    """Transformers ASR adapter compatible with the faster-whisper boundary."""
+
+    def __init__(self, config: WhisperConfig) -> None:
+        torch, AutoModelForSpeechSeq2Seq, AutoProcessor = import_transformers_asr()
+
+        self.config = config
+        self._torch = torch
+        self._sample_rate = 16000
+        self.device = self._resolve_device(config.device)
+        kwargs: dict[str, Any] = {"local_files_only": config.local_files_only}
+        if config.download_root is not None:
+            config.download_root.mkdir(parents=True, exist_ok=True)
+            kwargs["cache_dir"] = str(config.download_root)
+        self.processor = AutoProcessor.from_pretrained(config.model_source, **kwargs)
+        self.model = AutoModelForSpeechSeq2Seq.from_pretrained(
+            config.model_source,
+            **kwargs,
+        )
+        self.model.to(self.device)
+        self.model.eval()
+
+    def _resolve_device(self, requested: str):
+        torch = self._torch
+        if requested == "cuda" and not torch.cuda.is_available():
+            raise RuntimeError("ASR device cuda requested but CUDA is not available")
+        if requested == "auto":
+            return torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        return torch.device(requested)
+
+    def _read_audio(self, audio: str):
+        try:
+            import numpy as np
+            import soundfile as sf
+            from scipy.signal import resample_poly
+        except ImportError as exc:
+            raise RuntimeError(
+                "soundfile, scipy, and numpy are required for Transformers ASR"
+            ) from exc
+
+        waveform, sample_rate = sf.read(audio, dtype="float32", always_2d=True)
+        waveform = waveform.mean(axis=1)
+        if sample_rate != self._sample_rate:
+            waveform = resample_poly(
+                waveform,
+                self._sample_rate,
+                int(sample_rate),
+            ).astype(np.float32)
+        return waveform
+
+    def _forced_decoder_ids(self, language: str, task: str):
+        getter = getattr(self.processor, "get_decoder_prompt_ids", None)
+        if getter is None:
+            return None
+        try:
+            return getter(language=language, task=task)
+        except Exception:
+            return None
+
+    def transcribe(self, audio: str, **kwargs: Any) -> tuple[Any, Any]:
+        waveform = self._read_audio(audio)
+        inputs = self.processor(
+            waveform,
+            sampling_rate=self._sample_rate,
+            return_tensors="pt",
+        )
+        input_features = inputs.input_features.to(self.device)
+        generate_kwargs: dict[str, Any] = {
+            "num_beams": int(kwargs.get("beam_size", self.config.beam_size)),
+        }
+        forced_decoder_ids = self._forced_decoder_ids(
+            str(kwargs.get("language", self.config.language)),
+            str(kwargs.get("task", self.config.task)),
+        )
+        if forced_decoder_ids is not None:
+            generate_kwargs["forced_decoder_ids"] = forced_decoder_ids
+        with self._torch.inference_mode():
+            generated_ids = self.model.generate(input_features, **generate_kwargs)
+        text = self.processor.batch_decode(generated_ids, skip_special_tokens=True)[0]
+        return (iter([SimpleNamespace(text=text)]), object())
+
+
+def import_transformers_asr() -> tuple[Any, Any, Any]:
+    """Import Transformers ASR dependencies before SpeechBrain lazy modules."""
+
+    removed_lazy_modules = remove_speechbrain_lazy_modules()
+    try:
+        import torch
+        from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor
+    except ModuleNotFoundError as exc:
+        raise RuntimeError(
+            "transformers and torch are required for PhoWhisper; "
+            "run: pip install -r requirements.txt"
+        ) from exc
+    except ImportError as exc:
+        raise RuntimeError(
+            f"Unable to import Transformers/PyTorch for PhoWhisper: {exc}"
+        ) from exc
+    finally:
+        restore_modules(removed_lazy_modules)
+    return torch, AutoModelForSpeechSeq2Seq, AutoProcessor
 
 
 def load_whisper_config(config_path: str | Path = "config.yaml") -> WhisperConfig:
@@ -160,6 +271,9 @@ class WhisperASR:
         self._model_lock = threading.Lock()
 
     def _create_model(self) -> _WhisperBackend:
+        if self.config.backend == "transformers":
+            return TransformersWhisperBackend(self.config)
+
         try:
             from faster_whisper import WhisperModel
         except ImportError as exc:

@@ -1,7 +1,7 @@
 ﻿test_case_id,category,scenario,intent,actual_policy,actual_error,sid_calls,sv_calls,database_integrity_pass,response_scope_pass,latency_ms,passed
-SYS025,REJECT,music,OUT_OF_SCOPE,REJECT,OUT_OF_SCOPE,0,0,true,true,0.742700,true
-SYS026,REJECT,weather,OUT_OF_SCOPE,REJECT,OUT_OF_SCOPE,0,0,true,true,0.813200,true
-SYS027,REJECT,phone,OUT_OF_SCOPE,REJECT,OUT_OF_SCOPE,0,0,true,true,1.588500,true
-SYS028,ERROR,empty_transcript_oos,OUT_OF_SCOPE,REJECT,EMPTY_TRANSCRIPT,0,0,true,true,1.956300,true
-SYS029,ERROR,asr_failure,OUT_OF_SCOPE,REJECT,ASR_FAILED,0,0,true,true,1.523800,true
-SYS030,REJECT,unsupported,OUT_OF_SCOPE,REJECT,OUT_OF_SCOPE,0,0,true,true,1.326500,true
+SYS025,REJECT,music,OUT_OF_SCOPE,REJECT,OUT_OF_SCOPE,0,0,true,true,0.264000,true
+SYS026,REJECT,weather,OUT_OF_SCOPE,REJECT,OUT_OF_SCOPE,0,0,true,true,0.250800,true
+SYS027,REJECT,phone,OUT_OF_SCOPE,REJECT,OUT_OF_SCOPE,0,0,true,true,0.241100,true
+SYS028,ERROR,empty_transcript_oos,OUT_OF_SCOPE,REJECT,EMPTY_TRANSCRIPT,0,0,true,true,0.526800,true
+SYS029,ERROR,asr_failure,OUT_OF_SCOPE,REJECT,ASR_FAILED,0,0,true,true,0.311700,true
+SYS030,REJECT,unsupported,OUT_OF_SCOPE,REJECT,OUT_OF_SCOPE,0,0,true,true,0.261300,true

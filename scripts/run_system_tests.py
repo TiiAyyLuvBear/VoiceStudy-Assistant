@@ -17,10 +17,12 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from src.database.user_repository import create_user
 from src.pipeline.orchestrator import process_audio_request
+from src.security.secret_phrase import hash_secret_phrase
 from src.speaker.application import enroll_user, identify_application_user
 from src.tasks.note_tasks import add_note
 from src.tasks.schedule_tasks import add_schedule, get_schedules
 from src.utils.files import sha256_file
+from src.utils.request_logging import RequestLogger
 
 
 OUTPUT_DIR = PROJECT_ROOT / "experiments/system"
@@ -70,6 +72,8 @@ def _pipeline(intent: str, scenario: str):
     entities: dict[str, str] = {}
     missing: list[str] = []
     transcript = f"system command {scenario}"
+    if intent == "VIEW_PRIVATE_NOTE":
+        transcript = f"system command {scenario} mật khẩu hoa sen xanh"
     if intent == "VIEW_SCHEDULE" and scenario == "view_by_date":
         entities["date"] = "2026-08-13"
     if scenario in {"time_with_user_claim", "view_claim_other", "add_claim_other", "private_claim_other"}:
@@ -84,7 +88,7 @@ def _pipeline(intent: str, scenario: str):
         transcript = ""
 
     def run(*args, **kwargs):
-        if scenario == "asr_failure":
+        if scenario in {"asr_failure", "bad_audio_view"}:
             return {
                 "success": False,
                 "transcript": "",
@@ -95,7 +99,7 @@ def _pipeline(intent: str, scenario: str):
                 "intent": "OUT_OF_SCOPE",
                 "entities": {},
                 "missing_fields": [],
-                "error": "ASR_FAILED",
+                "error": "ASR_FAILED" if scenario == "asr_failure" else "AUDIO_NOT_FOUND",
             }
         return {
             "success": True,
@@ -172,8 +176,22 @@ def _error_matches(actual: str | None, expected: str) -> bool:
 
 
 def _seed(database: Path) -> None:
-    create_user("user_001", "System User One", database_path=database)
-    create_user("user_002", "System User Two", database_path=database)
+    secret_hash, secret_salt = hash_secret_phrase("hoa sen xanh")
+    create_user(
+        "user_001",
+        "System User One",
+        database_path=database,
+        secret_phrase_hash=secret_hash,
+        secret_phrase_salt=secret_salt,
+    )
+    secret_hash, secret_salt = hash_secret_phrase("mat trang bac")
+    create_user(
+        "user_002",
+        "System User Two",
+        database_path=database,
+        secret_phrase_hash=secret_hash,
+        secret_phrase_salt=secret_salt,
+    )
     add_schedule("user_001", "Lịch user 1", "2026-08-13", "08:00", database_path=database)
     add_schedule("user_002", "Lịch user 2", "2026-08-13", "09:00", database_path=database)
     add_note("user_001", "Ghi chú user 1", database_path=database)
@@ -361,7 +379,7 @@ def run_dynamic_enrollment_test(output_dir: Path = OUTPUT_DIR) -> dict:
         audio_paths = []
         for index in range(5):
             path = root / f"user004-enroll-{index}.wav"
-            path.write_bytes(b"independent-enrollment-audio")
+            path.write_bytes(f"independent-enrollment-audio-{index}".encode("ascii"))
             audio_paths.append(path)
         query = root / "user004-heldout-query.wav"
         query.write_bytes(b"independent-heldout-query")
@@ -375,6 +393,7 @@ def run_dynamic_enrollment_test(output_dir: Path = OUTPUT_DIR) -> dict:
             "user_004",
             "Dynamic User 004",
             audio_paths,
+            secret_phrase="hoa sen xanh an toàn",
             database_path=database,
             config_path=config,
             extractor=_DynamicExtractor(),
@@ -411,6 +430,7 @@ def run_dynamic_enrollment_test(output_dir: Path = OUTPUT_DIR) -> dict:
             asr_nlu_runner=_pipeline("VIEW_SCHEDULE", "dynamic_user_004"),
             identifier=identifier,
         )
+        RequestLogger.clear_instances()
         centroid_value = Path(enrollment.get("centroid_path") or "")
         centroid_created = (
             centroid_value

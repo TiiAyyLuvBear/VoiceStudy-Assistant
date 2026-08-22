@@ -171,3 +171,167 @@
   CTranslate2 files are missing.
 - Deploy Whisper Small LoRA v4 from `models/experimental/asr/v4/ctranslate2`.
 - Keep CPU int8 default; allow `cuda` and `auto` for later hardware deployment.
+---
+
+# Decision: Prompt-guided enrollment and secret phrase verification
+
+Date: 2026-08-20
+
+Decision:
+- New application enrollment requires 5 guided WAV samples and a secret phrase with at least 3 words.
+- Secret phrases are stored as salted PBKDF2 hashes, never plaintext.
+- Private-note access requires SID, matching spoken secret phrase after a marker such as `mật khẩu`, then SV.
+- Audio quality and embedding consistency gates are configurable under `speaker.enrollment_quality`; strict gates are enabled in the main `config.yaml`.
+
+Rationale:
+- Prompt-guided samples improve speaker embedding robustness across realistic commands.
+- Hash-only secret storage reduces damage if SQLite leaks.
+- Secret phrase adds a knowledge factor for private tasks without retraining speaker models.
+- Configurable quality gates keep tests deterministic while enforcing stricter behavior in the real app config.
+
+Consequences:
+- Clients calling `/api/v1/enroll` must send `secret_phrase` and should send the official 5 `enrollment_prompts`.
+- Existing enrolled users without secret phrase columns fail private-note access with `SECRET_PHRASE_NOT_CONFIGURED` until re-enrolled or migrated.
+- Transcript must include a supported marker, e.g. `mở ghi chú riêng tư mật khẩu hoa sen xanh`.
+---
+
+# Decision: User-scoped schedule and note management endpoints
+
+Date: 2026-08-20
+
+Decision:
+- Manage schedules and notes under `/api/v1/users/{user_id}/schedules` and `/api/v1/users/{user_id}/notes`.
+- Delete operations require both `user_id` and item ID in SQL.
+- Streamlit User Management page is the first UI surface for CRUD management.
+
+Rationale:
+- Notes and schedules are user-owned data; URL structure and SQL filters should make ownership explicit.
+- Owner-scoped deletes prevent deleting another user's record by guessing `schedule_id` or `note_id`.
+- Streamlit already hosts the operational user management workflow.
+
+Consequences:
+- React frontend still lacks schedule/note management UI unless added later.
+- Current CRUD supports create/list/delete; edit/update is not implemented.
+---
+
+# Decision: Fixed command template catalog and separate secret-audio verification
+
+Date: 2026-08-20
+
+Decision:
+- Maintain a fixed command template catalog in `src/nlu/command_catalog.py`.
+- Run ASR post-processing by fuzzy-snapping noisy transcripts to catalog phrases only when the command has no free slots.
+- Expose catalog through `GET /api/v1/commands`.
+- For protected intents, React records command audio first, then asks for a second audio sample containing the registered secret phrase.
+- `POST /api/v1/process` accepts optional `secret_audio`; orchestrator verifies this raw phrase before SV and private data access.
+
+Rationale:
+- Fixed command scripts reduce ASR variance and make downstream intent/entity parsing more stable.
+- Slot templates keep system commands general; task data such as schedule title or note content remains in the user utterance.
+- Separate secret phrase audio makes verification explicit instead of forcing users to append the secret to the command.
+- Same-transcript marker compatibility remains useful for direct API/manual tests.
+
+Consequences:
+- Adding a new supported user command now requires updating command catalog, NLU parsing/entity logic, access policy, and frontend display/tests.
+- React protected-flow state keeps the original command audio in memory until verification completes or user records a new command.
+
+---
+
+# Decision: Add private-note write intent
+
+Date: 2026-08-20
+
+Decision:
+- Add `ADD_PRIVATE_NOTE` as a protected intent requiring SID, spoken secret phrase, and SV before database write.
+- Extract note `content` from commands such as `Thêm ghi chú riêng tư <nội dung>`.
+- Treat generic non-private notes such as `Thêm ghi chú về môn toán` as `OUT_OF_SCOPE` for the voice pipeline.
+
+Rationale:
+- The old catalog could view private notes but could not create them by voice.
+- Writing private notes is a private task and should use the same verification policy as viewing private notes.
+
+Consequences:
+- `can_write_database` now covers `ADD_SCHEDULE` and `ADD_PRIVATE_NOTE`.
+- Slot commands are shown in UI but are not snap-normalized to fixed phrases, preserving user content.
+
+---
+
+# Decision: Backend Vietnamese TTS for assistant output
+
+Date: 2026-08-20
+
+Decision:
+- React assistant output must request speech from backend `POST /api/v1/tts`.
+- Backend returns MP3 bytes with `audio/mpeg` and no-store cache policy.
+- Browser `window.speechSynthesis` is no longer used for the React assistant output path.
+- Current implementation uses existing `src.tts.text_to_speech.synthesize_vietnamese`, backed by `gTTS(lang="vi")`.
+
+Rationale:
+- Browser voices vary by OS/browser and often lack natural Vietnamese support.
+- Backend TTS gives one API contract for later model replacement without changing frontend workflow.
+
+Consequences:
+- Runtime TTS depends on the configured backend synthesizer; current `gTTS` implementation needs network access.
+- If `gTTS` fails, API returns HTTP 503 and frontend keeps text visible with a warning.
+
+---
+
+# Decision: Trial PhoWhisper-small runtime ASR
+
+Date: 2026-08-20
+
+Decision:
+- Switch runtime ASR config to `backend: transformers` and `model_name: vinai/PhoWhisper-small`.
+- Keep `model_size: small`, Vietnamese transcribe task, CPU device, and beam size 10.
+- Use `models/cache/phowhisper` as the Hugging Face cache and allow first-run download with `local_files_only: false`.
+- Preserve faster-whisper/CTranslate2 support for the older local LoRA v4 artifact.
+
+Rationale:
+- PhoWhisper-small is a Vietnamese ASR model exposed through Transformers/PyTorch.
+- The existing faster-whisper loader cannot directly load this Hugging Face Transformers checkpoint.
+- Keeping the same ASR wrapper contract avoids changing orchestration, authentication, and NLU code.
+
+Consequences:
+- Startup may download and load `vinai/PhoWhisper-small` before accepting requests when `backend.preload_models` is true.
+- Transformers ASR currently uses `soundfile`/SciPy decoding and resampling; WAV/FLAC are the safest runtime inputs.
+- To run fully offline after caching, set `asr.local_files_only: true`.
+
+---
+
+# Decision: Enrollment requires secret audio plus typed transcript
+
+Date: 2026-08-20
+
+Decision:
+- React and Streamlit enrollment require a typed secret phrase transcript and a separate WAV/audio recording of the same phrase.
+- Backend `/api/v1/enroll` requires multipart `secret_audio`, transcribes it with the configured ASR backend, and compares normalized ASR transcript against the typed transcript before hashing/storing.
+- If ASR fails or the transcript does not match, enrollment returns `success=false` with `SECRET_PHRASE_ASR_FAILED` or `SECRET_PHRASE_TRANSCRIPT_MISMATCH`; the enroller does not run.
+- Secret phrase storage remains salted PBKDF2 hash only; raw enrollment secret audio is temporary and not stored.
+
+Rationale:
+- Enrollment should verify that the user's spoken secret phrase is recognizable by the same ASR stack used later for protected actions.
+- Typed transcript gives a human-confirmed target; spoken audio confirms ASR can recover it.
+- Using the configured ASR means PhoWhisper-small is used for this check when `config.yaml` selects `backend: transformers`.
+
+Consequences:
+- All `/api/v1/enroll` clients must send `secret_phrase`, `secret_phrase_transcript`, `secret_audio`, five enrollment WAV samples, and the official prompts.
+- Existing API tests and Streamlit refresh enrollment flows must inject or collect secret audio.
+
+---
+
+# Decision: Enrollment consistency can pass by centroid coherence
+
+Date: 2026-08-22
+
+Decision:
+- Speaker enrollment consistency is valid when either strict pairwise cosine thresholds pass or accepted embeddings remain coherent around the shared centroid.
+- Per-sample outlier rejection by `min_centroid_similarity` remains active before final centroid creation.
+- `speaker.enrollment_quality.min_mean_centroid_similarity` is explicit in `config.yaml` with default `0.70`.
+
+Rationale:
+- Guided enrollment records different prompts, so same-speaker short utterances can have low pairwise cosine even in the same environment.
+- Centroid coherence better matches the artifact being stored: one normalized user centroid built from accepted samples.
+
+Consequences:
+- `embedding_consistency` now reports `valid_by_pairwise`, `valid_by_centroid`, `mean_centroid_similarity`, and `min_centroid_similarity`.
+- If enrollment still returns `EMBEDDING_CONSISTENCY_FAILED`, inspect `embedding_consistency.accepted` to see which gate failed.

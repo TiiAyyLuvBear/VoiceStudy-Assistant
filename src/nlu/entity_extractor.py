@@ -68,6 +68,7 @@ _ADD_PREFIX_RE = re.compile(
     r"^(?:xin\s+)?(?:hãy\s+)?"
     r"(?:(?:thêm|tạo|lập|đặt)\s+(?:cho tôi\s+|cho mình\s+)?(?:một\s+)?"
     r"(?:(?:lịch|buổi|cuộc hẹn)\s*)?"
+    r"|tạo\s+lời\s+nhắc\s+"
     r"|nhắc\s+(?:tôi|mình)\s+)"
 )
 _LEADING_DATE_RE = re.compile(
@@ -80,6 +81,22 @@ _TEMPORAL_MARKER_RE = re.compile(
     r"\s+(?:vào\s+)?(?:lúc\s+\d|lúc\s+(?:một|hai|ba|bốn|tư|năm|sáu|bảy|tám|chín|mười)|"
     r"hôm nay|ngày mai|ngày kia|thứ (?:hai|ba|tư|năm|sáu|bảy|[2-7])|chủ nhật|"
     r"ngày \d{1,2}(?:[/-]| tháng ))"
+)
+_ADD_PRIVATE_NOTE_PREFIX_RE = re.compile(
+    r"^(?:xin\s+)?(?:hãy\s+)?"
+    r"(?:thêm|tạo|lưu|ghi)\s+"
+    r"(?:(?:cho tôi|cho mình)\s+)?(?:một\s+)?"
+    r"(?:ghi chú|ghi chủ|ghi chỗ|note)\s+"
+    r"(?:(?:riêng tư|riêng từ|cá nhân|bảo mật)\s*)?"
+)
+_ADD_NOTE_PREFIX_RE = re.compile(
+    r"^(?:xin\s+)?(?:hãy\s+)?"
+    r"(?:thêm|tạo|lưu|ghi)\s+"
+    r"(?:(?:cho tôi|cho mình)\s+)?(?:một\s+)?"
+    r"(?:ghi chú|ghi chủ|ghi chỗ|note)\s+"
+)
+_TRAILING_SECRET_RE = re.compile(
+    r"\s+(?:mật khẩu|câu bí mật|lệnh bí mật|khẩu lệnh|secret phrase|passphrase)\b.*$"
 )
 
 
@@ -212,6 +229,26 @@ def extract_title(text: str) -> str | None:
     return body or None
 
 
+def extract_private_note_content(text: str) -> str | None:
+    """Trích nội dung cho ADD_PRIVATE_NOTE."""
+
+    normalized = normalize_text(text)
+    body = _ADD_PRIVATE_NOTE_PREFIX_RE.sub("", normalized, count=1)
+    body = _TRAILING_SECRET_RE.sub("", body, count=1)
+    body = body.strip(" .,:;-")
+    return body or None
+
+
+def extract_note_content(text: str) -> str | None:
+    """Trích nội dung cho ADD_NOTE, không sửa ngữ nghĩa nội dung."""
+
+    normalized = normalize_text(text)
+    body = _ADD_NOTE_PREFIX_RE.sub("", normalized, count=1)
+    body = _TRAILING_SECRET_RE.sub("", body, count=1)
+    body = body.strip(" .,:;-")
+    return body or None
+
+
 def extract_entities(
     text: str,
     intent: str | Intent,
@@ -226,6 +263,18 @@ def extract_entities(
         date_value = extract_date(text, reference_date)
         if date_value:
             entities["date"] = date_value
+        return entities
+
+    if intent_value == Intent.ADD_PRIVATE_NOTE.value:
+        content = extract_private_note_content(text)
+        if content:
+            entities["content"] = content
+        return entities
+
+    if intent_value == Intent.ADD_NOTE.value:
+        content = extract_note_content(text)
+        if content:
+            entities["content"] = content
         return entities
 
     if intent_value != Intent.ADD_SCHEDULE.value:
