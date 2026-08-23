@@ -82,6 +82,7 @@ function LoadingBadge({label}: {label: string}) {
 export function AssistantPage() {
   const recorder = useMediaRecorder();
   const [result, setResult] = useState<AssistantResult>();
+  const [autoSpeechId, setAutoSpeechId] = useState('');
   const [commandAudio, setCommandAudio] = useState<Blob>();
   const [commands, setCommands] = useState<SystemCommand[]>(SYSTEM_COMMANDS);
   const [commandsLoading, setCommandsLoading] = useState(true);
@@ -118,8 +119,10 @@ export function AssistantPage() {
         setVerification('required');
       } else {
         setVerification(next.securityLevel === 'verified' ? (next.verified ? 'verified' : 'rejected') : 'not-required');
+        const historyItem = historyItemFromResult(next);
+        setAutoSpeechId(historyItem.id);
         setHistory(current => {
-          const updated = [historyItemFromResult(next), ...current].slice(0, MAX_ASSISTANT_HISTORY);
+          const updated = [historyItem, ...current].slice(0, MAX_ASSISTANT_HISTORY);
           saveAssistantHistory(updated);
           return updated;
         });
@@ -273,11 +276,14 @@ export function AssistantPage() {
                   <Badge tone={index === 0 ? 'info' : 'neutral'}>{index === 0 ? 'Latest' : item.createdAt}</Badge>
                 </div>
                 <p className="transcript">“{item.command}”</p>
-                {SHOW_RAW_TRANSCRIPT && item.rawTranscript && (
-                  <Status label={`Raw ASR: ${item.rawTranscript}`} detail={item.result.asrPostprocessed ? 'ASR post-processed' : 'Developer mode'} tone="warning" />
-                )}
-                {item.result.secretPhraseTranscript && <Status label={`Raw secret ASR: ${item.result.secretPhraseTranscript}`} detail="Verification audio transcript" tone="warning" />}
-                <div className="pipeline">
+                <div className="command-metadata">
+                  {SHOW_RAW_TRANSCRIPT && item.rawTranscript && (
+                    <Status label={`Raw ASR: ${item.rawTranscript}`} detail={item.result.asrPostprocessed ? 'ASR post-processed' : 'Developer mode'} tone="warning" />
+                  )}
+                  {item.result.secretPhraseTranscript && (
+                    <Status label={`Raw secret ASR: ${item.result.secretPhraseTranscript}`} detail="Verification audio transcript" tone="warning" />
+                  )}
+                  <div className="pipeline">
                   <Status label={item.result.intent || 'Intent pending'} detail="Fixed command catalog" />
                   <Status
                     label={item.result.speaker ? `Speaker: ${item.result.speaker.name}` : 'Speaker not identified'}
@@ -288,12 +294,13 @@ export function AssistantPage() {
                     label={item.result.securityLevel === 'verified' ? 'Protected action' : item.result.securityLevel === 'personalized' ? 'Personalized action' : 'Public action'}
                     tone={item.result.securityLevel === 'verified' ? 'warning' : 'success'}
                   />
+                  </div>
                 </div>
               </div>
             </div>
             <div className="qa-turn qa-answer">
               <span className="qa-marker">A</span>
-              <AnswerPanel result={item.result} autoSpeech={index === 0} />
+              <AnswerPanel result={item.result} autoSpeech={item.id === autoSpeechId} />
             </div>
           </Card>
         ))}
@@ -335,6 +342,7 @@ function AnswerPanel({result, autoSpeech}: {result: AssistantResult; autoSpeech:
   useEffect(() => {
     if (autoSpeech) void loadSpeech();
   }, [autoSpeech, result.response]);
+
   useEffect(
     () => () => {
       if (audioUrlRef.current && typeof URL.revokeObjectURL === 'function') URL.revokeObjectURL(audioUrlRef.current);
@@ -356,7 +364,7 @@ function AnswerPanel({result, autoSpeech}: {result: AssistantResult; autoSpeech:
         </button>
         {result.speaker && <Badge tone="info">Speaker: {result.speaker.name}</Badge>}
       </div>
-      {audioUrl && <audio className="tts-player" controls autoPlay src={audioUrl} />}
+      {audioUrl && <audio className="tts-player" controls autoPlay={autoSpeech} src={audioUrl} />}
       {ttsError && <Status label={ttsError} tone="warning" />}
     </div>
   );
